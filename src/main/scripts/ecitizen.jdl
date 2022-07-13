@@ -1,0 +1,134 @@
+entity Province {
+    name String minlength(3) maxlength(255) required
+}
+
+entity District {
+    name String minlength(3) maxlength(255) required
+}
+
+entity Sector{
+    name String minlength(3) maxlength(255) required
+}
+
+entity Cell{
+    name String minlength(3) maxlength(255) required
+}
+
+entity Village{
+    name String minlength(3) maxlength(255) required,
+}
+
+entity UserExtended{
+	phone String minlength(13) maxlength(13)
+}
+
+entity Office {
+	parentId String,
+    name String required,
+    officeType OfficeType required,
+    createdAt LocalDate required
+}
+
+enum OfficeType{
+	MINALOC, PROVINCE, DISTRICT, SECTOR, CELL, OTHER
+}
+
+
+entity Umuturage{
+    indangamuntu String required minlength(16) maxlength(16) unique,
+    amazina String required minlength(3) maxlength(255),
+    dob Instant required,
+    gender Gender required,
+    ubudeheCategory String minlength(1) maxlength(1) required,
+    phone String minlength(13) maxlength(13),
+    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)
+}
+
+enum Gender{
+	MALE, FEMALE
+}
+
+entity Complain{
+    ikibazo TextBlob required,
+    icyakozwe TextBlob required,
+    icyakorwa TextBlob,
+    umwanzuro TextBlob,
+    date Instant required,
+    status Status,
+    priority Priority required
+}
+
+enum Status{
+	PENDING_REVIEW, ORIENTED, ONHOLD, SOLVED
+}
+
+enum Priority{
+	HIGH, MEDIUM, LOW
+}
+
+entity Category{
+	name String required,
+    description TextBlob required
+}
+
+entity Attachment{
+	attachmentLink Blob required,
+    attachmentType String required,
+}
+
+entity Organization{
+	name String required,
+    location String required
+}
+
+entity Umuyobozi{
+    firstName String required minlength(3) maxlength(100), 
+    lastName String required minlength(3) maxlength(100), 
+    phoneOne String required maxlength(13), 
+    phoneTwo String required maxlength(13), 
+    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)
+}
+
+entity Umurimo{
+    umurimo String required minlength(3) maxlength(100), 
+    urwego String required minlength(3) maxlength(100)
+}
+
+relationship OneToOne{
+	Complain{category} to Category,
+    UserExtended{user(login)} to User,
+    Organization{organization} to User,
+    Office{Office} to User,
+    Umuyobozi{umurimo(umurimo)} to Umurimo,
+}
+
+relationship ManyToOne{
+	Complain{umuturage} to Umuturage,
+    Attachment{complain} to Complain,
+    Umuturage{user(login)} to User,
+    Complain{user(login)} to User,
+}
+relationship OneToMany {
+  Province to District{province(name)},
+  District to Sector{district(name)},
+  Sector to Cell{sector(name)},
+  Cell to Village{cell(name)},
+  Village to Umuturage{village(name)},
+  Office{parent} to Office{children}
+}
+
+relationship ManyToMany{
+	Complain{organization(name)} to Organization{complain}
+}
+
+
+// Set pagination options
+
+paginate Complain, Umuturage, Umuyobozi  with pagination
+paginate Sector, Cell, Village with infinite-scroll
+
+// Set service options to all except few
+service all with serviceImpl
+
+// Set filter to all entities except Province
+filter Complain, Umuturage, Umuyobozi, Umurimo, Village, Cell, Sector, District, Province

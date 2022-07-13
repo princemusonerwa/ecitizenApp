@@ -1,0 +1,9 @@
+export enum Status {
+  PENDING_REVIEW = 'PENDING_REVIEW',
+
+  ORIENTED = 'ORIENTED',
+
+  ONHOLD = 'ONHOLD',
+
+  SOLVED = 'SOLVED',
+}

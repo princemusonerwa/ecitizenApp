@@ -1,0 +1,56 @@
+{
+  "applications": "*",
+  "changelogDate": "20220713102527",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "office",
+  "fields": [
+    {
+      "fieldName": "parentId",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "officeType",
+      "fieldType": "OfficeType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "MINALOC,PROVINCE,DISTRICT,SECTOR,CELL,OTHER"
+    },
+    {
+      "fieldName": "createdAt",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "Office",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "office",
+      "ownerSide": true,
+      "relationshipName": "office",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityName": "office",
+      "otherEntityRelationshipName": "children",
+      "relationshipName": "parent",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "office",
+      "otherEntityRelationshipName": "parent",
+      "relationshipName": "children",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

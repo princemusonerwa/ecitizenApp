@@ -1,0 +1,83 @@
+{
+  "applications": "*",
+  "changelogDate": "20220713102529",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "complain",
+  "fields": [
+    {
+      "fieldName": "ikibazo",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "icyakozwe",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "icyakorwa",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "umwanzuro",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "date",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "Status",
+      "fieldValues": "PENDING_REVIEW,ORIENTED,ONHOLD,SOLVED"
+    },
+    {
+      "fieldName": "priority",
+      "fieldType": "Priority",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "HIGH,MEDIUM,LOW"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": true,
+  "name": "Complain",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "category",
+      "otherEntityRelationshipName": "complain",
+      "ownerSide": true,
+      "relationshipName": "category",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityName": "umuturage",
+      "otherEntityRelationshipName": "complain",
+      "relationshipName": "umuturage",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "login",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "complain",
+      "relationshipName": "user",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "organization",
+      "otherEntityRelationshipName": "complain",
+      "ownerSide": true,
+      "relationshipName": "organization",
+      "relationshipType": "many-to-many"
+    }
+  ],
+  "service": "serviceImpl"
+}

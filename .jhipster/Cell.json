@@ -1,0 +1,37 @@
+{
+  "applications": "*",
+  "changelogDate": "20220713102524",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "cell",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["minlength", "maxlength", "required"],
+      "fieldValidateRulesMaxlength": "255",
+      "fieldValidateRulesMinlength": "3"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": true,
+  "name": "Cell",
+  "pagination": "infinite-scroll",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "village",
+      "otherEntityRelationshipName": "cell",
+      "relationshipName": "village",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "sector",
+      "otherEntityRelationshipName": "cell",
+      "relationshipName": "sector",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <!--
+        Added the constraints for entity Umuturage.
+    -->
+    <changeSet id="20220713102528-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="umuturage"
+                                 constraintName="fk_umuturage__user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="village_id"
+                                 baseTableName="umuturage"
+                                 constraintName="fk_umuturage__village_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="village"/>
+    </changeSet>
+</databaseChangeLog>
