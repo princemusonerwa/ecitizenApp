@@ -1,0 +1,11 @@
+id;ikibazo;icyakozwe;icyakorwa;umwanzuro;date;status;priority
+1;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;2022-07-13T07:12:04;ORIENTED;MEDIUM
+2;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;2022-07-12T17:15:14;PENDING_REVIEW;HIGH
+3;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;2022-07-13T03:47:51;ORIENTED;LOW
+4;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;2022-07-13T06:51:52;ORIENTED;HIGH
+5;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;2022-07-12T14:24:30;PENDING_REVIEW;HIGH
+6;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;2022-07-13T01:10:02;SOLVED;HIGH
+7;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;2022-07-13T00:21:09;SOLVED;LOW
+8;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;2022-07-13T08:37:09;ORIENTED;MEDIUM
+9;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;2022-07-12T15:14:22;ONHOLD;LOW
+10;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;2022-07-12T19:17:42;PENDING_REVIEW;HIGH

@@ -1,0 +1,37 @@
+{
+  "applications": "*",
+  "changelogDate": "20220713102522",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "district",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["minlength", "maxlength", "required"],
+      "fieldValidateRulesMaxlength": "255",
+      "fieldValidateRulesMinlength": "3"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": true,
+  "name": "District",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "sector",
+      "otherEntityRelationshipName": "district",
+      "relationshipName": "sector",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "province",
+      "otherEntityRelationshipName": "district",
+      "relationshipName": "province",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

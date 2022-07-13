@@ -1,0 +1,30 @@
+{
+  "applications": "*",
+  "changelogDate": "20220713102521",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "province",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["minlength", "maxlength", "required"],
+      "fieldValidateRulesMaxlength": "255",
+      "fieldValidateRulesMinlength": "3"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": true,
+  "name": "Province",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "district",
+      "otherEntityRelationshipName": "province",
+      "relationshipName": "district",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "service": "serviceImpl"
+}

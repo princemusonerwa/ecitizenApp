@@ -15,7 +15,32 @@
     <property name="datetimeType" value="datetime" dbms="oracle, mssql, postgresql, h2"/>
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102521_added_entity_Province.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102522_added_entity_District.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102523_added_entity_Sector.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102524_added_entity_Cell.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102525_added_entity_Village.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102526_added_entity_UserExtended.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102527_added_entity_Office.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102528_added_entity_Umuturage.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102529_added_entity_Complain.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102530_added_entity_Category.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102531_added_entity_Attachment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102532_added_entity_Organization.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102533_added_entity_Umuyobozi.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102534_added_entity_Umurimo.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20220713102522_added_entity_constraints_District.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102523_added_entity_constraints_Sector.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102524_added_entity_constraints_Cell.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102525_added_entity_constraints_Village.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102526_added_entity_constraints_UserExtended.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102527_added_entity_constraints_Office.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102528_added_entity_constraints_Umuturage.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102529_added_entity_constraints_Complain.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102531_added_entity_constraints_Attachment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102532_added_entity_constraints_Organization.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20220713102533_added_entity_constraints_Umuyobozi.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>
