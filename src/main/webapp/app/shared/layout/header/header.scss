@@ -96,6 +96,7 @@ Navbar styles
   }
   .brand-icon {
     height: 35px;
+    margin: 2px;
     width: auto;
     display: inline-block;
     img {
@@ -106,6 +107,7 @@ Navbar styles
 
 .brand-title {
   font-size: 24px;
+  margin-left: 5px;
   color: $header-color;
   &:hover {
     color: $header-color-hover;

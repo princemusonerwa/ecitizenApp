@@ -17,7 +17,6 @@ export interface IComplain {
   priority?: Priority;
   category?: ICategory | null;
   umuturage?: IUmuturage | null;
-  user?: IUser | null;
   organizations?: IOrganization[] | null;
 }
 
