@@ -3,6 +3,7 @@ import { ICell } from 'app/shared/model/cell.model';
 
 export interface IVillage {
   id?: number;
+  villageCode?: string;
   name?: string;
   umuturages?: IUmuturage[] | null;
   cell?: ICell | null;

@@ -46,6 +46,7 @@ export const Province = (props: RouteComponentProps<{ url: string }>) => {
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Province Code</th>
                 <th>Name</th>
                 <th />
               </tr>
@@ -58,6 +59,7 @@ export const Province = (props: RouteComponentProps<{ url: string }>) => {
                       {province.id}
                     </Button>
                   </td>
+                  <td>{province.provinceCode}</td>
                   <td>{province.name}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

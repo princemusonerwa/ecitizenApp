@@ -28,6 +28,8 @@ public class SectorCriteria implements Serializable, Criteria {
 
     private LongFilter id;
 
+    private StringFilter sectorCode;
+
     private StringFilter name;
 
     private LongFilter cellId;
@@ -40,6 +42,7 @@ public class SectorCriteria implements Serializable, Criteria {
 
     public SectorCriteria(SectorCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
+        this.sectorCode = other.sectorCode == null ? null : other.sectorCode.copy();
         this.name = other.name == null ? null : other.name.copy();
         this.cellId = other.cellId == null ? null : other.cellId.copy();
         this.districtId = other.districtId == null ? null : other.districtId.copy();
@@ -64,6 +67,21 @@ public class SectorCriteria implements Serializable, Criteria {
 
     public void setId(LongFilter id) {
         this.id = id;
+    }
+
+    public StringFilter getSectorCode() {
+        return sectorCode;
+    }
+
+    public StringFilter sectorCode() {
+        if (sectorCode == null) {
+            sectorCode = new StringFilter();
+        }
+        return sectorCode;
+    }
+
+    public void setSectorCode(StringFilter sectorCode) {
+        this.sectorCode = sectorCode;
     }
 
     public StringFilter getName() {
@@ -130,6 +148,7 @@ public class SectorCriteria implements Serializable, Criteria {
         final SectorCriteria that = (SectorCriteria) o;
         return (
             Objects.equals(id, that.id) &&
+            Objects.equals(sectorCode, that.sectorCode) &&
             Objects.equals(name, that.name) &&
             Objects.equals(cellId, that.cellId) &&
             Objects.equals(districtId, that.districtId) &&
@@ -139,7 +158,7 @@ public class SectorCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, cellId, districtId, distinct);
+        return Objects.hash(id, sectorCode, name, cellId, districtId, distinct);
     }
 
     // prettier-ignore
@@ -147,6 +166,7 @@ public class SectorCriteria implements Serializable, Criteria {
     public String toString() {
         return "SectorCriteria{" +
             (id != null ? "id=" + id + ", " : "") +
+            (sectorCode != null ? "sectorCode=" + sectorCode + ", " : "") +
             (name != null ? "name=" + name + ", " : "") +
             (cellId != null ? "cellId=" + cellId + ", " : "") +
             (districtId != null ? "districtId=" + districtId + ", " : "") +

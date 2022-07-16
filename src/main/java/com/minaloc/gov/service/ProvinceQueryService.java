@@ -85,6 +85,9 @@ public class ProvinceQueryService extends QueryService<Province> {
             if (criteria.getId() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getId(), Province_.id));
             }
+            if (criteria.getProvinceCode() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getProvinceCode(), Province_.provinceCode));
+            }
             if (criteria.getName() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getName(), Province_.name));
             }

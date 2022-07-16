@@ -45,6 +45,9 @@ public class CellServiceImpl implements CellService {
         return cellRepository
             .findById(cell.getId())
             .map(existingCell -> {
+                if (cell.getSectorCode() != null) {
+                    existingCell.setSectorCode(cell.getSectorCode());
+                }
                 if (cell.getName() != null) {
                     existingCell.setName(cell.getName());
                 }

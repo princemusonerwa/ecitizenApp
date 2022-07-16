@@ -85,6 +85,9 @@ public class DistrictQueryService extends QueryService<District> {
             if (criteria.getId() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getId(), District_.id));
             }
+            if (criteria.getDistrictCode() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getDistrictCode(), District_.districtCode));
+            }
             if (criteria.getName() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getName(), District_.name));
             }

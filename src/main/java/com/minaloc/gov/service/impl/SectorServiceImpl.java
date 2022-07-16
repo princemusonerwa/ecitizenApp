@@ -45,6 +45,9 @@ public class SectorServiceImpl implements SectorService {
         return sectorRepository
             .findById(sector.getId())
             .map(existingSector -> {
+                if (sector.getSectorCode() != null) {
+                    existingSector.setSectorCode(sector.getSectorCode());
+                }
                 if (sector.getName() != null) {
                     existingSector.setName(sector.getName());
                 }

@@ -34,7 +34,7 @@
     {
       "fieldName": "email",
       "fieldType": "String",
-      "fieldValidateRules": ["required", "pattern"],
+      "fieldValidateRules": ["unique", "required", "pattern"],
       "fieldValidateRulesPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
     }
   ],

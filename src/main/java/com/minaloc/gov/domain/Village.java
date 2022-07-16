@@ -27,6 +27,11 @@ public class Village implements Serializable {
 
     @NotNull
     @Size(min = 3, max = 255)
+    @Column(name = "village_code", length = 255, nullable = false, unique = true)
+    private String villageCode;
+
+    @NotNull
+    @Size(min = 3, max = 255)
     @Column(name = "name", length = 255, nullable = false)
     private String name;
 
@@ -52,6 +57,19 @@ public class Village implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getVillageCode() {
+        return this.villageCode;
+    }
+
+    public Village villageCode(String villageCode) {
+        this.setVillageCode(villageCode);
+        return this;
+    }
+
+    public void setVillageCode(String villageCode) {
+        this.villageCode = villageCode;
     }
 
     public String getName() {
@@ -135,6 +153,7 @@ public class Village implements Serializable {
     public String toString() {
         return "Village{" +
             "id=" + getId() +
+            ", villageCode='" + getVillageCode() + "'" +
             ", name='" + getName() + "'" +
             "}";
     }
