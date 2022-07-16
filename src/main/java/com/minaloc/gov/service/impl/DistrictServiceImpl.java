@@ -46,6 +46,9 @@ public class DistrictServiceImpl implements DistrictService {
         return districtRepository
             .findById(district.getId())
             .map(existingDistrict -> {
+                if (district.getDistrictCode() != null) {
+                    existingDistrict.setDistrictCode(district.getDistrictCode());
+                }
                 if (district.getName() != null) {
                     existingDistrict.setName(district.getName());
                 }

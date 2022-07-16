@@ -1,9 +1,7 @@
 package com.minaloc.gov.web.rest;
 
 import com.minaloc.gov.domain.Complain;
-import com.minaloc.gov.domain.User;
 import com.minaloc.gov.repository.ComplainRepository;
-import com.minaloc.gov.repository.UserRepository;
 import com.minaloc.gov.service.ComplainQueryService;
 import com.minaloc.gov.service.ComplainService;
 import com.minaloc.gov.service.criteria.ComplainCriteria;
@@ -22,8 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -50,18 +46,14 @@ public class ComplainResource {
 
     private final ComplainQueryService complainQueryService;
 
-    private final UserRepository userRepository;
-
     public ComplainResource(
         ComplainService complainService,
         ComplainRepository complainRepository,
-        ComplainQueryService complainQueryService,
-        UserRepository userRepository
+        ComplainQueryService complainQueryService
     ) {
         this.complainService = complainService;
         this.complainRepository = complainRepository;
         this.complainQueryService = complainQueryService;
-        this.userRepository = userRepository;
     }
 
     /**
@@ -77,16 +69,6 @@ public class ComplainResource {
         if (complain.getId() != null) {
             throw new BadRequestAlertException("A new complain cannot already have an ID", ENTITY_NAME, "idexists");
         }
-
-        String username = "";
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        }
-
-        User user = userRepository.findByLogin(username);
-        complain.setUser(user);
         Complain result = complainService.save(complain);
         return ResponseEntity
             .created(new URI("/api/complains/" + result.getId()))

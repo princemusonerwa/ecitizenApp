@@ -31,6 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 @WithMockUser
 class ProvinceResourceIT {
 
+    private static final String DEFAULT_PROVINCE_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_PROVINCE_CODE = "BBBBBBBBBB";
+
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
@@ -58,7 +61,7 @@ class ProvinceResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Province createEntity(EntityManager em) {
-        Province province = new Province().name(DEFAULT_NAME);
+        Province province = new Province().provinceCode(DEFAULT_PROVINCE_CODE).name(DEFAULT_NAME);
         return province;
     }
 
@@ -69,7 +72,7 @@ class ProvinceResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Province createUpdatedEntity(EntityManager em) {
-        Province province = new Province().name(UPDATED_NAME);
+        Province province = new Province().provinceCode(UPDATED_PROVINCE_CODE).name(UPDATED_NAME);
         return province;
     }
 
@@ -91,6 +94,7 @@ class ProvinceResourceIT {
         List<Province> provinceList = provinceRepository.findAll();
         assertThat(provinceList).hasSize(databaseSizeBeforeCreate + 1);
         Province testProvince = provinceList.get(provinceList.size() - 1);
+        assertThat(testProvince.getProvinceCode()).isEqualTo(DEFAULT_PROVINCE_CODE);
         assertThat(testProvince.getName()).isEqualTo(DEFAULT_NAME);
     }
 
@@ -110,6 +114,23 @@ class ProvinceResourceIT {
         // Validate the Province in the database
         List<Province> provinceList = provinceRepository.findAll();
         assertThat(provinceList).hasSize(databaseSizeBeforeCreate);
+    }
+
+    @Test
+    @Transactional
+    void checkProvinceCodeIsRequired() throws Exception {
+        int databaseSizeBeforeTest = provinceRepository.findAll().size();
+        // set the field null
+        province.setProvinceCode(null);
+
+        // Create the Province, which fails.
+
+        restProvinceMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(province)))
+            .andExpect(status().isBadRequest());
+
+        List<Province> provinceList = provinceRepository.findAll();
+        assertThat(provinceList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
@@ -141,6 +162,7 @@ class ProvinceResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(province.getId().intValue())))
+            .andExpect(jsonPath("$.[*].provinceCode").value(hasItem(DEFAULT_PROVINCE_CODE)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
     }
 
@@ -156,6 +178,7 @@ class ProvinceResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(province.getId().intValue()))
+            .andExpect(jsonPath("$.provinceCode").value(DEFAULT_PROVINCE_CODE))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
     }
 
@@ -175,6 +198,84 @@ class ProvinceResourceIT {
 
         defaultProvinceShouldBeFound("id.lessThanOrEqual=" + id);
         defaultProvinceShouldNotBeFound("id.lessThan=" + id);
+    }
+
+    @Test
+    @Transactional
+    void getAllProvincesByProvinceCodeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        provinceRepository.saveAndFlush(province);
+
+        // Get all the provinceList where provinceCode equals to DEFAULT_PROVINCE_CODE
+        defaultProvinceShouldBeFound("provinceCode.equals=" + DEFAULT_PROVINCE_CODE);
+
+        // Get all the provinceList where provinceCode equals to UPDATED_PROVINCE_CODE
+        defaultProvinceShouldNotBeFound("provinceCode.equals=" + UPDATED_PROVINCE_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllProvincesByProvinceCodeIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        provinceRepository.saveAndFlush(province);
+
+        // Get all the provinceList where provinceCode not equals to DEFAULT_PROVINCE_CODE
+        defaultProvinceShouldNotBeFound("provinceCode.notEquals=" + DEFAULT_PROVINCE_CODE);
+
+        // Get all the provinceList where provinceCode not equals to UPDATED_PROVINCE_CODE
+        defaultProvinceShouldBeFound("provinceCode.notEquals=" + UPDATED_PROVINCE_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllProvincesByProvinceCodeIsInShouldWork() throws Exception {
+        // Initialize the database
+        provinceRepository.saveAndFlush(province);
+
+        // Get all the provinceList where provinceCode in DEFAULT_PROVINCE_CODE or UPDATED_PROVINCE_CODE
+        defaultProvinceShouldBeFound("provinceCode.in=" + DEFAULT_PROVINCE_CODE + "," + UPDATED_PROVINCE_CODE);
+
+        // Get all the provinceList where provinceCode equals to UPDATED_PROVINCE_CODE
+        defaultProvinceShouldNotBeFound("provinceCode.in=" + UPDATED_PROVINCE_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllProvincesByProvinceCodeIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        provinceRepository.saveAndFlush(province);
+
+        // Get all the provinceList where provinceCode is not null
+        defaultProvinceShouldBeFound("provinceCode.specified=true");
+
+        // Get all the provinceList where provinceCode is null
+        defaultProvinceShouldNotBeFound("provinceCode.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllProvincesByProvinceCodeContainsSomething() throws Exception {
+        // Initialize the database
+        provinceRepository.saveAndFlush(province);
+
+        // Get all the provinceList where provinceCode contains DEFAULT_PROVINCE_CODE
+        defaultProvinceShouldBeFound("provinceCode.contains=" + DEFAULT_PROVINCE_CODE);
+
+        // Get all the provinceList where provinceCode contains UPDATED_PROVINCE_CODE
+        defaultProvinceShouldNotBeFound("provinceCode.contains=" + UPDATED_PROVINCE_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllProvincesByProvinceCodeNotContainsSomething() throws Exception {
+        // Initialize the database
+        provinceRepository.saveAndFlush(province);
+
+        // Get all the provinceList where provinceCode does not contain DEFAULT_PROVINCE_CODE
+        defaultProvinceShouldNotBeFound("provinceCode.doesNotContain=" + DEFAULT_PROVINCE_CODE);
+
+        // Get all the provinceList where provinceCode does not contain UPDATED_PROVINCE_CODE
+        defaultProvinceShouldBeFound("provinceCode.doesNotContain=" + UPDATED_PROVINCE_CODE);
     }
 
     @Test
@@ -290,6 +391,7 @@ class ProvinceResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(province.getId().intValue())))
+            .andExpect(jsonPath("$.[*].provinceCode").value(hasItem(DEFAULT_PROVINCE_CODE)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
 
         // Check, that the count call also returns 1
@@ -338,7 +440,7 @@ class ProvinceResourceIT {
         Province updatedProvince = provinceRepository.findById(province.getId()).get();
         // Disconnect from session so that the updates on updatedProvince are not directly saved in db
         em.detach(updatedProvince);
-        updatedProvince.name(UPDATED_NAME);
+        updatedProvince.provinceCode(UPDATED_PROVINCE_CODE).name(UPDATED_NAME);
 
         restProvinceMockMvc
             .perform(
@@ -352,6 +454,7 @@ class ProvinceResourceIT {
         List<Province> provinceList = provinceRepository.findAll();
         assertThat(provinceList).hasSize(databaseSizeBeforeUpdate);
         Province testProvince = provinceList.get(provinceList.size() - 1);
+        assertThat(testProvince.getProvinceCode()).isEqualTo(UPDATED_PROVINCE_CODE);
         assertThat(testProvince.getName()).isEqualTo(UPDATED_NAME);
     }
 
@@ -423,7 +526,7 @@ class ProvinceResourceIT {
         Province partialUpdatedProvince = new Province();
         partialUpdatedProvince.setId(province.getId());
 
-        partialUpdatedProvince.name(UPDATED_NAME);
+        partialUpdatedProvince.provinceCode(UPDATED_PROVINCE_CODE);
 
         restProvinceMockMvc
             .perform(
@@ -437,7 +540,8 @@ class ProvinceResourceIT {
         List<Province> provinceList = provinceRepository.findAll();
         assertThat(provinceList).hasSize(databaseSizeBeforeUpdate);
         Province testProvince = provinceList.get(provinceList.size() - 1);
-        assertThat(testProvince.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testProvince.getProvinceCode()).isEqualTo(UPDATED_PROVINCE_CODE);
+        assertThat(testProvince.getName()).isEqualTo(DEFAULT_NAME);
     }
 
     @Test
@@ -452,7 +556,7 @@ class ProvinceResourceIT {
         Province partialUpdatedProvince = new Province();
         partialUpdatedProvince.setId(province.getId());
 
-        partialUpdatedProvince.name(UPDATED_NAME);
+        partialUpdatedProvince.provinceCode(UPDATED_PROVINCE_CODE).name(UPDATED_NAME);
 
         restProvinceMockMvc
             .perform(
@@ -466,6 +570,7 @@ class ProvinceResourceIT {
         List<Province> provinceList = provinceRepository.findAll();
         assertThat(provinceList).hasSize(databaseSizeBeforeUpdate);
         Province testProvince = provinceList.get(provinceList.size() - 1);
+        assertThat(testProvince.getProvinceCode()).isEqualTo(UPDATED_PROVINCE_CODE);
         assertThat(testProvince.getName()).isEqualTo(UPDATED_NAME);
     }
 

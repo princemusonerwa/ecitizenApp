@@ -82,6 +82,18 @@ export const DistrictUpdate = (props: RouteComponentProps<{ id: string }>) => {
             <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
               {!isNew ? <ValidatedField name="id" required readOnly id="district-id" label="ID" validate={{ required: true }} /> : null}
               <ValidatedField
+                label="District Code"
+                id="district-districtCode"
+                name="districtCode"
+                data-cy="districtCode"
+                type="text"
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                  minLength: { value: 3, message: 'This field is required to be at least 3 characters.' },
+                  maxLength: { value: 255, message: 'This field cannot be longer than 255 characters.' },
+                }}
+              />
+              <ValidatedField
                 label="Name"
                 id="district-name"
                 name="name"

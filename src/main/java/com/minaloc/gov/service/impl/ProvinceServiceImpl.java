@@ -44,6 +44,9 @@ public class ProvinceServiceImpl implements ProvinceService {
         return provinceRepository
             .findById(province.getId())
             .map(existingProvince -> {
+                if (province.getProvinceCode() != null) {
+                    existingProvince.setProvinceCode(province.getProvinceCode());
+                }
                 if (province.getName() != null) {
                     existingProvince.setName(province.getName());
                 }
