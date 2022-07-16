@@ -7,9 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IUser } from 'app/shared/model/user.model';
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { IVillage } from 'app/shared/model/village.model';
 import { getEntities as getVillages } from 'app/entities/village/village.reducer';
 import { IUmuturage } from 'app/shared/model/umuturage.model';
@@ -21,7 +18,6 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
   const [isNew] = useState(!props.match.params || !props.match.params.id);
 
-  const users = useAppSelector(state => state.userManagement.users);
   const villages = useAppSelector(state => state.village.entities);
   const umuturageEntity = useAppSelector(state => state.umuturage.entity);
   const loading = useAppSelector(state => state.umuturage.loading);
@@ -38,8 +34,6 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
     } else {
       dispatch(getEntity(props.match.params.id));
     }
-
-    dispatch(getUsers({}));
     dispatch(getVillages({}));
   }, []);
 
@@ -55,7 +49,6 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
     const entity = {
       ...umuturageEntity,
       ...values,
-      user: users.find(it => it.id.toString() === values.user.toString()),
       village: villages.find(it => it.id.toString() === values.village.toString()),
     };
 
@@ -174,16 +167,6 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   },
                 }}
               />
-              <ValidatedField id="umuturage-user" name="user" data-cy="user" label="User" type="select">
-                <option value="" key="0" />
-                {users
-                  ? users.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.login}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
               <ValidatedField id="umuturage-village" name="village" data-cy="village" label="Village" type="select">
                 <option value="" key="0" />
                 {villages

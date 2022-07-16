@@ -12,7 +12,6 @@ import { ICategory } from 'app/shared/model/category.model';
 import { getEntities as getCategories } from 'app/entities/category/category.reducer';
 import { IUmuturage } from 'app/shared/model/umuturage.model';
 import { getEntities as getUmuturages } from 'app/entities/umuturage/umuturage.reducer';
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { IOrganization } from 'app/shared/model/organization.model';
 import { getEntities as getOrganizations } from 'app/entities/organization/organization.reducer';
@@ -49,7 +48,6 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
     dispatch(getCategories({}));
     dispatch(getUmuturages({}));
-    dispatch(getUsers({}));
     dispatch(getOrganizations({}));
   }, []);
 
@@ -68,7 +66,6 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
       organizations: mapIdList(values.organizations),
       category: categories.find(it => it.id.toString() === values.category.toString()),
       umuturage: umuturages.find(it => it.id.toString() === values.umuturage.toString()),
-      user: users.find(it => it.id.toString() === values.user.toString()),
     };
 
     if (isNew) {
@@ -90,7 +87,6 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
           date: convertDateTimeFromServer(complainEntity.date),
           category: complainEntity?.category?.id,
           umuturage: complainEntity?.umuturage?.id,
-          user: complainEntity?.user?.id,
           organizations: complainEntity?.organizations?.map(e => e.id.toString()),
         };
 
@@ -162,7 +158,7 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 {categories
                   ? categories.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.name}
                       </option>
                     ))
                   : null}
@@ -173,16 +169,6 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   ? umuturages.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
                         {otherEntity.id}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <ValidatedField id="complain-user" name="user" data-cy="user" label="User" type="select">
-                <option value="" key="0" />
-                {users
-                  ? users.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.login}
                       </option>
                     ))
                   : null}
