@@ -27,6 +27,11 @@ public class Province implements Serializable {
 
     @NotNull
     @Size(min = 3, max = 255)
+    @Column(name = "province_code", length = 255, nullable = false, unique = true)
+    private String provinceCode;
+
+    @NotNull
+    @Size(min = 3, max = 255)
     @Column(name = "name", length = 255, nullable = false)
     private String name;
 
@@ -48,6 +53,19 @@ public class Province implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getProvinceCode() {
+        return this.provinceCode;
+    }
+
+    public Province provinceCode(String provinceCode) {
+        this.setProvinceCode(provinceCode);
+        return this;
+    }
+
+    public void setProvinceCode(String provinceCode) {
+        this.provinceCode = provinceCode;
     }
 
     public String getName() {
@@ -118,6 +136,7 @@ public class Province implements Serializable {
     public String toString() {
         return "Province{" +
             "id=" + getId() +
+            ", provinceCode='" + getProvinceCode() + "'" +
             ", name='" + getName() + "'" +
             "}";
     }

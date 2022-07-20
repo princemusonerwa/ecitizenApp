@@ -27,6 +27,10 @@ export const CellDetail = (props: RouteComponentProps<{ id: string }>) => {
           </dt>
           <dd>{cellEntity.id}</dd>
           <dt>
+            <span id="sectorCode">Sector Code</span>
+          </dt>
+          <dd>{cellEntity.sectorCode}</dd>
+          <dt>
             <span id="name">Name</span>
           </dt>
           <dd>{cellEntity.name}</dd>

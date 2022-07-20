@@ -33,7 +33,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="email" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_umuturage__email" />
             </column>
             <column name="user_id" type="bigint">
                 <constraints nullable="true" />

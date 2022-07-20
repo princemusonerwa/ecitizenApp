@@ -41,6 +41,9 @@ import org.springframework.transaction.annotation.Transactional;
 @WithMockUser
 class CellResourceIT {
 
+    private static final String DEFAULT_SECTOR_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_SECTOR_CODE = "BBBBBBBBBB";
+
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
@@ -74,7 +77,7 @@ class CellResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Cell createEntity(EntityManager em) {
-        Cell cell = new Cell().name(DEFAULT_NAME);
+        Cell cell = new Cell().sectorCode(DEFAULT_SECTOR_CODE).name(DEFAULT_NAME);
         return cell;
     }
 
@@ -85,7 +88,7 @@ class CellResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Cell createUpdatedEntity(EntityManager em) {
-        Cell cell = new Cell().name(UPDATED_NAME);
+        Cell cell = new Cell().sectorCode(UPDATED_SECTOR_CODE).name(UPDATED_NAME);
         return cell;
     }
 
@@ -107,6 +110,7 @@ class CellResourceIT {
         List<Cell> cellList = cellRepository.findAll();
         assertThat(cellList).hasSize(databaseSizeBeforeCreate + 1);
         Cell testCell = cellList.get(cellList.size() - 1);
+        assertThat(testCell.getSectorCode()).isEqualTo(DEFAULT_SECTOR_CODE);
         assertThat(testCell.getName()).isEqualTo(DEFAULT_NAME);
     }
 
@@ -126,6 +130,23 @@ class CellResourceIT {
         // Validate the Cell in the database
         List<Cell> cellList = cellRepository.findAll();
         assertThat(cellList).hasSize(databaseSizeBeforeCreate);
+    }
+
+    @Test
+    @Transactional
+    void checkSectorCodeIsRequired() throws Exception {
+        int databaseSizeBeforeTest = cellRepository.findAll().size();
+        // set the field null
+        cell.setSectorCode(null);
+
+        // Create the Cell, which fails.
+
+        restCellMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(cell)))
+            .andExpect(status().isBadRequest());
+
+        List<Cell> cellList = cellRepository.findAll();
+        assertThat(cellList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
@@ -157,6 +178,7 @@ class CellResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(cell.getId().intValue())))
+            .andExpect(jsonPath("$.[*].sectorCode").value(hasItem(DEFAULT_SECTOR_CODE)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
     }
 
@@ -190,6 +212,7 @@ class CellResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(cell.getId().intValue()))
+            .andExpect(jsonPath("$.sectorCode").value(DEFAULT_SECTOR_CODE))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
     }
 
@@ -209,6 +232,84 @@ class CellResourceIT {
 
         defaultCellShouldBeFound("id.lessThanOrEqual=" + id);
         defaultCellShouldNotBeFound("id.lessThan=" + id);
+    }
+
+    @Test
+    @Transactional
+    void getAllCellsBySectorCodeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        cellRepository.saveAndFlush(cell);
+
+        // Get all the cellList where sectorCode equals to DEFAULT_SECTOR_CODE
+        defaultCellShouldBeFound("sectorCode.equals=" + DEFAULT_SECTOR_CODE);
+
+        // Get all the cellList where sectorCode equals to UPDATED_SECTOR_CODE
+        defaultCellShouldNotBeFound("sectorCode.equals=" + UPDATED_SECTOR_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllCellsBySectorCodeIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        cellRepository.saveAndFlush(cell);
+
+        // Get all the cellList where sectorCode not equals to DEFAULT_SECTOR_CODE
+        defaultCellShouldNotBeFound("sectorCode.notEquals=" + DEFAULT_SECTOR_CODE);
+
+        // Get all the cellList where sectorCode not equals to UPDATED_SECTOR_CODE
+        defaultCellShouldBeFound("sectorCode.notEquals=" + UPDATED_SECTOR_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllCellsBySectorCodeIsInShouldWork() throws Exception {
+        // Initialize the database
+        cellRepository.saveAndFlush(cell);
+
+        // Get all the cellList where sectorCode in DEFAULT_SECTOR_CODE or UPDATED_SECTOR_CODE
+        defaultCellShouldBeFound("sectorCode.in=" + DEFAULT_SECTOR_CODE + "," + UPDATED_SECTOR_CODE);
+
+        // Get all the cellList where sectorCode equals to UPDATED_SECTOR_CODE
+        defaultCellShouldNotBeFound("sectorCode.in=" + UPDATED_SECTOR_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllCellsBySectorCodeIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        cellRepository.saveAndFlush(cell);
+
+        // Get all the cellList where sectorCode is not null
+        defaultCellShouldBeFound("sectorCode.specified=true");
+
+        // Get all the cellList where sectorCode is null
+        defaultCellShouldNotBeFound("sectorCode.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllCellsBySectorCodeContainsSomething() throws Exception {
+        // Initialize the database
+        cellRepository.saveAndFlush(cell);
+
+        // Get all the cellList where sectorCode contains DEFAULT_SECTOR_CODE
+        defaultCellShouldBeFound("sectorCode.contains=" + DEFAULT_SECTOR_CODE);
+
+        // Get all the cellList where sectorCode contains UPDATED_SECTOR_CODE
+        defaultCellShouldNotBeFound("sectorCode.contains=" + UPDATED_SECTOR_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllCellsBySectorCodeNotContainsSomething() throws Exception {
+        // Initialize the database
+        cellRepository.saveAndFlush(cell);
+
+        // Get all the cellList where sectorCode does not contain DEFAULT_SECTOR_CODE
+        defaultCellShouldNotBeFound("sectorCode.doesNotContain=" + DEFAULT_SECTOR_CODE);
+
+        // Get all the cellList where sectorCode does not contain UPDATED_SECTOR_CODE
+        defaultCellShouldBeFound("sectorCode.doesNotContain=" + UPDATED_SECTOR_CODE);
     }
 
     @Test
@@ -350,6 +451,7 @@ class CellResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(cell.getId().intValue())))
+            .andExpect(jsonPath("$.[*].sectorCode").value(hasItem(DEFAULT_SECTOR_CODE)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
 
         // Check, that the count call also returns 1
@@ -398,7 +500,7 @@ class CellResourceIT {
         Cell updatedCell = cellRepository.findById(cell.getId()).get();
         // Disconnect from session so that the updates on updatedCell are not directly saved in db
         em.detach(updatedCell);
-        updatedCell.name(UPDATED_NAME);
+        updatedCell.sectorCode(UPDATED_SECTOR_CODE).name(UPDATED_NAME);
 
         restCellMockMvc
             .perform(
@@ -412,6 +514,7 @@ class CellResourceIT {
         List<Cell> cellList = cellRepository.findAll();
         assertThat(cellList).hasSize(databaseSizeBeforeUpdate);
         Cell testCell = cellList.get(cellList.size() - 1);
+        assertThat(testCell.getSectorCode()).isEqualTo(UPDATED_SECTOR_CODE);
         assertThat(testCell.getName()).isEqualTo(UPDATED_NAME);
     }
 
@@ -483,7 +586,7 @@ class CellResourceIT {
         Cell partialUpdatedCell = new Cell();
         partialUpdatedCell.setId(cell.getId());
 
-        partialUpdatedCell.name(UPDATED_NAME);
+        partialUpdatedCell.sectorCode(UPDATED_SECTOR_CODE).name(UPDATED_NAME);
 
         restCellMockMvc
             .perform(
@@ -497,6 +600,7 @@ class CellResourceIT {
         List<Cell> cellList = cellRepository.findAll();
         assertThat(cellList).hasSize(databaseSizeBeforeUpdate);
         Cell testCell = cellList.get(cellList.size() - 1);
+        assertThat(testCell.getSectorCode()).isEqualTo(UPDATED_SECTOR_CODE);
         assertThat(testCell.getName()).isEqualTo(UPDATED_NAME);
     }
 
@@ -512,7 +616,7 @@ class CellResourceIT {
         Cell partialUpdatedCell = new Cell();
         partialUpdatedCell.setId(cell.getId());
 
-        partialUpdatedCell.name(UPDATED_NAME);
+        partialUpdatedCell.sectorCode(UPDATED_SECTOR_CODE).name(UPDATED_NAME);
 
         restCellMockMvc
             .perform(
@@ -526,6 +630,7 @@ class CellResourceIT {
         List<Cell> cellList = cellRepository.findAll();
         assertThat(cellList).hasSize(databaseSizeBeforeUpdate);
         Cell testCell = cellList.get(cellList.size() - 1);
+        assertThat(testCell.getSectorCode()).isEqualTo(UPDATED_SECTOR_CODE);
         assertThat(testCell.getName()).isEqualTo(UPDATED_NAME);
     }
 

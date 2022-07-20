@@ -28,6 +28,8 @@ public class DistrictCriteria implements Serializable, Criteria {
 
     private LongFilter id;
 
+    private StringFilter districtCode;
+
     private StringFilter name;
 
     private LongFilter sectorId;
@@ -40,6 +42,7 @@ public class DistrictCriteria implements Serializable, Criteria {
 
     public DistrictCriteria(DistrictCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
+        this.districtCode = other.districtCode == null ? null : other.districtCode.copy();
         this.name = other.name == null ? null : other.name.copy();
         this.sectorId = other.sectorId == null ? null : other.sectorId.copy();
         this.provinceId = other.provinceId == null ? null : other.provinceId.copy();
@@ -64,6 +67,21 @@ public class DistrictCriteria implements Serializable, Criteria {
 
     public void setId(LongFilter id) {
         this.id = id;
+    }
+
+    public StringFilter getDistrictCode() {
+        return districtCode;
+    }
+
+    public StringFilter districtCode() {
+        if (districtCode == null) {
+            districtCode = new StringFilter();
+        }
+        return districtCode;
+    }
+
+    public void setDistrictCode(StringFilter districtCode) {
+        this.districtCode = districtCode;
     }
 
     public StringFilter getName() {
@@ -130,6 +148,7 @@ public class DistrictCriteria implements Serializable, Criteria {
         final DistrictCriteria that = (DistrictCriteria) o;
         return (
             Objects.equals(id, that.id) &&
+            Objects.equals(districtCode, that.districtCode) &&
             Objects.equals(name, that.name) &&
             Objects.equals(sectorId, that.sectorId) &&
             Objects.equals(provinceId, that.provinceId) &&
@@ -139,7 +158,7 @@ public class DistrictCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, sectorId, provinceId, distinct);
+        return Objects.hash(id, districtCode, name, sectorId, provinceId, distinct);
     }
 
     // prettier-ignore
@@ -147,6 +166,7 @@ public class DistrictCriteria implements Serializable, Criteria {
     public String toString() {
         return "DistrictCriteria{" +
             (id != null ? "id=" + id + ", " : "") +
+            (districtCode != null ? "districtCode=" + districtCode + ", " : "") +
             (name != null ? "name=" + name + ", " : "") +
             (sectorId != null ? "sectorId=" + sectorId + ", " : "") +
             (provinceId != null ? "provinceId=" + provinceId + ", " : "") +

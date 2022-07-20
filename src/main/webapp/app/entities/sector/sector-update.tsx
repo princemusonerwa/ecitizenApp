@@ -80,6 +80,18 @@ export const SectorUpdate = (props: RouteComponentProps<{ id: string }>) => {
             <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
               {!isNew ? <ValidatedField name="id" required readOnly id="sector-id" label="ID" validate={{ required: true }} /> : null}
               <ValidatedField
+                label="Sector Code"
+                id="sector-sectorCode"
+                name="sectorCode"
+                data-cy="sectorCode"
+                type="text"
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                  minLength: { value: 3, message: 'This field is required to be at least 3 characters.' },
+                  maxLength: { value: 255, message: 'This field cannot be longer than 255 characters.' },
+                }}
+              />
+              <ValidatedField
                 label="Name"
                 id="sector-name"
                 name="name"

@@ -27,6 +27,11 @@ public class District implements Serializable {
 
     @NotNull
     @Size(min = 3, max = 255)
+    @Column(name = "district_code", length = 255, nullable = false, unique = true)
+    private String districtCode;
+
+    @NotNull
+    @Size(min = 3, max = 255)
     @Column(name = "name", length = 255, nullable = false)
     private String name;
 
@@ -52,6 +57,19 @@ public class District implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDistrictCode() {
+        return this.districtCode;
+    }
+
+    public District districtCode(String districtCode) {
+        this.setDistrictCode(districtCode);
+        return this;
+    }
+
+    public void setDistrictCode(String districtCode) {
+        this.districtCode = districtCode;
     }
 
     public String getName() {
@@ -135,6 +153,7 @@ public class District implements Serializable {
     public String toString() {
         return "District{" +
             "id=" + getId() +
+            ", districtCode='" + getDistrictCode() + "'" +
             ", name='" + getName() + "'" +
             "}";
     }
