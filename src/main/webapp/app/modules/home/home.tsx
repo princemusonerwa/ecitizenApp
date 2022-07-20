@@ -36,12 +36,12 @@ export const Home = () => {
               <br />- User (login=&quot;user&quot; and password=&quot;user&quot;).
             </Alert>
 
-            <Alert color="warning">
+            {/* <Alert color="warning">
               You do not have an account yet?&nbsp;
               <Link to="/account/register" className="alert-link">
                 Register a new account
               </Link>
-            </Alert>
+            </Alert> */}
           </div>
         )}
         <p>If you have any question on JHipster:</p>
