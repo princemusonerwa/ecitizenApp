@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { handleRegister, reset } from './register.reducer';
 import { Link } from 'react-router-dom';
 
-export const RegisterPage = () => {
+export const RegisterPage = props => {
   const [password, setPassword] = useState('');
   const dispatch = useAppDispatch();
 
@@ -19,8 +19,13 @@ export const RegisterPage = () => {
     []
   );
 
+  const handleClose = () => {
+    props.history.push('/login');
+  };
+
   const handleValidSubmit = ({ username, email, firstPassword }) => {
     dispatch(handleRegister({ login: username, email, password: firstPassword, langKey: 'en' }));
+    handleClose();
   };
 
   const updatePassword = event => setPassword(event.target.value);
