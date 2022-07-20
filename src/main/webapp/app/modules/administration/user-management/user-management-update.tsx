@@ -23,17 +23,12 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
     };
   }, [props.match.params.login]);
 
-  const handleClose = () => {
-    props.history.push('/admin/user-management');
-  };
-
   const saveUser = values => {
     if (isNew) {
       dispatch(createUser(values));
     } else {
       dispatch(updateUser(values));
     }
-    handleClose();
   };
 
   const isInvalid = false;
