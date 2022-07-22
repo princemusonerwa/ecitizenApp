@@ -41,4 +41,26 @@ public interface ComplainRepository
 
     @Query("select complain from Complain complain left join fetch complain.user where complain.id =:id")
     Optional<Complain> findOneWithToOneRelationships(@Param("id") Long id);
+
+    @Query("select c.icyakozwe, c.icyakorwa, c.umwanzuro, c.ikibazo, u.indangamuntu from Complain c " +
+        "inner join Umuturage u on c.umuturage.indangamuntu = u.indangamuntu" +
+         " inner join Village v on v.id = u.village.id inner join Cell cel on cel.id = v.cell.id inner join Sector s on s.id = cel.sector.id"+
+        " inner join District d on d.id=s.district.id" )
+    Page<Complain> findAllComplainsByProvince(Pageable page);
+
+    @Query("select c.icyakozwe, c.icyakorwa, c.umwanzuro, c.ikibazo, u.indangamuntu from Complain c " +
+        "inner join Umuturage u on c.umuturage.indangamuntu = u.indangamuntu" +
+        " inner join Village v on v.id = u.village.id inner join Cell cel on cel.id = v.cell.id inner join Sector s on s.id = cel.sector.id")
+    Page<Complain> findAllComplainsByDistrict(Pageable page);
+
+    @Query("select c.icyakozwe, c.icyakorwa, c.umwanzuro, c.ikibazo, u.indangamuntu from Complain c " +
+        "inner join Umuturage u on c.umuturage.indangamuntu = u.indangamuntu" +
+        " inner join Village v on v.id = u.village.id inner join Cell cel on cel.id = v.cell.id")
+    Page<Complain> findAllComplainsBySector(Pageable page);
+
+    @Query("select c.icyakozwe, c.icyakorwa, c.umwanzuro, c.ikibazo, u.indangamuntu from Complain c " +
+        "inner join Umuturage u on c.umuturage.indangamuntu = u.indangamuntu" +
+        " inner join Village v on v.id = u.village.id")
+    Page<Complain> findAllComplainsByCell(Pageable page);
+
 }

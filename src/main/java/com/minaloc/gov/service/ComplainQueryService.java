@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
@@ -126,5 +127,21 @@ public class ComplainQueryService extends QueryService<Complain> {
             }
         }
         return specification;
+    }
+
+    public Page<Complain> findAllComplainsByProvince(Pageable page) {
+        return complainRepository.findAllComplainsByProvince(page);
+    }
+
+    public Page<Complain> findAllComplainsByDistrict(Pageable page) {
+        return complainRepository.findAllComplainsByDistrict(page);
+    }
+
+    public Page<Complain> findAllComplainsBySector(Pageable page) {
+        return complainRepository.findAllComplainsBySector(page);
+    }
+
+    public Page<Complain> findAllComplainsByCell(Pageable page) {
+        return complainRepository.findAllComplainsByCell(page);
     }
 }

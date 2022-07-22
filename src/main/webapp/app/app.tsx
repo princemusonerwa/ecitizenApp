@@ -23,6 +23,17 @@ export const App = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    fetch('https://meistesting.loda.gov.rw/meis/rest/rssb/details/nid/1199380157429149', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: "POST",
+      body: JSON.stringify({ "email": "umuturage@minaloc.gov.rw",
+      "password": "Ectizen@123"})
+    })
+        .then(response => response.json())
+        .then(res => console.log(res));
     dispatch(getSession());
     dispatch(getProfile());
   }, []);

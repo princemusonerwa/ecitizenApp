@@ -3,6 +3,8 @@ package com.minaloc.gov.service.impl;
 import com.minaloc.gov.domain.Complain;
 import com.minaloc.gov.repository.ComplainRepository;
 import com.minaloc.gov.service.ComplainService;
+
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,5 +96,21 @@ public class ComplainServiceImpl implements ComplainService {
     public void delete(Long id) {
         log.debug("Request to delete Complain : {}", id);
         complainRepository.deleteById(id);
+    }
+
+    public Page<Complain> findAllComplainsByProvince(Pageable page) {
+        return complainRepository.findAllComplainsByProvince(page);
+    }
+
+    public Page<Complain> findAllComplainsByDistrict(Pageable page) {
+        return complainRepository.findAllComplainsByDistrict(page);
+    }
+
+    public Page<Complain> findAllComplainsBySector(Pageable page) {
+        return complainRepository.findAllComplainsBySector(page);
+    }
+
+    public Page<Complain> findAllComplainsByCell(Pageable page) {
+        return complainRepository.findAllComplainsByCell(page);
     }
 }
