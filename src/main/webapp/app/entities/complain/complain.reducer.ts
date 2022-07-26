@@ -22,6 +22,7 @@ const apiUrl = 'api/complains';
 export const getEntities = createAsyncThunk('complain/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
   return axios.get<IComplain[]>(requestUrl);
+
 });
 
 export const getEntity = createAsyncThunk(

@@ -97,20 +97,4 @@ public class ComplainServiceImpl implements ComplainService {
         log.debug("Request to delete Complain : {}", id);
         complainRepository.deleteById(id);
     }
-
-    public Page<Complain> findAllComplainsByProvince(Pageable page) {
-        return complainRepository.findAllComplainsByProvince(page);
-    }
-
-    public Page<Complain> findAllComplainsByDistrict(Pageable page) {
-        return complainRepository.findAllComplainsByDistrict(page);
-    }
-
-    public Page<Complain> findAllComplainsBySector(Pageable page) {
-        return complainRepository.findAllComplainsBySector(page);
-    }
-
-    public Page<Complain> findAllComplainsByCell(Pageable page) {
-        return complainRepository.findAllComplainsByCell(page);
-    }
 }

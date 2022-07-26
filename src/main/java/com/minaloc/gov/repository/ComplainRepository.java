@@ -45,22 +45,25 @@ public interface ComplainRepository
     @Query("select c.icyakozwe, c.icyakorwa, c.umwanzuro, c.ikibazo, u.indangamuntu from Complain c " +
         "inner join Umuturage u on c.umuturage.indangamuntu = u.indangamuntu" +
          " inner join Village v on v.id = u.village.id inner join Cell cel on cel.id = v.cell.id inner join Sector s on s.id = cel.sector.id"+
-        " inner join District d on d.id=s.district.id" )
-    Page<Complain> findAllComplainsByProvince(Pageable page);
+        " inner join District d on d.id=s.district.id inner join Province p on p.name=?2" )
+    Page<Complain> findAllComplainsByProvince(Pageable page, String officeName);
 
     @Query("select c.icyakozwe, c.icyakorwa, c.umwanzuro, c.ikibazo, u.indangamuntu from Complain c " +
         "inner join Umuturage u on c.umuturage.indangamuntu = u.indangamuntu" +
-        " inner join Village v on v.id = u.village.id inner join Cell cel on cel.id = v.cell.id inner join Sector s on s.id = cel.sector.id")
-    Page<Complain> findAllComplainsByDistrict(Pageable page);
+        " inner join Village v on v.id = u.village.id " +
+        "inner join Cell cel on cel.id = v.cell.id " +
+        "inner join Sector s on s.id = cel.sector.id inner join District d on d.name=?2")
+    Page<Complain> findAllComplainsByDistrict(Pageable page, String officeName);
 
     @Query("select c.icyakozwe, c.icyakorwa, c.umwanzuro, c.ikibazo, u.indangamuntu from Complain c " +
         "inner join Umuturage u on c.umuturage.indangamuntu = u.indangamuntu" +
-        " inner join Village v on v.id = u.village.id inner join Cell cel on cel.id = v.cell.id")
-    Page<Complain> findAllComplainsBySector(Pageable page);
+        " inner join Village v on v.id = u.village.id inner join Cell cel on cel.id = v.cell.id " +
+        "inner join Sector s on s.name=?2")
+    Page<Complain> findAllComplainsBySector(Pageable page, String officeName);
 
     @Query("select c.icyakozwe, c.icyakorwa, c.umwanzuro, c.ikibazo, u.indangamuntu from Complain c " +
         "inner join Umuturage u on c.umuturage.indangamuntu = u.indangamuntu" +
-        " inner join Village v on v.id = u.village.id")
-    Page<Complain> findAllComplainsByCell(Pageable page);
+        " inner join Village v on v.id = u.village.id inner join Cell cel on cel.name=?2")
+    Page<Complain> findAllComplainsByCell(Pageable page, String officeName);
 
 }

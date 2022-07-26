@@ -174,31 +174,34 @@ public class ComplainResource {
     @GetMapping("/complains")
     public ResponseEntity<List<Complain>> getAllComplains(
         ComplainCriteria criteria,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable, @RequestBody OfficeType body
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @RequestParam("officeType") String officeType,
+        @RequestParam("officeName") String officeName
     ) {
+        System.out.println(officeType);
+        System.out.println(officeName);
         Page<Complain> page;
         HttpHeaders headers;
-        System.out.println(body.getOfficeType());
-        switch (body.getOfficeType().toLowerCase()) {
+        switch (officeType.toLowerCase()) {
             case "province":
                 log.debug("REST request to get Complains by criteria: {}", criteria);
-                page = complainQueryService.findAllComplainsByProvince(pageable);
+                page = complainQueryService.findAllComplainsByProvince(pageable, officeName);
                 headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
                 return ResponseEntity.ok().headers(headers).body(page.getContent());
             case "district":
                 log.debug("REST request to get Complains by criteria: {}", criteria);
-                page = complainQueryService.findAllComplainsByDistrict(pageable);
+                page = complainQueryService.findAllComplainsByDistrict(pageable, officeName);
                 headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
                 return ResponseEntity.ok().headers(headers).body(page.getContent());
 
             case "sector":
                 log.debug("REST request to get Complains by criteria: {}", criteria);
-                page = complainQueryService.findAllComplainsBySector(pageable);
+                page = complainQueryService.findAllComplainsBySector(pageable, officeName);
                 headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
                 return ResponseEntity.ok().headers(headers).body(page.getContent());
             case "cell":
                 log.debug("REST request to get Complains by criteria: {}", criteria);
-                page = complainQueryService.findAllComplainsByCell(pageable);
+                page = complainQueryService.findAllComplainsByCell(pageable, officeName);
                 headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
                 return ResponseEntity.ok().headers(headers).body(page.getContent());
             case "minaloc":

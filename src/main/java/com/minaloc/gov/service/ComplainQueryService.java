@@ -129,19 +129,19 @@ public class ComplainQueryService extends QueryService<Complain> {
         return specification;
     }
 
-    public Page<Complain> findAllComplainsByProvince(Pageable page) {
-        return complainRepository.findAllComplainsByProvince(page);
+    public Page<Complain> findAllComplainsByProvince(Pageable page, String officeName) {
+        return complainRepository.findAllComplainsByProvince(page, officeName);
     }
 
-    public Page<Complain> findAllComplainsByDistrict(Pageable page) {
-        return complainRepository.findAllComplainsByDistrict(page);
+    public Page<Complain> findAllComplainsByDistrict(Pageable page, String officeName) {
+        return complainRepository.findAllComplainsByDistrict(page, officeName);
     }
 
-    public Page<Complain> findAllComplainsBySector(Pageable page) {
-        return complainRepository.findAllComplainsBySector(page);
+    public Page<Complain> findAllComplainsBySector(Pageable page, String officeName) {
+        return complainRepository.findAllComplainsBySector(page, officeName);
     }
 
-    public Page<Complain> findAllComplainsByCell(Pageable page) {
-        return complainRepository.findAllComplainsByCell(page);
+    public Page<Complain> findAllComplainsByCell(Pageable page, String officeName) {
+        return complainRepository.findAllComplainsByCell(page, officeName);
     }
 }
