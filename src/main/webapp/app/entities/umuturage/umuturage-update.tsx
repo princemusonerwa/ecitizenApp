@@ -11,10 +11,13 @@ import { IVillage } from 'app/shared/model/village.model';
 import { getEntities as getVillages } from 'app/entities/village/village.reducer';
 import { IUmuturage } from 'app/shared/model/umuturage.model';
 import { Gender } from 'app/shared/model/enumerations/gender.model';
-import { getEntity, updateEntity, createEntity, reset } from './umuturage.reducer';
+import { getEntity, updateEntity, apiUrl, createEntity, reset } from './umuturage.reducer';
+import axios from 'axios';
 
 export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
+  const [searchInput, setSearchInput] = useState('');
+  const [value, setValue] = useState({ nationalId: '', ubudehe: '', village: '', amazina: '', gender: '', phone: '' });
 
   const [isNew] = useState(!props.match.params || !props.match.params.id);
 
@@ -43,8 +46,39 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
     }
   }, [updateSuccess]);
 
+  // Get Umuturage By Id
+
+  const getPerson = async (id: string | number) => {
+    const { data } = await axios.get(`${apiUrl}/indentification/${id}`);
+    const personIdentity = data.households[0];
+    const familyMember = personIdentity.members.persons;
+    const p = familyMember.find(person => person.nationalId === searchInput);
+    console.log(p);
+    const pId = {
+      nationalId: p.nationalId,
+      ubudehe: personIdentity.category.label,
+      village: personIdentity.location.village.code,
+      amazina: p.firstName + ' ' + p.lastName,
+      gender: p.gender.label,
+      phone: p.phone,
+    };
+    setValue({
+      nationalId: pId.nationalId,
+      ubudehe: pId.ubudehe,
+      village: pId.village,
+      amazina: pId.amazina,
+      gender: pId.gender,
+      phone: pId.phone,
+    });
+  };
+
+  const getPersonIdentity = () => {
+    getPerson(searchInput);
+  };
+
   const saveEntity = values => {
     values.dob = convertDateTimeToServer(values.dob);
+    values.indangamuntu = value.nationalId ? value.nationalId : '';
 
     const entity = {
       ...umuturageEntity,
@@ -56,6 +90,12 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
       dispatch(createEntity(entity));
     } else {
       dispatch(updateEntity(entity));
+    }
+  };
+
+  const handleInput = event => {
+    if (isNew) {
+      setSearchInput(event.target.value);
     }
   };
 
@@ -88,24 +128,39 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
           ) : (
             <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
               {!isNew ? <ValidatedField name="id" required readOnly id="umuturage-id" label="ID" validate={{ required: true }} /> : null}
-              <ValidatedField
-                label="Indangamuntu"
-                id="umuturage-indangamuntu"
-                name="indangamuntu"
-                data-cy="indangamuntu"
-                type="text"
-                validate={{
-                  required: { value: true, message: 'This field is required.' },
-                  minLength: { value: 16, message: 'This field is required to be at least 16 characters.' },
-                  maxLength: { value: 16, message: 'This field cannot be longer than 16 characters.' },
-                }}
-              />
+              <Row>
+                <Col md="8">
+                  <ValidatedField
+                    label="Indangamuntu"
+                    id="umuturage-indangamuntu"
+                    name="indangamuntu"
+                    data-cy="indangamuntu"
+                    type="text"
+                    onChange={handleInput}
+                    validate={{
+                      required: { value: true, message: 'This field is required.' },
+                      minLength: { value: 16, message: 'This field is required to be at least 16 characters.' },
+                      maxLength: { value: 16, message: 'This field cannot be longer than 16 characters.' },
+                    }}
+                  />
+                </Col>
+                {isNew ? (
+                  <Col md="4">
+                    <button onClick={getPersonIdentity} className="btn btn-primary">
+                      Click here
+                    </button>
+                  </Col>
+                ) : (
+                  ''
+                )}
+              </Row>
               <ValidatedField
                 label="Amazina"
                 id="umuturage-amazina"
                 name="amazina"
                 data-cy="amazina"
                 type="text"
+                value={value.amazina ? value.amazina : ''}
                 validate={{
                   required: { value: true, message: 'This field is required.' },
                   minLength: { value: 3, message: 'This field is required to be at least 3 characters.' },
@@ -123,19 +178,22 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   required: { value: true, message: 'This field is required.' },
                 }}
               />
-              <ValidatedField label="Gender" id="umuturage-gender" name="gender" data-cy="gender" type="select">
-                {genderValues.map(gender => (
-                  <option value={gender} key={gender}>
-                    {gender}
-                  </option>
-                ))}
-              </ValidatedField>
+              <ValidatedField
+                label="Gender"
+                id="umuturage-gender"
+                name="gender"
+                data-cy="gender"
+                type="text"
+                value={value.gender ? value.gender.toUpperCase() : ''}
+              ></ValidatedField>
               <ValidatedField
                 label="Ubudehe Category"
                 id="umuturage-ubudeheCategory"
                 name="ubudeheCategory"
                 data-cy="ubudeheCategory"
                 type="text"
+                value={value.ubudehe ? value.ubudehe : ''}
+                onChange={event => setValue({ ...value, ubudehe: event.target.value })}
                 validate={{
                   required: { value: true, message: 'This field is required.' },
                   minLength: { value: 1, message: 'This field is required to be at least 1 characters.' },
@@ -148,6 +206,8 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 name="phone"
                 data-cy="phone"
                 type="text"
+                value={value.phone}
+                onChange={event => setValue({ ...value, phone: event.target.value })}
                 validate={{
                   minLength: { value: 13, message: 'This field is required to be at least 13 characters.' },
                   maxLength: { value: 13, message: 'This field cannot be longer than 13 characters.' },

@@ -15,7 +15,7 @@ const initialState: EntityState<IUmuturage> = {
   updateSuccess: false,
 };
 
-const apiUrl = 'api/umuturages';
+export const apiUrl = 'api/umuturages';
 
 // Actions
 

@@ -224,4 +224,17 @@ public class UmuturageResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @GetMapping("/umuturages/indentification/{identityId}")
+    public Object getUmuturageByIdentityCard(@PathVariable("identityId") String identityCard) {
+        Optional<Umuturage> umuturage = umuturageRepository.findByIndangamuntu(identityCard);
+        if (umuturage.isPresent()) {
+            throw new BadRequestAlertException(
+                "Umuturage with the given indangamuntu already exists in our system.",
+                ENTITY_NAME,
+                "idexists"
+            );
+        }
+        return umuturageService.getByIdentityCard(identityCard);
+    }
 }
