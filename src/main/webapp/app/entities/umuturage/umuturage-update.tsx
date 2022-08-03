@@ -22,7 +22,14 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
   const [formSection, setFormSection] = useState(0);
 
-  const { register, handleSubmit, watch } = useForm();
+  const {
+    watch,
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: 'all',
+  });
 
   const [isNew] = useState(!props.match.params || !props.match.params.id);
 
@@ -31,10 +38,17 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const loading = useAppSelector(state => state.umuturage.loading);
   const updating = useAppSelector(state => state.umuturage.updating);
   const updateSuccess = useAppSelector(state => state.umuturage.updateSuccess);
-  const genderValues = Object.keys(Gender);
 
   const handleClose = () => {
     props.history.push('/umuturage' + props.location.search);
+  };
+
+  const backDisabled = () => {
+    if (formSection === 0) {
+      return true;
+    } else if (formSection > 0) {
+      return false;
+    }
   };
 
   const completeSection = () => {
@@ -49,10 +63,10 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
     if (formSection < 2) {
       return (
         <div>
-          <button type="button" onClick={moveBackSection} className="btn btn-success m-2">
+          <button type="button" onClick={moveBackSection} disabled={backDisabled()} className="btn btn-success m-2">
             Back
           </button>
-          <button type="button" onClick={completeSection} className="btn btn-success m-2">
+          <button type="button" onClick={completeSection} disabled={!isValid} className="btn btn-success m-2">
             Next
           </button>
         </div>
@@ -61,6 +75,9 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
       return (
         <div>
           <h1>Preview all the value </h1>
+          <button type="button" onClick={moveBackSection} disabled={backDisabled()} className="btn btn-success m-2">
+            Back
+          </button>
         </div>
       );
     } else {
@@ -114,7 +131,7 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
   };
 
   const saveEntity = values => {
-    console.log(values);
+    console.log('You have reached here.');
     values.dob = convertDateTimeToServer(values.dob);
     values.indangamuntu = value.nationalId ? value.nationalId : '';
 
@@ -131,24 +148,80 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
     }
   };
 
-  const handleInput = event => {
-    if (isNew) {
-      setSearchInput(event.target.value);
-    }
-  };
+  // const defaultValues = () =>
+  //   isNew
+  //     ? {
+  //         dob: displayDefaultDateTime(),
+  //       }
+  //     : {
+  //         gender: 'MALE',
+  //         ...umuturageEntity,
+  //         dob: convertDateTimeFromServer(umuturageEntity.dob),
+  //         user: umuturageEntity?.user?.id,
+  //         village: umuturageEntity?.village?.id,
+  //       };
 
-  const defaultValues = () =>
-    isNew
-      ? {
-          dob: displayDefaultDateTime(),
-        }
-      : {
-          gender: 'MALE',
-          ...umuturageEntity,
-          dob: convertDateTimeFromServer(umuturageEntity.dob),
-          user: umuturageEntity?.user?.id,
-          village: umuturageEntity?.village?.id,
-        };
+  const registerOptions = {
+    indangamuntu: {
+      required: 'This field is required',
+      minLength: {
+        value: 16,
+        message: 'This field is required to be at least 16 characters.',
+      },
+      maxLength: {
+        value: 16,
+        message: 'Indangamuntu must have at least 16 characters',
+      },
+    },
+    amazina: {
+      required: 'This field is required',
+      minLength: {
+        value: 3,
+        message: 'This field is required to be at least 3 characters.',
+      },
+    },
+    dob: {
+      required: 'This field is required',
+    },
+    ubudehe: {
+      required: 'This field is required.',
+      minLength: {
+        value: 1,
+        message: 'This field is required to be at least 1 characters.',
+      },
+      maxLength: {
+        value: 1,
+        message: 'This field cannot be longer than 1 characters.',
+      },
+    },
+    phone: {
+      minLength: {
+        value: 13,
+        message: 'This field is required to be at least 13 characters.',
+      },
+      maxLength: {
+        value: 13,
+        message: 'This field cannot be longer than 13 characters.',
+      },
+    },
+    email: {
+      pattern: {
+        value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
+        message: "This field should follow pattern for '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+..",
+      },
+    },
+    gender: {
+      required: 'This field is required',
+      minLength: {
+        value: 4,
+        message: 'This field is required to be at least 4 characters.',
+      },
+      maxLength: {
+        value: 6,
+        message: 'This field cannot be longer than 6 characters.',
+      },
+    },
+  };
 
   return (
     <div>
@@ -164,31 +237,30 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <ValidatedForm defaultValues={defaultValues()} onSubmit={handleSubmit(saveEntity)}>
+            <ValidatedForm onSubmit={handleSubmit(saveEntity)}>
               {!isNew ? <ValidatedField name="id" required readOnly id="umuturage-id" label="ID" validate={{ required: true }} /> : null}
               {formSection === 0 && (
                 <section>
                   <Row>
-                    <Col md="8">
-                      <ValidatedField
-                        label="Indangamuntu"
-                        id="umuturage-indangamuntu"
-                        name="indangamuntu"
-                        data-cy="indangamuntu"
-                        register={register}
-                        type="text"
-                        onChange={handleInput}
-                        validate={{
-                          required: { value: true, message: 'This field is required.' },
-                          minLength: { value: 16, message: 'This field is required to be at least 16 characters.' },
-                          maxLength: { value: 16, message: 'This field cannot be longer than 16 characters.' },
-                        }}
-                      />
-                    </Col>
+                    <div className="form-group mt-2">
+                      <Col md="8">
+                        <label htmlFor="indangamuntu">Indangamuntu</label>
+                        <input
+                          id="umuturage-indangamuntu"
+                          name="indangamuntu"
+                          data-cy="indangamuntu"
+                          type="text"
+                          {...register('indangamuntu', registerOptions.indangamuntu)}
+                          onChange={e => setSearchInput(e.target.value)}
+                          className="form-control"
+                        />
+                      </Col>
+                      <small className="text-danger mb-2">{errors?.indangamuntu && errors.indangamuntu.message}</small>
+                    </div>
                     {isNew && (
                       <Row>
                         <Col md="4">
-                          <button type="button" onClick={getPersonIdentity} className="btn btn-primary">
+                          <button type="button" onClick={getPersonIdentity} disabled={!isValid} className="btn btn-primary">
                             Click here
                           </button>
                         </Col>
@@ -199,111 +271,109 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
               )}
               {formSection === 1 && (
                 <section>
-                  <ValidatedField
-                    label="Amazina"
-                    id="umuturage-amazina"
-                    name="amazina"
-                    data-cy="amazina"
-                    type="text"
-                    register={register}
-                    value={value.amazina && value.amazina}
-                    onChange={event => setValue({ ...value, amazina: event.target.value })}
-                    validate={{
-                      required: { value: true, message: 'This field is required.' },
-                      minLength: { value: 3, message: 'This field is required to be at least 3 characters.' },
-                      maxLength: { value: 255, message: 'This field cannot be longer than 255 characters.' },
-                    }}
-                  />
+                  <div className="form-group mt-2">
+                    <label htmlFor="amazina">Amazina</label>
+                    <input
+                      id="umuturage-amazina"
+                      name="amazina"
+                      data-cy="amazina"
+                      type="text"
+                      value={value.amazina && value.amazina}
+                      {...register('amazina', registerOptions.amazina)}
+                      onChange={event => setValue({ ...value, amazina: event.target.value })}
+                      className="form-control"
+                    />
+                    <small className="text-danger mb-2">{errors?.amazina && errors.amazina.message}</small>
+                  </div>
+                  <div className="form-group mt-2">
+                    <label htmlFor="dob">Date of Birth</label>
+                    <input
+                      id="umuturage-dob"
+                      name="dob"
+                      data-cy="dob"
+                      type="datetime-local"
+                      placeholder="YYYY-MM-DD HH:mm"
+                      value={displayDefaultDateTime()}
+                      {...register('dob', registerOptions.dob)}
+                      className="form-control"
+                    />
+                    <small className="text-danger mb-2">{errors?.dob && errors.indangamuntu.dob}</small>
+                  </div>
+                  <div className="form-group mt-2">
+                    <label htmlFor="gender">Gender</label>
+                    <input
+                      id="umuturage-gender"
+                      name="gender"
+                      data-cy="gender"
+                      type="text"
+                      value={value.gender && value.gender.toUpperCase()}
+                      {...register('gender', registerOptions.gender)}
+                      onChange={event => setValue({ ...value, gender: event.target.value })}
+                      className="form-control"
+                    ></input>
+                    <small className="text-danger mb-2">{errors?.gender && errors.gender.message}</small>
+                  </div>
+
+                  <div className="form-group mt-2">
+                    <label htmlFor="ubudeheCategory">Ubudehe Category</label>
+                    <input
+                      id="umuturage-ubudeheCategory"
+                      name="ubudeheCategory"
+                      data-cy="ubudeheCategory"
+                      type="text"
+                      value={value.ubudehe && value.ubudehe}
+                      onChange={event => setValue({ ...value, ubudehe: event.target.value })}
+                      {...register('ubudeheCategory', registerOptions.ubudehe)}
+                      className="form-control"
+                    />
+                    <small className="text-danger mb-2">{errors?.ubudehe && errors.ubudehe.message}</small>
+                  </div>
+                  <div className="form-group mt-2">
+                    <label htmlFor="phone">Phone</label>
+                    <input
+                      id="umuturage-phone"
+                      name="phone"
+                      data-cy="phone"
+                      type="text"
+                      value={value.phone}
+                      {...register('phone', registerOptions.phone)}
+                      onChange={event => setValue({ ...value, phone: event.target.value })}
+                      className="form-control"
+                    />
+                    <small className="text-danger mb-2">{errors?.phone && errors.phone.message}</small>
+                  </div>
+                  <div className="form-group mt-2">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      id="umuturage-email"
+                      name="email"
+                      data-cy="email"
+                      type="email"
+                      {...register('email', registerOptions.email)}
+                      className="form-control"
+                    />
+                    <small className="text-danger mb-2">{errors?.email && errors.email.message}</small>
+                  </div>
+                  <div className="form-group mt-2">
+                    <label htmlFor="village">Village</label>
+                    <select id="umuturage-village" name="village" data-cy="village" {...register('village')} className="form-control">
+                      <option value="" key="0" />
+                      {villages
+                        ? villages.map(otherEntity => (
+                            <option value={otherEntity.id} key={otherEntity.id}>
+                              {otherEntity.name}
+                            </option>
+                          ))
+                        : null}
+                    </select>
+                  </div>
                 </section>
               )}
-              {formSection === 1 && (
-                <ValidatedField
-                  label="Dob"
-                  id="umuturage-dob"
-                  name="dob"
-                  data-cy="dob"
-                  type="datetime-local"
-                  placeholder="YYYY-MM-DD HH:mm"
-                  validate={{
-                    required: { value: true, message: 'This field is required.' },
-                  }}
-                />
-              )}
-              {formSection === 1 && (
-                <section>
-                  <ValidatedField
-                    label="Gender"
-                    id="umuturage-gender"
-                    name="gender"
-                    data-cy="gender"
-                    type="text"
-                    value={value.gender && value.gender}
-                    onChange={event => setValue({ ...value, gender: event.target.value })}
-                    register={register}
-                  ></ValidatedField>
-                  <ValidatedField
-                    label="Ubudehe Category"
-                    id="umuturage-ubudeheCategory"
-                    name="ubudeheCategory"
-                    data-cy="ubudeheCategory"
-                    type="text"
-                    value={value.ubudehe && value.ubudehe}
-                    onChange={event => setValue({ ...value, ubudehe: event.target.value })}
-                    validate={{
-                      required: { value: true, message: 'This field is required.' },
-                      minLength: { value: 1, message: 'This field is required to be at least 1 characters.' },
-                      maxLength: { value: 1, message: 'This field cannot be longer than 1 characters.' },
-                    }}
-                  />
-                  <ValidatedField
-                    label="Phone"
-                    id="umuturage-phone"
-                    name="phone"
-                    data-cy="phone"
-                    type="text"
-                    value={value.phone}
-                    onChange={event => setValue({ ...value, phone: event.target.value })}
-                    register={register}
-                    validate={{
-                      minLength: { value: 13, message: 'This field is required to be at least 13 characters.' },
-                      maxLength: { value: 13, message: 'This field cannot be longer than 13 characters.' },
-                    }}
-                  />
-                  <ValidatedField
-                    label="Email"
-                    id="umuturage-email"
-                    name="email"
-                    data-cy="email"
-                    type="text"
-                    register={register}
-                    validate={{
-                      required: { value: true, message: 'This field is required.' },
-                      pattern: {
-                        value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                        message: "This field should follow pattern for '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+..",
-                      },
-                    }}
-                  />
-                  <ValidatedField id="umuturage-village" name="village" data-cy="village" label="Village" type="select">
-                    <option value="" key="0" />
-                    {villages
-                      ? villages.map(otherEntity => (
-                          <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.name}
-                          </option>
-                        ))
-                      : null}
-                  </ValidatedField>
-                </section>
-              )}
+              <Row>
+                <Col md="4">{handleButton()}</Col>
+              </Row>
               {formSection === 2 && (
                 <div>
-                  <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/umuturage" replace color="info">
-                    <FontAwesomeIcon icon="arrow-left" />
-                    &nbsp;
-                    <span className="d-none d-md-inline">Back</span>
-                  </Button>
-                  &nbsp;
                   <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
                     <FontAwesomeIcon icon="save" />
                     &nbsp; Save
@@ -313,11 +383,7 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
             </ValidatedForm>
           )}
         </Col>
-
-        <Row>
-          <Col md="4">{handleButton()}</Col>
-        </Row>
-        {JSON.stringify(watch(), null, 2)}
+        {/* {JSON.stringify(watch(), null, 2)} */}
       </Row>
     </div>
   );
