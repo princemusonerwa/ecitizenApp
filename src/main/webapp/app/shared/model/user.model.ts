@@ -6,6 +6,7 @@ export interface IUser {
   email?: string;
   activated?: boolean;
   langKey?: string;
+  phone?: string;
   authorities?: any[];
   createdBy?: string;
   createdDate?: Date | null;
@@ -22,6 +23,7 @@ export const defaultValue: Readonly<IUser> = {
   email: '',
   activated: true,
   langKey: '',
+  phone: '',
   authorities: [],
   createdBy: '',
   createdDate: null,

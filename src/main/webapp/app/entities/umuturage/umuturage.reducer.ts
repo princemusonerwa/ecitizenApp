@@ -15,7 +15,7 @@ const initialState: EntityState<IUmuturage> = {
   updateSuccess: false,
 };
 
-const apiUrl = 'api/umuturages';
+export const apiUrl = 'api/umuturages';
 
 // Actions
 
@@ -36,6 +36,7 @@ export const getEntity = createAsyncThunk(
 export const createEntity = createAsyncThunk(
   'umuturage/create_entity',
   async (entity: IUmuturage, thunkAPI) => {
+    console.log(entity);
     const result = await axios.post<IUmuturage>(apiUrl, cleanEntity(entity));
     thunkAPI.dispatch(getEntities({}));
     return result;
