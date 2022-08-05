@@ -3,7 +3,9 @@ package com.minaloc.gov.service;
 import com.minaloc.gov.config.Constants;
 import com.minaloc.gov.domain.Authority;
 import com.minaloc.gov.domain.User;
+import com.minaloc.gov.domain.UserExtended;
 import com.minaloc.gov.repository.AuthorityRepository;
+import com.minaloc.gov.repository.UserExtendedRepository;
 import com.minaloc.gov.repository.UserRepository;
 import com.minaloc.gov.security.AuthoritiesConstants;
 import com.minaloc.gov.security.SecurityUtils;
@@ -41,16 +43,20 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    private final UserExtendedRepository userExtendedRepository;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager
+        CacheManager cacheManager,
+        UserExtendedRepository userExtendedRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.userExtendedRepository = userExtendedRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -145,7 +151,7 @@ public class UserService {
         return true;
     }
 
-    public User createUser(AdminUserDTO userDTO) {
+    public User createUser(AdminUserDTO userDTO, String phone) {
         User user = new User();
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
@@ -175,8 +181,16 @@ public class UserService {
             user.setAuthorities(authorities);
         }
         userRepository.save(user);
+        userRepository.save(user);
         this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
+        // Create and save the UserExtra entity
+        UserExtended newUserExtended = new UserExtended();
+        newUserExtended.setUser(user);
+        newUserExtended.setPhone(phone);
+        userExtendedRepository.save(newUserExtended);
+        log.debug("Created Information for UserExtended: {}", newUserExtended);
+        this.clearUserCaches(user);
         return user;
     }
 

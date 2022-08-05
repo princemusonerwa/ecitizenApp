@@ -118,6 +118,26 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
                   validate: v => isEmail(v) || 'Your email is invalid.',
                 }}
               />
+              <ValidatedField
+                name="phone"
+                label="Phone numnber"
+                placeholder={'Your phone number'}
+                type="text"
+                validate={{
+                  required: {
+                    value: true,
+                    message: 'Your phone number is required.',
+                  },
+                  minLength: {
+                    value: 13,
+                    message: 'Your phone number is required to be 13 characters.',
+                  },
+                  maxLength: {
+                    value: 13,
+                    message: 'Your phone number is required to be 13 characters.',
+                  },
+                }}
+              />
               <ValidatedField type="checkbox" name="activated" check value={true} disabled={!user.id} label="Activated" />
               <ValidatedField type="select" name="authorities" multiple label="Profiles">
                 {authorities.map(role => (

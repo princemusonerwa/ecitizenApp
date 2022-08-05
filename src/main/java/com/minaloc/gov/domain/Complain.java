@@ -85,6 +85,34 @@ public class Complain implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
+    public Complain() {}
+
+    public Complain(
+        String ikibazo,
+        String icyakozwe,
+        String icyakorwa,
+        String umwanzuro,
+        @NotNull Instant date,
+        Status status,
+        @NotNull Priority priority,
+        Category category,
+        Umuturage umuturage,
+        User user,
+        Set<Organization> organizations
+    ) {
+        this.ikibazo = ikibazo;
+        this.icyakozwe = icyakozwe;
+        this.icyakorwa = icyakorwa;
+        this.umwanzuro = umwanzuro;
+        this.date = date;
+        this.status = status;
+        this.priority = priority;
+        this.category = category;
+        this.umuturage = umuturage;
+        this.user = user;
+        this.organizations = organizations;
+    }
+
     public Long getId() {
         return this.id;
     }
