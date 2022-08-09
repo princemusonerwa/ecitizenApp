@@ -66,6 +66,12 @@ public class ComplainServiceImpl implements ComplainService {
                 if (complain.getPriority() != null) {
                     existingComplain.setPriority(complain.getPriority());
                 }
+                if (complain.getCreatedAt() != null) {
+                    existingComplain.setCreatedAt(complain.getCreatedAt());
+                }
+                if (complain.getUpdatedAt() != null) {
+                    existingComplain.setUpdatedAt(complain.getUpdatedAt());
+                }
 
                 return existingComplain;
             })

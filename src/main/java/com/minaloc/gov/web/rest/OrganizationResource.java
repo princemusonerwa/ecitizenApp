@@ -135,10 +135,11 @@ public class OrganizationResource {
     /**
      * {@code GET  /organizations} : get all the organizations.
      *
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of organizations in body.
      */
     @GetMapping("/organizations")
-    public List<Organization> getAllOrganizations() {
+    public List<Organization> getAllOrganizations(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get all Organizations");
         return organizationService.findAll();
     }

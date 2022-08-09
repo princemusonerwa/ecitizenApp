@@ -8,14 +8,6 @@ import { Priority } from 'app/shared/model/enumerations/priority.model';
 
 export interface IComplain {
   id?: number;
-  indangamuntu?: string;
-  amazina?: string;
-  dob?: string;
-  gender?: string;
-  ubudeheCategory?: string;
-  phone?: string;
-  email?: string;
-  village?: string;
   ikibazo?: string;
   icyakozwe?: string;
   icyakorwa?: string | null;
@@ -23,7 +15,10 @@ export interface IComplain {
   date?: string;
   status?: Status | null;
   priority?: Priority;
+  createdAt?: string;
+  updatedAt?: string;
   category?: ICategory | null;
+  umuturage?: IUmuturage | null;
   user?: IUser | null;
   organizations?: IOrganization[] | null;
 }

@@ -40,6 +40,8 @@ public class UmuyoboziCriteria implements Serializable, Criteria {
 
     private LongFilter umurimoId;
 
+    private LongFilter officeId;
+
     private Boolean distinct;
 
     public UmuyoboziCriteria() {}
@@ -52,6 +54,7 @@ public class UmuyoboziCriteria implements Serializable, Criteria {
         this.phoneTwo = other.phoneTwo == null ? null : other.phoneTwo.copy();
         this.email = other.email == null ? null : other.email.copy();
         this.umurimoId = other.umurimoId == null ? null : other.umurimoId.copy();
+        this.officeId = other.officeId == null ? null : other.officeId.copy();
         this.distinct = other.distinct;
     }
 
@@ -165,6 +168,21 @@ public class UmuyoboziCriteria implements Serializable, Criteria {
         this.umurimoId = umurimoId;
     }
 
+    public LongFilter getOfficeId() {
+        return officeId;
+    }
+
+    public LongFilter officeId() {
+        if (officeId == null) {
+            officeId = new LongFilter();
+        }
+        return officeId;
+    }
+
+    public void setOfficeId(LongFilter officeId) {
+        this.officeId = officeId;
+    }
+
     public Boolean getDistinct() {
         return distinct;
     }
@@ -190,13 +208,14 @@ public class UmuyoboziCriteria implements Serializable, Criteria {
             Objects.equals(phoneTwo, that.phoneTwo) &&
             Objects.equals(email, that.email) &&
             Objects.equals(umurimoId, that.umurimoId) &&
+            Objects.equals(officeId, that.officeId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, phoneOne, phoneTwo, email, umurimoId, distinct);
+        return Objects.hash(id, firstName, lastName, phoneOne, phoneTwo, email, umurimoId, officeId, distinct);
     }
 
     // prettier-ignore
@@ -210,6 +229,7 @@ public class UmuyoboziCriteria implements Serializable, Criteria {
             (phoneTwo != null ? "phoneTwo=" + phoneTwo + ", " : "") +
             (email != null ? "email=" + email + ", " : "") +
             (umurimoId != null ? "umurimoId=" + umurimoId + ", " : "") +
+            (officeId != null ? "officeId=" + officeId + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +
             "}";
     }

@@ -28,10 +28,9 @@ entity UserExtended{
 }
 
 entity Office {
-	parentId String,
-    name String required,
     officeType OfficeType required,
-    createdAt LocalDate required
+    name String required,
+    createdAt Instant required
 }
 
 enum OfficeType{
@@ -60,7 +59,9 @@ entity Complain{
     umwanzuro TextBlob,
     date Instant required,
     status Status,
-    priority Priority required
+    priority Priority required, 
+    createdAt Instant required, 
+    updatedAt Instant required
 }
 
 enum Status{
@@ -102,9 +103,10 @@ entity Umurimo{
 relationship OneToOne{
 	Complain{category} to Category,
     UserExtended{user(login)} to User,
-    Organization{organization} to User,
-    Office{Office} to User,
+    Organization{user(login)} to User,
+    Office{user(login)} to User,
     Umuyobozi{umurimo(umurimo)} to Umurimo,
+    Umuyobozi{office(name)} to Office,
 }
 
 relationship ManyToOne{
@@ -119,7 +121,7 @@ relationship OneToMany {
   Sector to Cell{sector(name)},
   Cell to Village{cell(name)},
   Village to Umuturage{village(name)},
-  Office{parent} to Office{children}
+  Office{children(name)} to Office{parent(name)}
 }
 
 relationship ManyToMany{

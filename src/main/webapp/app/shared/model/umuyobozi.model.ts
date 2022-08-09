@@ -1,4 +1,5 @@
 import { IUmurimo } from 'app/shared/model/umurimo.model';
+import { IOffice } from 'app/shared/model/office.model';
 
 export interface IUmuyobozi {
   id?: number;
@@ -8,6 +9,7 @@ export interface IUmuyobozi {
   phoneTwo?: string;
   email?: string;
   umurimo?: IUmurimo | null;
+  office?: IOffice | null;
 }
 
 export const defaultValue: Readonly<IUmuyobozi> = {};

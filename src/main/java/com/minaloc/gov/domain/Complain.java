@@ -62,6 +62,14 @@ public class Complain implements Serializable {
     @Column(name = "priority", nullable = false)
     private Priority priority;
 
+    @NotNull
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    @NotNull
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
     @OneToOne
     @JoinColumn(unique = true)
     private Category category;
@@ -80,38 +88,10 @@ public class Complain implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "organization_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "organization", "complains" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "user", "complains" }, allowSetters = true)
     private Set<Organization> organizations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
-
-    public Complain() {}
-
-    public Complain(
-        String ikibazo,
-        String icyakozwe,
-        String icyakorwa,
-        String umwanzuro,
-        @NotNull Instant date,
-        Status status,
-        @NotNull Priority priority,
-        Category category,
-        Umuturage umuturage,
-        User user,
-        Set<Organization> organizations
-    ) {
-        this.ikibazo = ikibazo;
-        this.icyakozwe = icyakozwe;
-        this.icyakorwa = icyakorwa;
-        this.umwanzuro = umwanzuro;
-        this.date = date;
-        this.status = status;
-        this.priority = priority;
-        this.category = category;
-        this.umuturage = umuturage;
-        this.user = user;
-        this.organizations = organizations;
-    }
 
     public Long getId() {
         return this.id;
@@ -217,6 +197,32 @@ public class Complain implements Serializable {
         this.priority = priority;
     }
 
+    public Instant getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public Complain createdAt(Instant createdAt) {
+        this.setCreatedAt(createdAt);
+        return this;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public Complain updatedAt(Instant updatedAt) {
+        this.setUpdatedAt(updatedAt);
+        return this;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public Category getCategory() {
         return this.category;
     }
@@ -312,6 +318,8 @@ public class Complain implements Serializable {
             ", date='" + getDate() + "'" +
             ", status='" + getStatus() + "'" +
             ", priority='" + getPriority() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            ", updatedAt='" + getUpdatedAt() + "'" +
             "}";
     }
 }

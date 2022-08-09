@@ -67,30 +67,6 @@ public class Umuturage implements Serializable {
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public Umuturage() {}
-
-    public Umuturage(
-        @NotNull @Size(min = 16, max = 16) String indangamuntu,
-        @NotNull @Size(min = 3, max = 255) String amazina,
-        @NotNull Instant dob,
-        @NotNull Gender gender,
-        @NotNull @Size(min = 1, max = 1) String ubudeheCategory,
-        @Size(min = 13, max = 13) String phone,
-        @NotNull @Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$") String email,
-        User user,
-        Village village
-    ) {
-        this.indangamuntu = indangamuntu;
-        this.amazina = amazina;
-        this.dob = dob;
-        this.gender = gender;
-        this.ubudeheCategory = ubudeheCategory;
-        this.phone = phone;
-        this.email = email;
-        this.user = user;
-        this.village = village;
-    }
-
     public Long getId() {
         return this.id;
     }

@@ -42,6 +42,4 @@ public interface UmuturageRepository extends JpaRepository<Umuturage, Long>, Jpa
         "select umuturage from Umuturage umuturage left join fetch umuturage.user left join fetch umuturage.village where umuturage.id =:id"
     )
     Optional<Umuturage> findOneWithToOneRelationships(@Param("id") Long id);
-
-    Optional<Umuturage> findByIndangamuntu(String indangamuntu);
 }

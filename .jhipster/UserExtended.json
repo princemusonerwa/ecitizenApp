@@ -1,25 +1,32 @@
 {
-  "fluentMethods": true,
-  "relationships": [
-      {
-          "relationshipType": "one-to-one",
-          "relationshipName": "user",
-          "otherEntityName": "user",
-          "otherEntityField": "id",
-          "ownerSide": true,
-          "otherEntityRelationshipName": "userExtended"
-      }
-  ],
-  "fields": [
-      {
-          "fieldName": "phone",
-          "fieldType": "String"
-      }
-  ],
+  "applications": "*",
   "changelogDate": "20220713102526",
   "dto": "no",
-  "service": "no",
+  "embedded": false,
   "entityTableName": "user_extended",
+  "fields": [
+    {
+      "fieldName": "phone",
+      "fieldType": "String",
+      "fieldValidateRules": ["minlength", "maxlength"],
+      "fieldValidateRulesMaxlength": "13",
+      "fieldValidateRulesMinlength": "13"
+    }
+  ],
+  "fluentMethods": true,
   "jpaMetamodelFiltering": false,
-  "pagination": "no"
+  "name": "UserExtended",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityField": "login",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "userExtended",
+      "ownerSide": true,
+      "relationshipName": "user",
+      "relationshipType": "one-to-one"
+    }
+  ],
+  "service": "serviceImpl"
 }
