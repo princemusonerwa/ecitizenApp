@@ -60,9 +60,6 @@ class ComplainResourceIT {
     private static final String DEFAULT_UMWANZURO = "AAAAAAAAAA";
     private static final String UPDATED_UMWANZURO = "BBBBBBBBBB";
 
-    private static final Instant DEFAULT_DATE = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
-
     private static final Status DEFAULT_STATUS = Status.PENDING_REVIEW;
     private static final Status UPDATED_STATUS = Status.ORIENTED;
 
@@ -110,7 +107,6 @@ class ComplainResourceIT {
             .icyakozwe(DEFAULT_ICYAKOZWE)
             .icyakorwa(DEFAULT_ICYAKORWA)
             .umwanzuro(DEFAULT_UMWANZURO)
-            .date(DEFAULT_DATE)
             .status(DEFAULT_STATUS)
             .priority(DEFAULT_PRIORITY)
             .createdAt(DEFAULT_CREATED_AT)
@@ -130,7 +126,6 @@ class ComplainResourceIT {
             .icyakozwe(UPDATED_ICYAKOZWE)
             .icyakorwa(UPDATED_ICYAKORWA)
             .umwanzuro(UPDATED_UMWANZURO)
-            .date(UPDATED_DATE)
             .status(UPDATED_STATUS)
             .priority(UPDATED_PRIORITY)
             .createdAt(UPDATED_CREATED_AT)
@@ -160,7 +155,6 @@ class ComplainResourceIT {
         assertThat(testComplain.getIcyakozwe()).isEqualTo(DEFAULT_ICYAKOZWE);
         assertThat(testComplain.getIcyakorwa()).isEqualTo(DEFAULT_ICYAKORWA);
         assertThat(testComplain.getUmwanzuro()).isEqualTo(DEFAULT_UMWANZURO);
-        assertThat(testComplain.getDate()).isEqualTo(DEFAULT_DATE);
         assertThat(testComplain.getStatus()).isEqualTo(DEFAULT_STATUS);
         assertThat(testComplain.getPriority()).isEqualTo(DEFAULT_PRIORITY);
         assertThat(testComplain.getCreatedAt()).isEqualTo(DEFAULT_CREATED_AT);
@@ -183,23 +177,6 @@ class ComplainResourceIT {
         // Validate the Complain in the database
         List<Complain> complainList = complainRepository.findAll();
         assertThat(complainList).hasSize(databaseSizeBeforeCreate);
-    }
-
-    @Test
-    @Transactional
-    void checkDateIsRequired() throws Exception {
-        int databaseSizeBeforeTest = complainRepository.findAll().size();
-        // set the field null
-        complain.setDate(null);
-
-        // Create the Complain, which fails.
-
-        restComplainMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(complain)))
-            .andExpect(status().isBadRequest());
-
-        List<Complain> complainList = complainRepository.findAll();
-        assertThat(complainList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
@@ -269,7 +246,6 @@ class ComplainResourceIT {
             .andExpect(jsonPath("$.[*].icyakozwe").value(hasItem(DEFAULT_ICYAKOZWE.toString())))
             .andExpect(jsonPath("$.[*].icyakorwa").value(hasItem(DEFAULT_ICYAKORWA.toString())))
             .andExpect(jsonPath("$.[*].umwanzuro").value(hasItem(DEFAULT_UMWANZURO.toString())))
-            .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].priority").value(hasItem(DEFAULT_PRIORITY.toString())))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())))
@@ -310,7 +286,6 @@ class ComplainResourceIT {
             .andExpect(jsonPath("$.icyakozwe").value(DEFAULT_ICYAKOZWE.toString()))
             .andExpect(jsonPath("$.icyakorwa").value(DEFAULT_ICYAKORWA.toString()))
             .andExpect(jsonPath("$.umwanzuro").value(DEFAULT_UMWANZURO.toString()))
-            .andExpect(jsonPath("$.date").value(DEFAULT_DATE.toString()))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.priority").value(DEFAULT_PRIORITY.toString()))
             .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()))
@@ -333,58 +308,6 @@ class ComplainResourceIT {
 
         defaultComplainShouldBeFound("id.lessThanOrEqual=" + id);
         defaultComplainShouldNotBeFound("id.lessThan=" + id);
-    }
-
-    @Test
-    @Transactional
-    void getAllComplainsByDateIsEqualToSomething() throws Exception {
-        // Initialize the database
-        complainRepository.saveAndFlush(complain);
-
-        // Get all the complainList where date equals to DEFAULT_DATE
-        defaultComplainShouldBeFound("date.equals=" + DEFAULT_DATE);
-
-        // Get all the complainList where date equals to UPDATED_DATE
-        defaultComplainShouldNotBeFound("date.equals=" + UPDATED_DATE);
-    }
-
-    @Test
-    @Transactional
-    void getAllComplainsByDateIsNotEqualToSomething() throws Exception {
-        // Initialize the database
-        complainRepository.saveAndFlush(complain);
-
-        // Get all the complainList where date not equals to DEFAULT_DATE
-        defaultComplainShouldNotBeFound("date.notEquals=" + DEFAULT_DATE);
-
-        // Get all the complainList where date not equals to UPDATED_DATE
-        defaultComplainShouldBeFound("date.notEquals=" + UPDATED_DATE);
-    }
-
-    @Test
-    @Transactional
-    void getAllComplainsByDateIsInShouldWork() throws Exception {
-        // Initialize the database
-        complainRepository.saveAndFlush(complain);
-
-        // Get all the complainList where date in DEFAULT_DATE or UPDATED_DATE
-        defaultComplainShouldBeFound("date.in=" + DEFAULT_DATE + "," + UPDATED_DATE);
-
-        // Get all the complainList where date equals to UPDATED_DATE
-        defaultComplainShouldNotBeFound("date.in=" + UPDATED_DATE);
-    }
-
-    @Test
-    @Transactional
-    void getAllComplainsByDateIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        complainRepository.saveAndFlush(complain);
-
-        // Get all the complainList where date is not null
-        defaultComplainShouldBeFound("date.specified=true");
-
-        // Get all the complainList where date is null
-        defaultComplainShouldNotBeFound("date.specified=false");
     }
 
     @Test
@@ -712,7 +635,6 @@ class ComplainResourceIT {
             .andExpect(jsonPath("$.[*].icyakozwe").value(hasItem(DEFAULT_ICYAKOZWE.toString())))
             .andExpect(jsonPath("$.[*].icyakorwa").value(hasItem(DEFAULT_ICYAKORWA.toString())))
             .andExpect(jsonPath("$.[*].umwanzuro").value(hasItem(DEFAULT_UMWANZURO.toString())))
-            .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].priority").value(hasItem(DEFAULT_PRIORITY.toString())))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())))
@@ -769,7 +691,6 @@ class ComplainResourceIT {
             .icyakozwe(UPDATED_ICYAKOZWE)
             .icyakorwa(UPDATED_ICYAKORWA)
             .umwanzuro(UPDATED_UMWANZURO)
-            .date(UPDATED_DATE)
             .status(UPDATED_STATUS)
             .priority(UPDATED_PRIORITY)
             .createdAt(UPDATED_CREATED_AT)
@@ -791,7 +712,6 @@ class ComplainResourceIT {
         assertThat(testComplain.getIcyakozwe()).isEqualTo(UPDATED_ICYAKOZWE);
         assertThat(testComplain.getIcyakorwa()).isEqualTo(UPDATED_ICYAKORWA);
         assertThat(testComplain.getUmwanzuro()).isEqualTo(UPDATED_UMWANZURO);
-        assertThat(testComplain.getDate()).isEqualTo(UPDATED_DATE);
         assertThat(testComplain.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testComplain.getPriority()).isEqualTo(UPDATED_PRIORITY);
         assertThat(testComplain.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);
@@ -870,7 +790,6 @@ class ComplainResourceIT {
             .ikibazo(UPDATED_IKIBAZO)
             .icyakozwe(UPDATED_ICYAKOZWE)
             .icyakorwa(UPDATED_ICYAKORWA)
-            .priority(UPDATED_PRIORITY)
             .createdAt(UPDATED_CREATED_AT)
             .updatedAt(UPDATED_UPDATED_AT);
 
@@ -890,9 +809,8 @@ class ComplainResourceIT {
         assertThat(testComplain.getIcyakozwe()).isEqualTo(UPDATED_ICYAKOZWE);
         assertThat(testComplain.getIcyakorwa()).isEqualTo(UPDATED_ICYAKORWA);
         assertThat(testComplain.getUmwanzuro()).isEqualTo(DEFAULT_UMWANZURO);
-        assertThat(testComplain.getDate()).isEqualTo(DEFAULT_DATE);
         assertThat(testComplain.getStatus()).isEqualTo(DEFAULT_STATUS);
-        assertThat(testComplain.getPriority()).isEqualTo(UPDATED_PRIORITY);
+        assertThat(testComplain.getPriority()).isEqualTo(DEFAULT_PRIORITY);
         assertThat(testComplain.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);
         assertThat(testComplain.getUpdatedAt()).isEqualTo(UPDATED_UPDATED_AT);
     }
@@ -914,7 +832,6 @@ class ComplainResourceIT {
             .icyakozwe(UPDATED_ICYAKOZWE)
             .icyakorwa(UPDATED_ICYAKORWA)
             .umwanzuro(UPDATED_UMWANZURO)
-            .date(UPDATED_DATE)
             .status(UPDATED_STATUS)
             .priority(UPDATED_PRIORITY)
             .createdAt(UPDATED_CREATED_AT)
@@ -936,7 +853,6 @@ class ComplainResourceIT {
         assertThat(testComplain.getIcyakozwe()).isEqualTo(UPDATED_ICYAKOZWE);
         assertThat(testComplain.getIcyakorwa()).isEqualTo(UPDATED_ICYAKORWA);
         assertThat(testComplain.getUmwanzuro()).isEqualTo(UPDATED_UMWANZURO);
-        assertThat(testComplain.getDate()).isEqualTo(UPDATED_DATE);
         assertThat(testComplain.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testComplain.getPriority()).isEqualTo(UPDATED_PRIORITY);
         assertThat(testComplain.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);

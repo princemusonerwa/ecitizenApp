@@ -120,7 +120,7 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
               />
               <ValidatedField
                 name="phone"
-                label="Phone numnber"
+                label="Phone number"
                 placeholder={'Your phone number'}
                 type="text"
                 validate={{

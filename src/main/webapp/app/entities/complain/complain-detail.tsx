@@ -43,10 +43,6 @@ export const ComplainDetail = (props: RouteComponentProps<{ id: string }>) => {
           </dt>
           <dd>{complainEntity.umwanzuro}</dd>
           <dt>
-            <span id="date">Date</span>
-          </dt>
-          <dd>{complainEntity.date ? <TextFormat value={complainEntity.date} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
-          <dt>
             <span id="status">Status</span>
           </dt>
           <dd>{complainEntity.status}</dd>

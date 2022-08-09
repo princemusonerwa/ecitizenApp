@@ -49,10 +49,6 @@ public class Complain implements Serializable {
     @Column(name = "umwanzuro")
     private String umwanzuro;
 
-    @NotNull
-    @Column(name = "date", nullable = false)
-    private Instant date;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
@@ -92,6 +88,36 @@ public class Complain implements Serializable {
     private Set<Organization> organizations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+    public Complain() {}
+
+    public Complain(
+        String ikibazo,
+        String icyakozwe,
+        String icyakorwa,
+        String umwanzuro,
+        Status status,
+        Priority priority,
+        Instant createdAt,
+        Instant updatedAt,
+        Category category,
+        Umuturage umuturage,
+        User user,
+        Set<Organization> organizations
+    ) {
+        this.ikibazo = ikibazo;
+        this.icyakozwe = icyakozwe;
+        this.icyakorwa = icyakorwa;
+        this.umwanzuro = umwanzuro;
+        this.status = status;
+        this.priority = priority;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.category = category;
+        this.umuturage = umuturage;
+        this.user = user;
+        this.organizations = organizations;
+    }
 
     public Long getId() {
         return this.id;
@@ -156,19 +182,6 @@ public class Complain implements Serializable {
 
     public void setUmwanzuro(String umwanzuro) {
         this.umwanzuro = umwanzuro;
-    }
-
-    public Instant getDate() {
-        return this.date;
-    }
-
-    public Complain date(Instant date) {
-        this.setDate(date);
-        return this;
-    }
-
-    public void setDate(Instant date) {
-        this.date = date;
     }
 
     public Status getStatus() {
@@ -315,7 +328,6 @@ public class Complain implements Serializable {
             ", icyakozwe='" + getIcyakozwe() + "'" +
             ", icyakorwa='" + getIcyakorwa() + "'" +
             ", umwanzuro='" + getUmwanzuro() + "'" +
-            ", date='" + getDate() + "'" +
             ", status='" + getStatus() + "'" +
             ", priority='" + getPriority() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +

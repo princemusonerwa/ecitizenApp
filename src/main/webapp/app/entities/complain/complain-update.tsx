@@ -7,12 +7,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { IVillage } from 'app/shared/model/village.model';
 
 import { ICategory } from 'app/shared/model/category.model';
 import { getEntities as getCategories } from 'app/entities/category/category.reducer';
 import { IUmuturage } from 'app/shared/model/umuturage.model';
 import { getEntities as getUmuturages } from 'app/entities/umuturage/umuturage.reducer';
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { IOrganization } from 'app/shared/model/organization.model';
 import { getEntities as getOrganizations } from 'app/entities/organization/organization.reducer';
@@ -20,6 +20,8 @@ import { IComplain } from 'app/shared/model/complain.model';
 import { Status } from 'app/shared/model/enumerations/status.model';
 import { Priority } from 'app/shared/model/enumerations/priority.model';
 import { getEntity, updateEntity, createEntity, reset } from './complain.reducer';
+import { Gender } from 'app/shared/model/enumerations/gender.model';
+import { getEntities as getVillages } from 'app/entities/village/village.reducer';
 
 export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
@@ -28,6 +30,8 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
   const categories = useAppSelector(state => state.category.entities);
   const umuturages = useAppSelector(state => state.umuturage.entities);
+  const genderValues = Object.keys(Gender);
+
   const users = useAppSelector(state => state.userManagement.users);
   const organizations = useAppSelector(state => state.organization.entities);
   const complainEntity = useAppSelector(state => state.complain.entity);
@@ -36,6 +40,8 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const updateSuccess = useAppSelector(state => state.complain.updateSuccess);
   const statusValues = Object.keys(Status);
   const priorityValues = Object.keys(Priority);
+  const villages = useAppSelector(state => state.village.entities);
+
   const handleClose = () => {
     props.history.push('/complain' + props.location.search);
   };
@@ -49,8 +55,8 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
     dispatch(getCategories({}));
     dispatch(getUmuturages({}));
-    dispatch(getUsers({}));
     dispatch(getOrganizations({}));
+    dispatch(getVillages({}));
   }, []);
 
   useEffect(() => {
@@ -60,17 +66,16 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
   }, [updateSuccess]);
 
   const saveEntity = values => {
-    values.date = convertDateTimeToServer(values.date);
     values.createdAt = convertDateTimeToServer(values.createdAt);
     values.updatedAt = convertDateTimeToServer(values.updatedAt);
+    values.dob = convertDateTimeToServer(values.dob);
 
     const entity = {
       ...complainEntity,
       ...values,
       organizations: mapIdList(values.organizations),
       category: categories.find(it => it.id.toString() === values.category.toString()),
-      umuturage: umuturages.find(it => it.id.toString() === values.umuturage.toString()),
-      user: users.find(it => it.id.toString() === values.user.toString()),
+      village: villages.find(it => it.id.toString() === values.village.toString()),
     };
 
     if (isNew) {
@@ -84,19 +89,15 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
     isNew
       ? {
           date: displayDefaultDateTime(),
-          createdAt: displayDefaultDateTime(),
-          updatedAt: displayDefaultDateTime(),
         }
       : {
           status: 'PENDING_REVIEW',
           priority: 'HIGH',
           ...complainEntity,
-          date: convertDateTimeFromServer(complainEntity.date),
           createdAt: convertDateTimeFromServer(complainEntity.createdAt),
-          updatedAt: convertDateTimeFromServer(complainEntity.updatedAt),
+          updatedAt: convertDateTimeFromServer(complainEntity.updated),
           category: complainEntity?.category?.id,
           umuturage: complainEntity?.umuturage?.id,
-          user: complainEntity?.user?.id,
           organizations: complainEntity?.organizations?.map(e => e.id.toString()),
         };
 
@@ -116,6 +117,96 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
           ) : (
             <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
               {!isNew ? <ValidatedField name="id" required readOnly id="complain-id" label="ID" validate={{ required: true }} /> : null}
+              <ValidatedField
+                label="Indangamuntu"
+                id="umuturage-indangamuntu"
+                name="indangamuntu"
+                data-cy="indangamuntu"
+                type="text"
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                  minLength: { value: 16, message: 'This field is required to be at least 16 characters.' },
+                  maxLength: { value: 16, message: 'This field cannot be longer than 16 characters.' },
+                }}
+              />
+              <ValidatedField
+                label="Amazina"
+                id="umuturage-amazina"
+                name="amazina"
+                data-cy="amazina"
+                type="text"
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                  minLength: { value: 3, message: 'This field is required to be at least 3 characters.' },
+                  maxLength: { value: 255, message: 'This field cannot be longer than 255 characters.' },
+                }}
+              />
+              <ValidatedField
+                label="Dob"
+                id="umuturage-dob"
+                name="dob"
+                data-cy="dob"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+                value={displayDefaultDateTime()}
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                }}
+              />
+              <ValidatedField label="Gender" id="umuturage-gender" name="gender" data-cy="gender" type="select">
+                {genderValues.map(gender => (
+                  <option value={gender} key={gender}>
+                    {gender}
+                  </option>
+                ))}
+              </ValidatedField>
+              <ValidatedField
+                label="Ubudehe Category"
+                id="umuturage-ubudeheCategory"
+                name="ubudeheCategory"
+                data-cy="ubudeheCategory"
+                type="text"
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                  minLength: { value: 1, message: 'This field is required to be at least 1 characters.' },
+                  maxLength: { value: 1, message: 'This field cannot be longer than 1 characters.' },
+                }}
+              />
+              <ValidatedField
+                label="Phone"
+                id="umuturage-phone"
+                name="phone"
+                data-cy="phone"
+                type="text"
+                validate={{
+                  minLength: { value: 13, message: 'This field is required to be at least 13 characters.' },
+                  maxLength: { value: 13, message: 'This field cannot be longer than 13 characters.' },
+                }}
+              />
+              <ValidatedField
+                label="Email"
+                id="umuturage-email"
+                name="email"
+                data-cy="email"
+                type="text"
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                  pattern: {
+                    value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
+                    message: "This field should follow pattern for '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+..",
+                  },
+                }}
+              />
+              <ValidatedField id="umuturage-village" name="village" data-cy="village" label="Village" type="select">
+                <option value="" key="0" />
+                {villages
+                  ? villages.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.name}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <ValidatedField
                 label="Ikibazo"
                 id="complain-ikibazo"
@@ -138,17 +229,6 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
               />
               <ValidatedField label="Icyakorwa" id="complain-icyakorwa" name="icyakorwa" data-cy="icyakorwa" type="textarea" />
               <ValidatedField label="Umwanzuro" id="complain-umwanzuro" name="umwanzuro" data-cy="umwanzuro" type="textarea" />
-              <ValidatedField
-                label="Date"
-                id="complain-date"
-                name="date"
-                data-cy="date"
-                type="datetime-local"
-                placeholder="YYYY-MM-DD HH:mm"
-                validate={{
-                  required: { value: true, message: 'This field is required.' },
-                }}
-              />
               <ValidatedField label="Status" id="complain-status" name="status" data-cy="status" type="select">
                 {statusValues.map(status => (
                   <option value={status} key={status}>
@@ -170,6 +250,7 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 data-cy="createdAt"
                 type="datetime-local"
                 placeholder="YYYY-MM-DD HH:mm"
+                value={displayDefaultDateTime()}
                 validate={{
                   required: { value: true, message: 'This field is required.' },
                 }}
@@ -181,6 +262,7 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 data-cy="updatedAt"
                 type="datetime-local"
                 placeholder="YYYY-MM-DD HH:mm"
+                value={displayDefaultDateTime()}
                 validate={{
                   required: { value: true, message: 'This field is required.' },
                 }}
@@ -190,27 +272,7 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 {categories
                   ? categories.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <ValidatedField id="complain-umuturage" name="umuturage" data-cy="umuturage" label="Umuturage" type="select">
-                <option value="" key="0" />
-                {umuturages
-                  ? umuturages.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <ValidatedField id="complain-user" name="user" data-cy="user" label="User" type="select">
-                <option value="" key="0" />
-                {users
-                  ? users.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.login}
+                        {otherEntity.name}
                       </option>
                     ))
                   : null}

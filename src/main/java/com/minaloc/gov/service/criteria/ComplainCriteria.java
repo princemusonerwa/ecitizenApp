@@ -65,8 +65,6 @@ public class ComplainCriteria implements Serializable, Criteria {
 
     private LongFilter id;
 
-    private InstantFilter date;
-
     private StatusFilter status;
 
     private PriorityFilter priority;
@@ -89,7 +87,6 @@ public class ComplainCriteria implements Serializable, Criteria {
 
     public ComplainCriteria(ComplainCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
-        this.date = other.date == null ? null : other.date.copy();
         this.status = other.status == null ? null : other.status.copy();
         this.priority = other.priority == null ? null : other.priority.copy();
         this.createdAt = other.createdAt == null ? null : other.createdAt.copy();
@@ -119,21 +116,6 @@ public class ComplainCriteria implements Serializable, Criteria {
 
     public void setId(LongFilter id) {
         this.id = id;
-    }
-
-    public InstantFilter getDate() {
-        return date;
-    }
-
-    public InstantFilter date() {
-        if (date == null) {
-            date = new InstantFilter();
-        }
-        return date;
-    }
-
-    public void setDate(InstantFilter date) {
-        this.date = date;
     }
 
     public StatusFilter getStatus() {
@@ -275,7 +257,6 @@ public class ComplainCriteria implements Serializable, Criteria {
         final ComplainCriteria that = (ComplainCriteria) o;
         return (
             Objects.equals(id, that.id) &&
-            Objects.equals(date, that.date) &&
             Objects.equals(status, that.status) &&
             Objects.equals(priority, that.priority) &&
             Objects.equals(createdAt, that.createdAt) &&
@@ -290,7 +271,7 @@ public class ComplainCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, date, status, priority, createdAt, updatedAt, categoryId, umuturageId, userId, organizationId, distinct);
+        return Objects.hash(id, status, priority, createdAt, updatedAt, categoryId, umuturageId, userId, organizationId, distinct);
     }
 
     // prettier-ignore
@@ -298,7 +279,6 @@ public class ComplainCriteria implements Serializable, Criteria {
     public String toString() {
         return "ComplainCriteria{" +
             (id != null ? "id=" + id + ", " : "") +
-            (date != null ? "date=" + date + ", " : "") +
             (status != null ? "status=" + status + ", " : "") +
             (priority != null ? "priority=" + priority + ", " : "") +
             (createdAt != null ? "createdAt=" + createdAt + ", " : "") +

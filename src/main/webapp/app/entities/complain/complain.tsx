@@ -114,9 +114,6 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
                 <th className="hand" onClick={sort('umwanzuro')}>
                   Umwanzuro <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('date')}>
-                  Date <FontAwesomeIcon icon="sort" />
-                </th>
                 <th className="hand" onClick={sort('status')}>
                   Status <FontAwesomeIcon icon="sort" />
                 </th>
@@ -153,7 +150,6 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{complain.icyakozwe}</td>
                   <td>{complain.icyakorwa}</td>
                   <td>{complain.umwanzuro}</td>
-                  <td>{complain.date ? <TextFormat type="date" value={complain.date} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{complain.status}</td>
                   <td>{complain.priority}</td>
                   <td>{complain.createdAt ? <TextFormat type="date" value={complain.createdAt} format={APP_DATE_FORMAT} /> : null}</td>

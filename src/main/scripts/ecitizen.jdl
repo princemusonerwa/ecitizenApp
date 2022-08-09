@@ -57,7 +57,6 @@ entity Complain{
     icyakozwe TextBlob required,
     icyakorwa TextBlob,
     umwanzuro TextBlob,
-    date Instant required,
     status Status,
     priority Priority required, 
     createdAt Instant required, 

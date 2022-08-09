@@ -57,9 +57,6 @@ public class ComplainServiceImpl implements ComplainService {
                 if (complain.getUmwanzuro() != null) {
                     existingComplain.setUmwanzuro(complain.getUmwanzuro());
                 }
-                if (complain.getDate() != null) {
-                    existingComplain.setDate(complain.getDate());
-                }
                 if (complain.getStatus() != null) {
                     existingComplain.setStatus(complain.getStatus());
                 }

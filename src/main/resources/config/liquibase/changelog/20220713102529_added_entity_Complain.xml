@@ -26,9 +26,6 @@
             <column name="umwanzuro" type="${clobType}">
                 <constraints nullable="true" />
             </column>
-            <column name="date" type="${datetimeType}">
-                <constraints nullable="false" />
-            </column>
             <column name="status" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
@@ -52,7 +49,6 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-        <dropDefaultValue tableName="complain" columnName="date" columnDataType="${datetimeType}"/>
         <dropDefaultValue tableName="complain" columnName="created_at" columnDataType="${datetimeType}"/>
         <dropDefaultValue tableName="complain" columnName="updated_at" columnDataType="${datetimeType}"/>
     </changeSet>
@@ -92,7 +88,6 @@
             <column name="icyakozwe" type="clob"/>
             <column name="icyakorwa" type="clob"/>
             <column name="umwanzuro" type="clob"/>
-            <column name="date" type="date"/>
             <column name="status" type="string"/>
             <column name="priority" type="string"/>
             <column name="created_at" type="date"/>
