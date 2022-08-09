@@ -135,10 +135,11 @@ public class OfficeResource {
     /**
      * {@code GET  /offices} : get all the offices.
      *
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of offices in body.
      */
     @GetMapping("/offices")
-    public List<Office> getAllOffices() {
+    public List<Office> getAllOffices(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get all Offices");
         return officeService.findAll();
     }

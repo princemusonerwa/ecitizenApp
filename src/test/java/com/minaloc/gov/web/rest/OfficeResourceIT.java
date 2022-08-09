@@ -2,6 +2,7 @@ package com.minaloc.gov.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -9,16 +10,23 @@ import com.minaloc.gov.IntegrationTest;
 import com.minaloc.gov.domain.Office;
 import com.minaloc.gov.domain.enumeration.OfficeType;
 import com.minaloc.gov.repository.OfficeRepository;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import com.minaloc.gov.service.OfficeService;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,21 +36,19 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link OfficeResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class OfficeResourceIT {
 
-    private static final String DEFAULT_PARENT_ID = "AAAAAAAAAA";
-    private static final String UPDATED_PARENT_ID = "BBBBBBBBBB";
+    private static final OfficeType DEFAULT_OFFICE_TYPE = OfficeType.MINALOC;
+    private static final OfficeType UPDATED_OFFICE_TYPE = OfficeType.PROVINCE;
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
-    private static final OfficeType DEFAULT_OFFICE_TYPE = OfficeType.MINALOC;
-    private static final OfficeType UPDATED_OFFICE_TYPE = OfficeType.PROVINCE;
-
-    private static final LocalDate DEFAULT_CREATED_AT = LocalDate.ofEpochDay(0L);
-    private static final LocalDate UPDATED_CREATED_AT = LocalDate.now(ZoneId.systemDefault());
+    private static final Instant DEFAULT_CREATED_AT = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_CREATED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
     private static final String ENTITY_API_URL = "/api/offices";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -52,6 +58,12 @@ class OfficeResourceIT {
 
     @Autowired
     private OfficeRepository officeRepository;
+
+    @Mock
+    private OfficeRepository officeRepositoryMock;
+
+    @Mock
+    private OfficeService officeServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -68,11 +80,7 @@ class OfficeResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Office createEntity(EntityManager em) {
-        Office office = new Office()
-            .parentId(DEFAULT_PARENT_ID)
-            .name(DEFAULT_NAME)
-            .officeType(DEFAULT_OFFICE_TYPE)
-            .createdAt(DEFAULT_CREATED_AT);
+        Office office = new Office().officeType(DEFAULT_OFFICE_TYPE).name(DEFAULT_NAME).createdAt(DEFAULT_CREATED_AT);
         return office;
     }
 
@@ -83,11 +91,7 @@ class OfficeResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Office createUpdatedEntity(EntityManager em) {
-        Office office = new Office()
-            .parentId(UPDATED_PARENT_ID)
-            .name(UPDATED_NAME)
-            .officeType(UPDATED_OFFICE_TYPE)
-            .createdAt(UPDATED_CREATED_AT);
+        Office office = new Office().officeType(UPDATED_OFFICE_TYPE).name(UPDATED_NAME).createdAt(UPDATED_CREATED_AT);
         return office;
     }
 
@@ -109,9 +113,8 @@ class OfficeResourceIT {
         List<Office> officeList = officeRepository.findAll();
         assertThat(officeList).hasSize(databaseSizeBeforeCreate + 1);
         Office testOffice = officeList.get(officeList.size() - 1);
-        assertThat(testOffice.getParentId()).isEqualTo(DEFAULT_PARENT_ID);
-        assertThat(testOffice.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testOffice.getOfficeType()).isEqualTo(DEFAULT_OFFICE_TYPE);
+        assertThat(testOffice.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testOffice.getCreatedAt()).isEqualTo(DEFAULT_CREATED_AT);
     }
 
@@ -135,10 +138,10 @@ class OfficeResourceIT {
 
     @Test
     @Transactional
-    void checkNameIsRequired() throws Exception {
+    void checkOfficeTypeIsRequired() throws Exception {
         int databaseSizeBeforeTest = officeRepository.findAll().size();
         // set the field null
-        office.setName(null);
+        office.setOfficeType(null);
 
         // Create the Office, which fails.
 
@@ -152,10 +155,10 @@ class OfficeResourceIT {
 
     @Test
     @Transactional
-    void checkOfficeTypeIsRequired() throws Exception {
+    void checkNameIsRequired() throws Exception {
         int databaseSizeBeforeTest = officeRepository.findAll().size();
         // set the field null
-        office.setOfficeType(null);
+        office.setName(null);
 
         // Create the Office, which fails.
 
@@ -196,10 +199,27 @@ class OfficeResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(office.getId().intValue())))
-            .andExpect(jsonPath("$.[*].parentId").value(hasItem(DEFAULT_PARENT_ID)))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].officeType").value(hasItem(DEFAULT_OFFICE_TYPE.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllOfficesWithEagerRelationshipsIsEnabled() throws Exception {
+        when(officeServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restOfficeMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(officeServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllOfficesWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(officeServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restOfficeMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(officeServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test
@@ -214,9 +234,8 @@ class OfficeResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(office.getId().intValue()))
-            .andExpect(jsonPath("$.parentId").value(DEFAULT_PARENT_ID))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.officeType").value(DEFAULT_OFFICE_TYPE.toString()))
+            .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()));
     }
 
@@ -239,7 +258,7 @@ class OfficeResourceIT {
         Office updatedOffice = officeRepository.findById(office.getId()).get();
         // Disconnect from session so that the updates on updatedOffice are not directly saved in db
         em.detach(updatedOffice);
-        updatedOffice.parentId(UPDATED_PARENT_ID).name(UPDATED_NAME).officeType(UPDATED_OFFICE_TYPE).createdAt(UPDATED_CREATED_AT);
+        updatedOffice.officeType(UPDATED_OFFICE_TYPE).name(UPDATED_NAME).createdAt(UPDATED_CREATED_AT);
 
         restOfficeMockMvc
             .perform(
@@ -253,9 +272,8 @@ class OfficeResourceIT {
         List<Office> officeList = officeRepository.findAll();
         assertThat(officeList).hasSize(databaseSizeBeforeUpdate);
         Office testOffice = officeList.get(officeList.size() - 1);
-        assertThat(testOffice.getParentId()).isEqualTo(UPDATED_PARENT_ID);
-        assertThat(testOffice.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testOffice.getOfficeType()).isEqualTo(UPDATED_OFFICE_TYPE);
+        assertThat(testOffice.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testOffice.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);
     }
 
@@ -327,7 +345,7 @@ class OfficeResourceIT {
         Office partialUpdatedOffice = new Office();
         partialUpdatedOffice.setId(office.getId());
 
-        partialUpdatedOffice.name(UPDATED_NAME).officeType(UPDATED_OFFICE_TYPE).createdAt(UPDATED_CREATED_AT);
+        partialUpdatedOffice.name(UPDATED_NAME).createdAt(UPDATED_CREATED_AT);
 
         restOfficeMockMvc
             .perform(
@@ -341,9 +359,8 @@ class OfficeResourceIT {
         List<Office> officeList = officeRepository.findAll();
         assertThat(officeList).hasSize(databaseSizeBeforeUpdate);
         Office testOffice = officeList.get(officeList.size() - 1);
-        assertThat(testOffice.getParentId()).isEqualTo(DEFAULT_PARENT_ID);
+        assertThat(testOffice.getOfficeType()).isEqualTo(DEFAULT_OFFICE_TYPE);
         assertThat(testOffice.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testOffice.getOfficeType()).isEqualTo(UPDATED_OFFICE_TYPE);
         assertThat(testOffice.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);
     }
 
@@ -359,7 +376,7 @@ class OfficeResourceIT {
         Office partialUpdatedOffice = new Office();
         partialUpdatedOffice.setId(office.getId());
 
-        partialUpdatedOffice.parentId(UPDATED_PARENT_ID).name(UPDATED_NAME).officeType(UPDATED_OFFICE_TYPE).createdAt(UPDATED_CREATED_AT);
+        partialUpdatedOffice.officeType(UPDATED_OFFICE_TYPE).name(UPDATED_NAME).createdAt(UPDATED_CREATED_AT);
 
         restOfficeMockMvc
             .perform(
@@ -373,9 +390,8 @@ class OfficeResourceIT {
         List<Office> officeList = officeRepository.findAll();
         assertThat(officeList).hasSize(databaseSizeBeforeUpdate);
         Office testOffice = officeList.get(officeList.size() - 1);
-        assertThat(testOffice.getParentId()).isEqualTo(UPDATED_PARENT_ID);
-        assertThat(testOffice.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testOffice.getOfficeType()).isEqualTo(UPDATED_OFFICE_TYPE);
+        assertThat(testOffice.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testOffice.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);
     }
 

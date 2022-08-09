@@ -1,15 +1,10 @@
 package com.minaloc.gov.web.rest;
 
 import com.minaloc.gov.domain.Complain;
-import com.minaloc.gov.domain.Umuturage;
-import com.minaloc.gov.domain.User;
 import com.minaloc.gov.repository.ComplainRepository;
-import com.minaloc.gov.repository.UmuturageRepository;
-import com.minaloc.gov.repository.UserRepository;
 import com.minaloc.gov.service.ComplainQueryService;
 import com.minaloc.gov.service.ComplainService;
 import com.minaloc.gov.service.criteria.ComplainCriteria;
-import com.minaloc.gov.service.dto.UmuturageComplainDTO;
 import com.minaloc.gov.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,8 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -53,22 +46,14 @@ public class ComplainResource {
 
     private final ComplainQueryService complainQueryService;
 
-    private final UserRepository userRepository;
-
-    private final UmuturageRepository umuturageRepository;
-
     public ComplainResource(
         ComplainService complainService,
         ComplainRepository complainRepository,
-        ComplainQueryService complainQueryService,
-        UserRepository userRepository,
-        UmuturageRepository umuturageRepository
+        ComplainQueryService complainQueryService
     ) {
         this.complainService = complainService;
         this.complainRepository = complainRepository;
         this.complainQueryService = complainQueryService;
-        this.userRepository = userRepository;
-        this.umuturageRepository = umuturageRepository;
     }
 
     /**
@@ -79,46 +64,11 @@ public class ComplainResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/complains")
-    public ResponseEntity<Complain> createComplain(@Valid @RequestBody UmuturageComplainDTO umuturageComplainDTO)
-        throws URISyntaxException {
-        log.debug("REST request to save Complain : {}", umuturageComplainDTO);
-        if (umuturageComplainDTO.getId() != null) {
+    public ResponseEntity<Complain> createComplain(@Valid @RequestBody Complain complain) throws URISyntaxException {
+        log.debug("REST request to save Complain : {}", complain);
+        if (complain.getId() != null) {
             throw new BadRequestAlertException("A new complain cannot already have an ID", ENTITY_NAME, "idexists");
         }
-
-        String username = "";
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        }
-
-        User user = userRepository.findByLogin(username);
-        Umuturage umuturage = new Umuturage(
-            umuturageComplainDTO.getIndangamuntu(),
-            umuturageComplainDTO.getAmazina(),
-            umuturageComplainDTO.getDob(),
-            umuturageComplainDTO.getGender(),
-            umuturageComplainDTO.getUbudeheCategory(),
-            umuturageComplainDTO.getPhone(),
-            umuturageComplainDTO.getEmail(),
-            user,
-            umuturageComplainDTO.getVillage()
-        );
-        umuturageRepository.save(umuturage);
-        Complain complain = new Complain(
-            umuturageComplainDTO.getIkibazo(),
-            umuturageComplainDTO.getIcyakozwe(),
-            umuturageComplainDTO.getIcyakorwa(),
-            umuturageComplainDTO.getUmwanzuro(),
-            umuturageComplainDTO.getDate(),
-            umuturageComplainDTO.getStatus(),
-            umuturageComplainDTO.getPriority(),
-            umuturageComplainDTO.getCategory(),
-            umuturage,
-            user,
-            umuturageComplainDTO.getOrganizations()
-        );
         Complain result = complainService.save(complain);
         return ResponseEntity
             .created(new URI("/api/complains/" + result.getId()))

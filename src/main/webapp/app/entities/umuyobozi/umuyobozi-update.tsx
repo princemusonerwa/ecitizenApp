@@ -10,6 +10,8 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { IUmurimo } from 'app/shared/model/umurimo.model';
 import { getEntities as getUmurimos } from 'app/entities/umurimo/umurimo.reducer';
+import { IOffice } from 'app/shared/model/office.model';
+import { getEntities as getOffices } from 'app/entities/office/office.reducer';
 import { IUmuyobozi } from 'app/shared/model/umuyobozi.model';
 import { getEntity, updateEntity, createEntity, reset } from './umuyobozi.reducer';
 
@@ -19,6 +21,7 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const umurimos = useAppSelector(state => state.umurimo.entities);
+  const offices = useAppSelector(state => state.office.entities);
   const umuyoboziEntity = useAppSelector(state => state.umuyobozi.entity);
   const loading = useAppSelector(state => state.umuyobozi.loading);
   const updating = useAppSelector(state => state.umuyobozi.updating);
@@ -35,6 +38,7 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
     }
 
     dispatch(getUmurimos({}));
+    dispatch(getOffices({}));
   }, []);
 
   useEffect(() => {
@@ -48,6 +52,7 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
       ...umuyoboziEntity,
       ...values,
       umurimo: umurimos.find(it => it.id.toString() === values.umurimo.toString()),
+      office: offices.find(it => it.id.toString() === values.office.toString()),
     };
 
     if (isNew) {
@@ -63,6 +68,7 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
       : {
           ...umuyoboziEntity,
           umurimo: umuyoboziEntity?.umurimo?.id,
+          office: umuyoboziEntity?.office?.id,
         };
 
   return (
@@ -147,6 +153,16 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   ? umurimos.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
                         {otherEntity.umurimo}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField id="umuyobozi-office" name="office" data-cy="office" label="Office" type="select">
+                <option value="" key="0" />
+                {offices
+                  ? offices.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.name}
                       </option>
                     ))
                   : null}

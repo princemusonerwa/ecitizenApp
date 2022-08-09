@@ -69,6 +69,12 @@ class ComplainResourceIT {
     private static final Priority DEFAULT_PRIORITY = Priority.HIGH;
     private static final Priority UPDATED_PRIORITY = Priority.MEDIUM;
 
+    private static final Instant DEFAULT_CREATED_AT = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_CREATED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final Instant DEFAULT_UPDATED_AT = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_UPDATED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
     private static final String ENTITY_API_URL = "/api/complains";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -106,7 +112,9 @@ class ComplainResourceIT {
             .umwanzuro(DEFAULT_UMWANZURO)
             .date(DEFAULT_DATE)
             .status(DEFAULT_STATUS)
-            .priority(DEFAULT_PRIORITY);
+            .priority(DEFAULT_PRIORITY)
+            .createdAt(DEFAULT_CREATED_AT)
+            .updatedAt(DEFAULT_UPDATED_AT);
         return complain;
     }
 
@@ -124,7 +132,9 @@ class ComplainResourceIT {
             .umwanzuro(UPDATED_UMWANZURO)
             .date(UPDATED_DATE)
             .status(UPDATED_STATUS)
-            .priority(UPDATED_PRIORITY);
+            .priority(UPDATED_PRIORITY)
+            .createdAt(UPDATED_CREATED_AT)
+            .updatedAt(UPDATED_UPDATED_AT);
         return complain;
     }
 
@@ -153,6 +163,8 @@ class ComplainResourceIT {
         assertThat(testComplain.getDate()).isEqualTo(DEFAULT_DATE);
         assertThat(testComplain.getStatus()).isEqualTo(DEFAULT_STATUS);
         assertThat(testComplain.getPriority()).isEqualTo(DEFAULT_PRIORITY);
+        assertThat(testComplain.getCreatedAt()).isEqualTo(DEFAULT_CREATED_AT);
+        assertThat(testComplain.getUpdatedAt()).isEqualTo(DEFAULT_UPDATED_AT);
     }
 
     @Test
@@ -209,6 +221,40 @@ class ComplainResourceIT {
 
     @Test
     @Transactional
+    void checkCreatedAtIsRequired() throws Exception {
+        int databaseSizeBeforeTest = complainRepository.findAll().size();
+        // set the field null
+        complain.setCreatedAt(null);
+
+        // Create the Complain, which fails.
+
+        restComplainMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(complain)))
+            .andExpect(status().isBadRequest());
+
+        List<Complain> complainList = complainRepository.findAll();
+        assertThat(complainList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    void checkUpdatedAtIsRequired() throws Exception {
+        int databaseSizeBeforeTest = complainRepository.findAll().size();
+        // set the field null
+        complain.setUpdatedAt(null);
+
+        // Create the Complain, which fails.
+
+        restComplainMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(complain)))
+            .andExpect(status().isBadRequest());
+
+        List<Complain> complainList = complainRepository.findAll();
+        assertThat(complainList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllComplains() throws Exception {
         // Initialize the database
         complainRepository.saveAndFlush(complain);
@@ -225,7 +271,9 @@ class ComplainResourceIT {
             .andExpect(jsonPath("$.[*].umwanzuro").value(hasItem(DEFAULT_UMWANZURO.toString())))
             .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].priority").value(hasItem(DEFAULT_PRIORITY.toString())));
+            .andExpect(jsonPath("$.[*].priority").value(hasItem(DEFAULT_PRIORITY.toString())))
+            .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())))
+            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(DEFAULT_UPDATED_AT.toString())));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -264,7 +312,9 @@ class ComplainResourceIT {
             .andExpect(jsonPath("$.umwanzuro").value(DEFAULT_UMWANZURO.toString()))
             .andExpect(jsonPath("$.date").value(DEFAULT_DATE.toString()))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
-            .andExpect(jsonPath("$.priority").value(DEFAULT_PRIORITY.toString()));
+            .andExpect(jsonPath("$.priority").value(DEFAULT_PRIORITY.toString()))
+            .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()))
+            .andExpect(jsonPath("$.updatedAt").value(DEFAULT_UPDATED_AT.toString()));
     }
 
     @Test
@@ -443,6 +493,110 @@ class ComplainResourceIT {
 
     @Test
     @Transactional
+    void getAllComplainsByCreatedAtIsEqualToSomething() throws Exception {
+        // Initialize the database
+        complainRepository.saveAndFlush(complain);
+
+        // Get all the complainList where createdAt equals to DEFAULT_CREATED_AT
+        defaultComplainShouldBeFound("createdAt.equals=" + DEFAULT_CREATED_AT);
+
+        // Get all the complainList where createdAt equals to UPDATED_CREATED_AT
+        defaultComplainShouldNotBeFound("createdAt.equals=" + UPDATED_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllComplainsByCreatedAtIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        complainRepository.saveAndFlush(complain);
+
+        // Get all the complainList where createdAt not equals to DEFAULT_CREATED_AT
+        defaultComplainShouldNotBeFound("createdAt.notEquals=" + DEFAULT_CREATED_AT);
+
+        // Get all the complainList where createdAt not equals to UPDATED_CREATED_AT
+        defaultComplainShouldBeFound("createdAt.notEquals=" + UPDATED_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllComplainsByCreatedAtIsInShouldWork() throws Exception {
+        // Initialize the database
+        complainRepository.saveAndFlush(complain);
+
+        // Get all the complainList where createdAt in DEFAULT_CREATED_AT or UPDATED_CREATED_AT
+        defaultComplainShouldBeFound("createdAt.in=" + DEFAULT_CREATED_AT + "," + UPDATED_CREATED_AT);
+
+        // Get all the complainList where createdAt equals to UPDATED_CREATED_AT
+        defaultComplainShouldNotBeFound("createdAt.in=" + UPDATED_CREATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllComplainsByCreatedAtIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        complainRepository.saveAndFlush(complain);
+
+        // Get all the complainList where createdAt is not null
+        defaultComplainShouldBeFound("createdAt.specified=true");
+
+        // Get all the complainList where createdAt is null
+        defaultComplainShouldNotBeFound("createdAt.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllComplainsByUpdatedAtIsEqualToSomething() throws Exception {
+        // Initialize the database
+        complainRepository.saveAndFlush(complain);
+
+        // Get all the complainList where updatedAt equals to DEFAULT_UPDATED_AT
+        defaultComplainShouldBeFound("updatedAt.equals=" + DEFAULT_UPDATED_AT);
+
+        // Get all the complainList where updatedAt equals to UPDATED_UPDATED_AT
+        defaultComplainShouldNotBeFound("updatedAt.equals=" + UPDATED_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllComplainsByUpdatedAtIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        complainRepository.saveAndFlush(complain);
+
+        // Get all the complainList where updatedAt not equals to DEFAULT_UPDATED_AT
+        defaultComplainShouldNotBeFound("updatedAt.notEquals=" + DEFAULT_UPDATED_AT);
+
+        // Get all the complainList where updatedAt not equals to UPDATED_UPDATED_AT
+        defaultComplainShouldBeFound("updatedAt.notEquals=" + UPDATED_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllComplainsByUpdatedAtIsInShouldWork() throws Exception {
+        // Initialize the database
+        complainRepository.saveAndFlush(complain);
+
+        // Get all the complainList where updatedAt in DEFAULT_UPDATED_AT or UPDATED_UPDATED_AT
+        defaultComplainShouldBeFound("updatedAt.in=" + DEFAULT_UPDATED_AT + "," + UPDATED_UPDATED_AT);
+
+        // Get all the complainList where updatedAt equals to UPDATED_UPDATED_AT
+        defaultComplainShouldNotBeFound("updatedAt.in=" + UPDATED_UPDATED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllComplainsByUpdatedAtIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        complainRepository.saveAndFlush(complain);
+
+        // Get all the complainList where updatedAt is not null
+        defaultComplainShouldBeFound("updatedAt.specified=true");
+
+        // Get all the complainList where updatedAt is null
+        defaultComplainShouldNotBeFound("updatedAt.specified=false");
+    }
+
+    @Test
+    @Transactional
     void getAllComplainsByCategoryIsEqualToSomething() throws Exception {
         // Initialize the database
         complainRepository.saveAndFlush(complain);
@@ -560,7 +714,9 @@ class ComplainResourceIT {
             .andExpect(jsonPath("$.[*].umwanzuro").value(hasItem(DEFAULT_UMWANZURO.toString())))
             .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].priority").value(hasItem(DEFAULT_PRIORITY.toString())));
+            .andExpect(jsonPath("$.[*].priority").value(hasItem(DEFAULT_PRIORITY.toString())))
+            .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())))
+            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(DEFAULT_UPDATED_AT.toString())));
 
         // Check, that the count call also returns 1
         restComplainMockMvc
@@ -615,7 +771,9 @@ class ComplainResourceIT {
             .umwanzuro(UPDATED_UMWANZURO)
             .date(UPDATED_DATE)
             .status(UPDATED_STATUS)
-            .priority(UPDATED_PRIORITY);
+            .priority(UPDATED_PRIORITY)
+            .createdAt(UPDATED_CREATED_AT)
+            .updatedAt(UPDATED_UPDATED_AT);
 
         restComplainMockMvc
             .perform(
@@ -636,6 +794,8 @@ class ComplainResourceIT {
         assertThat(testComplain.getDate()).isEqualTo(UPDATED_DATE);
         assertThat(testComplain.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testComplain.getPriority()).isEqualTo(UPDATED_PRIORITY);
+        assertThat(testComplain.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);
+        assertThat(testComplain.getUpdatedAt()).isEqualTo(UPDATED_UPDATED_AT);
     }
 
     @Test
@@ -710,7 +870,9 @@ class ComplainResourceIT {
             .ikibazo(UPDATED_IKIBAZO)
             .icyakozwe(UPDATED_ICYAKOZWE)
             .icyakorwa(UPDATED_ICYAKORWA)
-            .priority(UPDATED_PRIORITY);
+            .priority(UPDATED_PRIORITY)
+            .createdAt(UPDATED_CREATED_AT)
+            .updatedAt(UPDATED_UPDATED_AT);
 
         restComplainMockMvc
             .perform(
@@ -731,6 +893,8 @@ class ComplainResourceIT {
         assertThat(testComplain.getDate()).isEqualTo(DEFAULT_DATE);
         assertThat(testComplain.getStatus()).isEqualTo(DEFAULT_STATUS);
         assertThat(testComplain.getPriority()).isEqualTo(UPDATED_PRIORITY);
+        assertThat(testComplain.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);
+        assertThat(testComplain.getUpdatedAt()).isEqualTo(UPDATED_UPDATED_AT);
     }
 
     @Test
@@ -752,7 +916,9 @@ class ComplainResourceIT {
             .umwanzuro(UPDATED_UMWANZURO)
             .date(UPDATED_DATE)
             .status(UPDATED_STATUS)
-            .priority(UPDATED_PRIORITY);
+            .priority(UPDATED_PRIORITY)
+            .createdAt(UPDATED_CREATED_AT)
+            .updatedAt(UPDATED_UPDATED_AT);
 
         restComplainMockMvc
             .perform(
@@ -773,6 +939,8 @@ class ComplainResourceIT {
         assertThat(testComplain.getDate()).isEqualTo(UPDATED_DATE);
         assertThat(testComplain.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testComplain.getPriority()).isEqualTo(UPDATED_PRIORITY);
+        assertThat(testComplain.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);
+        assertThat(testComplain.getUpdatedAt()).isEqualTo(UPDATED_UPDATED_AT);
     }
 
     @Test

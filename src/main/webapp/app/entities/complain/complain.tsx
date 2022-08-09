@@ -123,6 +123,12 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
                 <th className="hand" onClick={sort('priority')}>
                   Priority <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('createdAt')}>
+                  Created At <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('updatedAt')}>
+                  Updated At <FontAwesomeIcon icon="sort" />
+                </th>
                 <th>
                   Category <FontAwesomeIcon icon="sort" />
                 </th>
@@ -150,6 +156,8 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{complain.date ? <TextFormat type="date" value={complain.date} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{complain.status}</td>
                   <td>{complain.priority}</td>
+                  <td>{complain.createdAt ? <TextFormat type="date" value={complain.createdAt} format={APP_DATE_FORMAT} /> : null}</td>
+                  <td>{complain.updatedAt ? <TextFormat type="date" value={complain.updatedAt} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{complain.category ? <Link to={`/category/${complain.category.id}`}>{complain.category.id}</Link> : ''}</td>
                   <td>{complain.umuturage ? <Link to={`/umuturage/${complain.umuturage.id}`}>{complain.umuturage.id}</Link> : ''}</td>
                   <td>{complain.user ? complain.user.login : ''}</td>

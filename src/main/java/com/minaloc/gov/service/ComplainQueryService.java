@@ -94,6 +94,12 @@ public class ComplainQueryService extends QueryService<Complain> {
             if (criteria.getPriority() != null) {
                 specification = specification.and(buildSpecification(criteria.getPriority(), Complain_.priority));
             }
+            if (criteria.getCreatedAt() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getCreatedAt(), Complain_.createdAt));
+            }
+            if (criteria.getUpdatedAt() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getUpdatedAt(), Complain_.updatedAt));
+            }
             if (criteria.getCategoryId() != null) {
                 specification =
                     specification.and(

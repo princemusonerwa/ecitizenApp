@@ -46,12 +46,11 @@ export const Office = (props: RouteComponentProps<{ url: string }>) => {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Parent Id</th>
-                <th>Name</th>
                 <th>Office Type</th>
+                <th>Name</th>
                 <th>Created At</th>
-                <th>Office</th>
-                <th>Children</th>
+                <th>User</th>
+                <th>Parent</th>
                 <th />
               </tr>
             </thead>
@@ -63,12 +62,11 @@ export const Office = (props: RouteComponentProps<{ url: string }>) => {
                       {office.id}
                     </Button>
                   </td>
-                  <td>{office.parentId}</td>
-                  <td>{office.name}</td>
                   <td>{office.officeType}</td>
-                  <td>{office.createdAt ? <TextFormat type="date" value={office.createdAt} format={APP_LOCAL_DATE_FORMAT} /> : null}</td>
-                  <td>{office.office ? office.office.id : ''}</td>
-                  <td>{office.children ? <Link to={`/office/${office.children.id}`}>{office.children.id}</Link> : ''}</td>
+                  <td>{office.name}</td>
+                  <td>{office.createdAt ? <TextFormat type="date" value={office.createdAt} format={APP_DATE_FORMAT} /> : null}</td>
+                  <td>{office.user ? office.user.login : ''}</td>
+                  <td>{office.parent ? <Link to={`/office/${office.parent.id}`}>{office.parent.name}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/office/${office.id}`} color="info" size="sm" data-cy="entityDetailsButton">

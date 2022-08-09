@@ -48,7 +48,7 @@ export const Organization = (props: RouteComponentProps<{ url: string }>) => {
                 <th>ID</th>
                 <th>Name</th>
                 <th>Location</th>
-                <th>Organization</th>
+                <th>User</th>
                 <th />
               </tr>
             </thead>
@@ -62,7 +62,7 @@ export const Organization = (props: RouteComponentProps<{ url: string }>) => {
                   </td>
                   <td>{organization.name}</td>
                   <td>{organization.location}</td>
-                  <td>{organization.organization ? organization.organization.id : ''}</td>
+                  <td>{organization.user ? organization.user.login : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/organization/${organization.id}`} color="info" size="sm" data-cy="entityDetailsButton">

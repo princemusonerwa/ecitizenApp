@@ -1,5 +1,6 @@
 package com.minaloc.gov.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -50,6 +51,11 @@ public class Umuyobozi implements Serializable {
     @OneToOne
     @JoinColumn(unique = true)
     private Umurimo umurimo;
+
+    @JsonIgnoreProperties(value = { "user", "children", "parent" }, allowSetters = true)
+    @OneToOne
+    @JoinColumn(unique = true)
+    private Office office;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -141,6 +147,19 @@ public class Umuyobozi implements Serializable {
 
     public Umuyobozi umurimo(Umurimo umurimo) {
         this.setUmurimo(umurimo);
+        return this;
+    }
+
+    public Office getOffice() {
+        return this.office;
+    }
+
+    public void setOffice(Office office) {
+        this.office = office;
+    }
+
+    public Umuyobozi office(Office office) {
+        this.setOffice(office);
         return this;
     }
 

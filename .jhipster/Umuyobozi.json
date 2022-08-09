@@ -51,6 +51,14 @@
       "ownerSide": true,
       "relationshipName": "umurimo",
       "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "office",
+      "otherEntityRelationshipName": "umuyobozi",
+      "ownerSide": true,
+      "relationshipName": "office",
+      "relationshipType": "one-to-one"
     }
   ],
   "service": "serviceImpl"

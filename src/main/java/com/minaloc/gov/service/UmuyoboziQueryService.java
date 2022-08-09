@@ -106,6 +106,12 @@ public class UmuyoboziQueryService extends QueryService<Umuyobozi> {
                         buildSpecification(criteria.getUmurimoId(), root -> root.join(Umuyobozi_.umurimo, JoinType.LEFT).get(Umurimo_.id))
                     );
             }
+            if (criteria.getOfficeId() != null) {
+                specification =
+                    specification.and(
+                        buildSpecification(criteria.getOfficeId(), root -> root.join(Umuyobozi_.office, JoinType.LEFT).get(Office_.id))
+                    );
+            }
         }
         return specification;
     }

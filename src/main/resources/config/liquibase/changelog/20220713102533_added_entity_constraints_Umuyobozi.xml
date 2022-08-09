@@ -13,5 +13,11 @@
                                  constraintName="fk_umuyobozi__umurimo_id"
                                  referencedColumnNames="id"
                                  referencedTableName="umurimo"/>
+
+        <addForeignKeyConstraint baseColumnNames="office_id"
+                                 baseTableName="umuyobozi"
+                                 constraintName="fk_umuyobozi__office_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="office"/>
     </changeSet>
 </databaseChangeLog>

@@ -54,6 +54,14 @@ export const ComplainDetail = (props: RouteComponentProps<{ id: string }>) => {
             <span id="priority">Priority</span>
           </dt>
           <dd>{complainEntity.priority}</dd>
+          <dt>
+            <span id="createdAt">Created At</span>
+          </dt>
+          <dd>{complainEntity.createdAt ? <TextFormat value={complainEntity.createdAt} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
+          <dt>
+            <span id="updatedAt">Updated At</span>
+          </dt>
+          <dd>{complainEntity.updatedAt ? <TextFormat value={complainEntity.updatedAt} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
           <dt>Category</dt>
           <dd>{complainEntity.category ? complainEntity.category.id : ''}</dd>
           <dt>Umuturage</dt>
