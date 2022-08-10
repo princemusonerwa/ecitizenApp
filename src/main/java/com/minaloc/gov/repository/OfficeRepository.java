@@ -1,6 +1,7 @@
 package com.minaloc.gov.repository;
 
 import com.minaloc.gov.domain.Office;
+import com.minaloc.gov.domain.enumeration.OfficeType;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;

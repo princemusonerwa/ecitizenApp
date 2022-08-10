@@ -1,7 +1,9 @@
 package com.minaloc.gov.web.rest;
 
 import com.minaloc.gov.domain.Umuturage;
+import com.minaloc.gov.domain.User;
 import com.minaloc.gov.repository.UmuturageRepository;
+import com.minaloc.gov.repository.UserRepository;
 import com.minaloc.gov.service.UmuturageQueryService;
 import com.minaloc.gov.service.UmuturageService;
 import com.minaloc.gov.service.criteria.UmuturageCriteria;
@@ -20,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -46,14 +50,18 @@ public class UmuturageResource {
 
     private final UmuturageQueryService umuturageQueryService;
 
+    private final UserRepository userRepository;
+
     public UmuturageResource(
         UmuturageService umuturageService,
         UmuturageRepository umuturageRepository,
-        UmuturageQueryService umuturageQueryService
+        UmuturageQueryService umuturageQueryService,
+        UserRepository userRepository
     ) {
         this.umuturageService = umuturageService;
         this.umuturageRepository = umuturageRepository;
         this.umuturageQueryService = umuturageQueryService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -69,6 +77,18 @@ public class UmuturageResource {
         if (umuturage.getId() != null) {
             throw new BadRequestAlertException("A new umuturage cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        // Get the current logged in user and assign it to Umuturage
+        String username = "";
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        }
+
+        User user = userRepository.findByLogin(username);
+        umuturage.setUser(user);
+
         Umuturage result = umuturageService.save(umuturage);
         return ResponseEntity
             .created(new URI("/api/umuturages/" + result.getId()))
@@ -203,5 +223,18 @@ public class UmuturageResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/umuturages/indentification/{identityId}")
+    public Object getUmuturageByIdentityCard(@PathVariable("identityId") String identityCard) {
+        Optional<Umuturage> umuturage = umuturageRepository.findByIndangamuntu(identityCard);
+        if (umuturage.isPresent()) {
+            throw new BadRequestAlertException(
+                "Umuturage with the given indangamuntu already exists in our system.",
+                ENTITY_NAME,
+                "idexists"
+            );
+        }
+        return umuturageService.getByIdentityCard(identityCard);
     }
 }

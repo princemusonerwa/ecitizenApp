@@ -63,4 +63,8 @@ public interface UmuturageService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    Object getByIdentityCard(String identityCard);
+
+    Optional<Umuturage> findByIndangamuntu(String indangamuntu);
 }

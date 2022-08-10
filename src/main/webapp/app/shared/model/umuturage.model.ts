@@ -12,7 +12,6 @@ export interface IUmuturage {
   ubudeheCategory?: string;
   phone?: string | null;
   email?: string;
-  user?: IUser | null;
   village?: IVillage | null;
 }
 

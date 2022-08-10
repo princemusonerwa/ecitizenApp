@@ -100,7 +100,6 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
           umuturage: complainEntity?.umuturage?.id,
           organizations: complainEntity?.organizations?.map(e => e.id.toString()),
         };
-
   return (
     <div>
       <Row className="justify-content-center">

@@ -7,13 +7,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { OfficeType } from 'app/shared/model/enumerations/office-type.model';
 
 import { IUmurimo } from 'app/shared/model/umurimo.model';
 import { getEntities as getUmurimos } from 'app/entities/umurimo/umurimo.reducer';
 import { IOffice } from 'app/shared/model/office.model';
 import { getEntities as getOffices } from 'app/entities/office/office.reducer';
 import { IUmuyobozi } from 'app/shared/model/umuyobozi.model';
-import { getEntity, updateEntity, createEntity, reset } from './umuyobozi.reducer';
+import { getEntity, updateEntity, createEntity, reset, getEntities } from './umuyobozi.reducer';
+
+import axios from 'axios';
 
 export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
@@ -26,6 +29,10 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const loading = useAppSelector(state => state.umuyobozi.loading);
   const updating = useAppSelector(state => state.umuyobozi.updating);
   const updateSuccess = useAppSelector(state => state.umuyobozi.updateSuccess);
+  const officeTypeValues = Object.keys(OfficeType);
+
+  const [selected, setSelected] = useState(officeTypeValues[0]);
+
   const handleClose = () => {
     props.history.push('/umuyobozi' + props.location.search);
   };
@@ -119,7 +126,8 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 type="text"
                 validate={{
                   required: { value: true, message: 'This field is required.' },
-                  maxLength: { value: 13, message: 'This field cannot be longer than 13 characters.' },
+                  minLength: { value: 13, message: 'This field is required to be at least 13 characters starting with +250.' },
+                  maxLength: { value: 13, message: 'This field cannot be longer than 13 characters starting with +250.' },
                 }}
               />
               <ValidatedField
@@ -129,8 +137,14 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
                 data-cy="phoneTwo"
                 type="text"
                 validate={{
-                  required: { value: true, message: 'This field is required.' },
-                  maxLength: { value: 13, message: 'This field cannot be longer than 13 characters.' },
+                  minLength: {
+                    value: 13,
+                    message: 'This field is not required, if you provide the input, it must have 13 characters starting with +250.',
+                  },
+                  maxLength: {
+                    value: 13,
+                    message: 'This field is not required, if you provide the input, it must have 13 characters starting with +250.',
+                  },
                 }}
               />
               <ValidatedField
@@ -157,14 +171,40 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
                     ))
                   : null}
               </ValidatedField>
-              <ValidatedField id="umuyobozi-office" name="office" data-cy="office" label="Office" type="select">
+              <ValidatedField
+                id="umuyobozi-office_select"
+                name="office"
+                label="Select Umuyobozi Level"
+                type="select"
+                value={selected}
+                onChange={e => setSelected(e.target.value)}
+              >
+                <option value="" key="0" />
+                {officeTypeValues.map(officeType => (
+                  <option value={officeType} key={officeType}>
+                    {officeType}
+                  </option>
+                ))}
+              </ValidatedField>
+              <ValidatedField
+                id="umuyobozi-office"
+                name="office"
+                data-cy="office"
+                label="Office"
+                type="select"
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                }}
+              >
                 <option value="" key="0" />
                 {offices
-                  ? offices.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.name}
-                      </option>
-                    ))
+                  ? offices
+                      .filter(otherEntity => otherEntity.officeType === selected)
+                      .map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.name}
+                        </option>
+                      ))
                   : null}
               </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/umuyobozi" replace color="info">
