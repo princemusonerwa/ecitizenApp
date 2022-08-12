@@ -88,8 +88,8 @@ public class UmurimoQueryService extends QueryService<Umurimo> {
             if (criteria.getUmurimo() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getUmurimo(), Umurimo_.umurimo));
             }
-            if (criteria.getUrwego() != null) {
-                specification = specification.and(buildStringSpecification(criteria.getUrwego(), Umurimo_.urwego));
+            if (criteria.getOfficeType() != null) {
+                specification = specification.and(buildSpecification(criteria.getOfficeType(), Umurimo_.officeType));
             }
         }
         return specification;

@@ -41,7 +41,6 @@ public class Office implements Serializable {
     private Instant createdAt;
 
     @OneToOne
-    @JoinColumn(unique = true)
     private User user;
 
     @OneToMany(mappedBy = "parent")

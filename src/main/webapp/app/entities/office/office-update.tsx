@@ -19,6 +19,7 @@ export const OfficeUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
   const [isNew] = useState(!props.match.params || !props.match.params.id);
 
+  const users = useAppSelector(state => state.userManagement.users);
   const offices = useAppSelector(state => state.office.entities);
   const officeEntity = useAppSelector(state => state.office.entity);
   const loading = useAppSelector(state => state.office.loading);
@@ -52,6 +53,7 @@ export const OfficeUpdate = (props: RouteComponentProps<{ id: string }>) => {
     const entity = {
       ...officeEntity,
       ...values,
+      user: users.find(it => it.id.toString() === values.user.toString()),
       parent: offices.find(it => it.id.toString() === values.parent.toString()),
     };
 
@@ -71,6 +73,7 @@ export const OfficeUpdate = (props: RouteComponentProps<{ id: string }>) => {
           officeType: 'MINALOC',
           ...officeEntity,
           createdAt: convertDateTimeFromServer(officeEntity.createdAt),
+          user: officeEntity?.user?.id,
           parent: officeEntity?.parent?.id,
         };
 
@@ -118,6 +121,16 @@ export const OfficeUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   required: { value: true, message: 'This field is required.' },
                 }}
               />
+              <ValidatedField id="office-user" name="user" data-cy="user" label="User" type="select">
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.login}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <ValidatedField id="office-parent" name="parent" data-cy="parent" label="Parent" type="select">
                 <option value="" key="0" />
                 {offices

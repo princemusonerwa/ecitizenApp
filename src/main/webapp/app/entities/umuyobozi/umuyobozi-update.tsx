@@ -31,7 +31,7 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const updateSuccess = useAppSelector(state => state.umuyobozi.updateSuccess);
   const officeTypeValues = Object.keys(OfficeType);
 
-  const [selected, setSelected] = useState(officeTypeValues[0]);
+  const [selected, setSelected] = useState('');
 
   const handleClose = () => {
     props.history.push('/umuyobozi' + props.location.search);
@@ -161,36 +161,28 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   },
                 }}
               />
-              <ValidatedField id="umuyobozi-umurimo" name="umurimo" data-cy="umurimo" label="Umurimo" type="select">
-                <option value="" key="0" />
-                {umurimos
-                  ? umurimos.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.umurimo}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <ValidatedField
-                id="umuyobozi-office_select"
-                name="office"
-                label="Select Umuyobozi Level"
-                type="select"
-                value={selected}
-                onChange={e => setSelected(e.target.value)}
-              >
-                <option value="" key="0" />
-                {officeTypeValues.map(officeType => (
-                  <option value={officeType} key={officeType}>
-                    {officeType}
-                  </option>
-                ))}
-              </ValidatedField>
+              <div className="form-group mt-2 mb-2">
+                <label htmlFor="level">Umuyobozi Level</label>
+                <select
+                  id="umuyobozi-office_select"
+                  name="level"
+                  className="form-select"
+                  value={selected}
+                  onChange={e => setSelected(e.target.value)}
+                >
+                  <option value="" key="0" />
+                  {officeTypeValues.map(officeType => (
+                    <option value={officeType} key={officeType}>
+                      {officeType}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <ValidatedField
                 id="umuyobozi-office"
                 name="office"
                 data-cy="office"
-                label="Office"
+                label="Area"
                 type="select"
                 validate={{
                   required: { value: true, message: 'This field is required.' },
@@ -203,6 +195,18 @@ export const UmuyoboziUpdate = (props: RouteComponentProps<{ id: string }>) => {
                       .map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
                           {otherEntity.name}
+                        </option>
+                      ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField id="umuyobozi-umurimo" name="umurimo" data-cy="umurimo" label="Umurimo" type="select">
+                <option value="" key="0" />
+                {umurimos
+                  ? umurimos
+                      .filter(otherEntity => otherEntity.officeType === selected)
+                      .map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.umurimo}
                         </option>
                       ))
                   : null}

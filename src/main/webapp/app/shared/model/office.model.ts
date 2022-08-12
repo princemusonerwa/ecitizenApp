@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { IUser } from 'app/shared/model/user.model';
 import { OfficeType } from 'app/shared/model/enumerations/office-type.model';
 
 export interface IOffice {
@@ -6,6 +7,7 @@ export interface IOffice {
   officeType?: OfficeType;
   name?: string;
   createdAt?: string;
+  user?: IUser | null;
   children?: IOffice[] | null;
   parent?: IOffice | null;
 }

@@ -1,7 +1,6 @@
 package com.minaloc.gov.web.rest;
 
 import com.minaloc.gov.domain.Office;
-import com.minaloc.gov.domain.User;
 import com.minaloc.gov.repository.OfficeRepository;
 import com.minaloc.gov.repository.UserRepository;
 import com.minaloc.gov.service.OfficeService;
@@ -17,8 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
@@ -34,8 +31,6 @@ public class OfficeResource {
 
     private static final String ENTITY_NAME = "office";
 
-    private final UserRepository userRepository;
-
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
@@ -46,7 +41,6 @@ public class OfficeResource {
     public OfficeResource(OfficeService officeService, OfficeRepository officeRepository, UserRepository userRepository) {
         this.officeService = officeService;
         this.officeRepository = officeRepository;
-        this.userRepository = userRepository;
     }
 
     /**
@@ -62,16 +56,7 @@ public class OfficeResource {
         if (office.getId() != null) {
             throw new BadRequestAlertException("A new office cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        // Get the current logged in user and assign it to Umuturage
-        String username = "";
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        }
-
-        User user = userRepository.findByLogin(username);
-        office.setUser(user);
         Office result = officeService.save(office);
         return ResponseEntity
             .created(new URI("/api/offices/" + result.getId()))
