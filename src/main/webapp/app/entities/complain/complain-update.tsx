@@ -66,6 +66,7 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
   }, [updateSuccess]);
 
   const saveEntity = values => {
+    console.log(values);
     values.createdAt = convertDateTimeToServer(values.createdAt);
     values.updatedAt = convertDateTimeToServer(values.updatedAt);
     values.dob = convertDateTimeToServer(values.dob);
@@ -95,11 +96,20 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
           priority: 'HIGH',
           ...complainEntity,
           createdAt: convertDateTimeFromServer(complainEntity.createdAt),
-          updatedAt: convertDateTimeFromServer(complainEntity.updated),
+          updatedAt: convertDateTimeFromServer(complainEntity.updatedAt),
           category: complainEntity?.category?.id,
           umuturage: complainEntity?.umuturage?.id,
+          indangamuntu: complainEntity?.umuturage?.indangamuntu,
+          amazina: complainEntity?.umuturage?.amazina,
+          dob: convertDateTimeFromServer(complainEntity?.umuturage?.dob),
+          gender: complainEntity?.umuturage?.gender,
+          ubudeheCategory: complainEntity?.umuturage?.ubudeheCategory,
+          phone: complainEntity?.umuturage?.phone,
+          email: complainEntity?.umuturage?.email,
+          village: complainEntity?.umuturage?.village,
           organizations: complainEntity?.organizations?.map(e => e.id.toString()),
         };
+
   return (
     <div>
       <Row className="justify-content-center">

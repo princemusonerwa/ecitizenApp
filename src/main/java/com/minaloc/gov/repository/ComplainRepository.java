@@ -1,6 +1,7 @@
 package com.minaloc.gov.repository;
 
 import com.minaloc.gov.domain.Complain;
+import com.minaloc.gov.domain.Umuturage;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -41,4 +42,10 @@ public interface ComplainRepository
 
     @Query("select complain from Complain complain left join fetch complain.user where complain.id =:id")
     Optional<Complain> findOneWithToOneRelationships(@Param("id") Long id);
+
+    @Query("select complain from Complain complain where complain.id =:id")
+    Complain getById(@Param("id") Long id);
+
+    @Query("select umuturage from Complain complain where complain.id = :id")
+    Umuturage findUmuturageComplain(@Param("id") Long id);
 }

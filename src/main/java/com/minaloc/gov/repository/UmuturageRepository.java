@@ -17,6 +17,8 @@ public interface UmuturageRepository extends JpaRepository<Umuturage, Long>, Jpa
     @Query("select umuturage from Umuturage umuturage where umuturage.user.login = ?#{principal.username}")
     List<Umuturage> findByUserIsCurrentUser();
 
+    Optional<Umuturage> findOneByEmailIgnoreCase(String email);
+
     default Optional<Umuturage> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
