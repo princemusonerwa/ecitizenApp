@@ -45,5 +45,7 @@ public interface UmuturageRepository extends JpaRepository<Umuturage, Long>, Jpa
     )
     Optional<Umuturage> findOneWithToOneRelationships(@Param("id") Long id);
 
+    Optional<Umuturage> findByPhone(String phone);
+
     Optional<Umuturage> findByIndangamuntu(String indangamuntu);
 }

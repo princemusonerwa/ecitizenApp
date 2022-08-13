@@ -94,7 +94,9 @@ public class ComplainResource {
 
         Optional<Umuturage> existingUmuturage = umuturageRepository.findByIndangamuntu(umuturageComplainDTO.getIndangamuntu());
 
-        Optional<Umuturage> existEmail = umuturageRepository.findOneByEmailIgnoreCase(umuturageComplainDTO.getEmail());
+        Optional<Umuturage> existingEmail = umuturageRepository.findOneByEmailIgnoreCase(umuturageComplainDTO.getEmail());
+
+        Optional<Umuturage> existingPhone = umuturageRepository.findOneByEmailIgnoreCase(umuturageComplainDTO.getPhone());
 
         if (
             existingUmuturage.isPresent() &&
@@ -103,8 +105,12 @@ public class ComplainResource {
             throw new BadRequestAlertException("Umuturage with the given indangamuntu already exists", ENTITY_NAME, "indangamuntuexists");
         }
 
-        if (existEmail.isPresent() && (existEmail.get().getEmail().equalsIgnoreCase(umuturageComplainDTO.getEmail()))) {
+        if (existingEmail.isPresent() && (existingEmail.get().getEmail().equalsIgnoreCase(umuturageComplainDTO.getEmail()))) {
             throw new BadRequestAlertException("Umuturage with the given email already exists", ENTITY_NAME, "emailexists");
+        }
+
+        if (existingPhone.isPresent() && (existingPhone.get().getEmail().equalsIgnoreCase(umuturageComplainDTO.getPhone()))) {
+            throw new BadRequestAlertException("Umuturage with the given phone already exists", ENTITY_NAME, "phoneexists");
         }
 
         String username = "";

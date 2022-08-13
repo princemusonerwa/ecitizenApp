@@ -17,8 +17,6 @@ export const UserManagement = (props: RouteComponentProps<any>) => {
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
 
-  console.log('List');
-
   const getUsersFromProps = () => {
     dispatch(
       getUsersAsAdmin({

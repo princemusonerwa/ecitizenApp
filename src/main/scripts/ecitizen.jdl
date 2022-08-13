@@ -100,7 +100,6 @@ entity Umurimo{
 }
 
 relationship OneToOne{
-	Complain{category} to Category,
     UserExtended{user(login)} to User,
     Organization{user(login)} to User,
     Office{user(login)} to User,
@@ -113,6 +112,7 @@ relationship ManyToOne{
     Attachment{complain} to Complain,
     Umuturage{user(login)} to User,
     Complain{user(login)} to User,
+    Complain{category} to Category,
 }
 relationship OneToMany {
   Province to District{province(name)},
