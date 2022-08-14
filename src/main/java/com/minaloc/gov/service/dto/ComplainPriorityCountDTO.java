@@ -2,14 +2,14 @@ package com.minaloc.gov.service.dto;
 
 import com.minaloc.gov.domain.enumeration.Priority;
 
-public class ComplainPriorityCount {
+public class ComplainPriorityCountDTO {
 
     private Priority priority;
     private Long count;
 
-    public ComplainPriorityCount() {}
+    public ComplainPriorityCountDTO() {}
 
-    public ComplainPriorityCount(Priority priority, Long count) {
+    public ComplainPriorityCountDTO(Priority priority, Long count) {
         this.priority = priority;
         this.count = count;
     }

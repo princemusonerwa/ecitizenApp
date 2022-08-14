@@ -112,7 +112,6 @@ relationship ManyToOne{
     Attachment{complain} to Complain,
     Umuturage{user(login)} to User,
     Complain{user(login)} to User,
-    Complain{category} to Category,
 }
 relationship OneToMany {
   Province to District{province(name)},
@@ -121,6 +120,7 @@ relationship OneToMany {
   Cell to Village{cell(name)},
   Village to Umuturage{village(name)},
   Office{children(name)} to Office{parent(name)}
+  Category{complain} to Complain{category(name)},
 }
 
 relationship ManyToMany{

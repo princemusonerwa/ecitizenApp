@@ -39,7 +39,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="category_id" type="bigint">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_complain__category_id" />
+                <constraints nullable="true" />
             </column>
             <column name="umuturage_id" type="bigint">
                 <constraints nullable="true" />

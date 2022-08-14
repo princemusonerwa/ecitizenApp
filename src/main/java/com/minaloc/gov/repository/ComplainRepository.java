@@ -2,8 +2,9 @@ package com.minaloc.gov.repository;
 
 import com.minaloc.gov.domain.Complain;
 import com.minaloc.gov.domain.Umuturage;
-import com.minaloc.gov.service.dto.ComplainPriorityCount;
-import com.minaloc.gov.service.dto.ComplainStatusCount;
+import com.minaloc.gov.service.dto.ComplainCategoryDTO;
+import com.minaloc.gov.service.dto.ComplainPriorityCountDTO;
+import com.minaloc.gov.service.dto.ComplainStatusCountDTO;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -51,14 +52,16 @@ public interface ComplainRepository
     @Query("select umuturage from Complain complain where complain.id = :id")
     Umuturage findUmuturageComplain(@Param("id") Long id);
 
-    @Query("SELECT new com.minaloc.gov.service.dto.ComplainStatusCount(c.status, COUNT(c.status)) FROM Complain AS c GROUP BY c.status")
-    List<ComplainStatusCount> getCountByStatus();
+    @Query("SELECT new com.minaloc.gov.service.dto.ComplainStatusCountDTO(c.status, COUNT(c.status)) FROM Complain AS c GROUP BY c.status")
+    List<ComplainStatusCountDTO> getCountByStatus();
 
     @Query(
-        "SELECT new com.minaloc.gov.service.dto.ComplainPriorityCount(c.priority, COUNT(c.priority)) FROM Complain AS c GROUP BY c.priority"
+        "SELECT new com.minaloc.gov.service.dto.ComplainPriorityCountDTO(c.priority, COUNT(c.priority)) FROM Complain AS c GROUP BY c.priority"
     )
-    List<ComplainPriorityCount> getCountByPriority();
+    List<ComplainPriorityCountDTO> getCountByPriority();
 
-    @Query("select cy.name, count(*) as count from Complain c LEFT JOIN Category cy on c.category=cy.id group by cy.name")
-    List<Object> getComplainBasedOnCategory();
+    @Query(
+        "select new com.minaloc.gov.service.dto.ComplainCategoryDTO(cy.name, COUNT(*)) from Complain c LEFT JOIN Category cy on c.category=cy.id group by cy.name"
+    )
+    List<ComplainCategoryDTO> getComplainBasedOnCategory();
 }

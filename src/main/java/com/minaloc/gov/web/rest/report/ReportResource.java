@@ -2,8 +2,9 @@ package com.minaloc.gov.web.rest.report;
 
 import com.minaloc.gov.repository.ComplainRepository;
 import com.minaloc.gov.service.ComplainService;
-import com.minaloc.gov.service.dto.ComplainPriorityCount;
-import com.minaloc.gov.service.dto.ComplainStatusCount;
+import com.minaloc.gov.service.dto.ComplainCategoryDTO;
+import com.minaloc.gov.service.dto.ComplainPriorityCountDTO;
+import com.minaloc.gov.service.dto.ComplainStatusCountDTO;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,20 +22,20 @@ public class ReportResource {
     }
 
     @GetMapping("reports/complains/status")
-    ResponseEntity<List<ComplainStatusCount>> getCountByStatus() {
-        List<ComplainStatusCount> result = complainRepository.getCountByStatus();
+    ResponseEntity<List<ComplainStatusCountDTO>> getCountByStatus() {
+        List<ComplainStatusCountDTO> result = complainRepository.getCountByStatus();
         return ResponseEntity.ok().body(result);
     }
 
     @GetMapping("reports/complains/priority")
-    ResponseEntity<List<ComplainPriorityCount>> getCountByPriority() {
-        List<ComplainPriorityCount> result = complainRepository.getCountByPriority();
+    ResponseEntity<List<ComplainPriorityCountDTO>> getCountByPriority() {
+        List<ComplainPriorityCountDTO> result = complainRepository.getCountByPriority();
         return ResponseEntity.ok().body(result);
     }
 
     @GetMapping("reports/complains/category")
-    ResponseEntity<List<Object>> getComplainBasedOnCategory() {
-        List<Object> result = complainRepository.getComplainBasedOnCategory();
+    ResponseEntity<List<ComplainCategoryDTO>> getComplainBasedOnCategory() {
+        List<ComplainCategoryDTO> result = complainRepository.getComplainBasedOnCategory();
         return ResponseEntity.ok().body(result);
     }
 }

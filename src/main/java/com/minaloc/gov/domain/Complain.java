@@ -66,8 +66,8 @@ public class Complain implements Serializable {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "complains" }, allowSetters = true)
     private Category category;
 
     @ManyToOne
