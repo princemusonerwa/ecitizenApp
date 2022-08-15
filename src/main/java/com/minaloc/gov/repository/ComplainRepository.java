@@ -4,6 +4,7 @@ import com.minaloc.gov.domain.Complain;
 import com.minaloc.gov.domain.Umuturage;
 import com.minaloc.gov.service.dto.ComplainCategoryDTO;
 import com.minaloc.gov.service.dto.ComplainPriorityCountDTO;
+import com.minaloc.gov.service.dto.ComplainProvinceCountDTO;
 import com.minaloc.gov.service.dto.ComplainStatusCountDTO;
 import java.util.List;
 import java.util.Optional;
@@ -64,4 +65,9 @@ public interface ComplainRepository
         "select new com.minaloc.gov.service.dto.ComplainCategoryDTO(cy.name, COUNT(*)) from Complain c LEFT JOIN Category cy on c.category=cy.id group by cy.name"
     )
     List<ComplainCategoryDTO> getComplainBasedOnCategory();
+
+    @Query(
+        "select new com.minaloc.gov.service.dto.ComplainProvinceCountDTO(p.name, COUNT(p.name)) from Complain c inner join Umuturage u on c.umuturage.id = u.id inner join Village v on v.id = u.village.id inner join Cell cel on cel.id = v.cell.id inner join Sector s on s.id = cel.sector.id inner join District d on d.id=s.district.id inner join Province p on p.id = d.province.id group by p.name"
+    )
+    List<ComplainProvinceCountDTO> getComplainBasedOnProvince();
 }

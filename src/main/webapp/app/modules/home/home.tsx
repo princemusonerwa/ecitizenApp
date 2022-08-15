@@ -19,6 +19,7 @@ export const Home = () => {
   const [chartPriorityData, setChartPriorityData] = useState([]);
   const [chartStatusData, setChartStatusData] = useState([]);
   const [chartComplainCategoryData, setComplainCategoryData] = useState([]);
+  const [chartComplainByProvinceData, setchartComplainByProvinceData] = useState([]);
 
   const url = 'http://localhost:8080/api/reports/complains';
 
@@ -37,6 +38,25 @@ export const Home = () => {
     setComplainCategoryData(data);
   };
 
+  const reportComplainByProvinceCount = async () => {
+    const { data } = await axios.get(`${url}/provinces`);
+    setchartComplainByProvinceData(data);
+  };
+
+  const options = {
+    plugins: {
+      legend: {
+        position: 'right',
+        rtl: true,
+        labels: {
+          usePointStyle: true,
+          pointStyle: 'circle',
+          padding: 20,
+        },
+      },
+    },
+  };
+
   const priorityData = {
     labels: chartPriorityData.map(d => d.priority),
     datasets: [
@@ -46,6 +66,36 @@ export const Home = () => {
         lineTension: 0.0,
         pointHitRadius: 20,
         data: chartPriorityData.map(d => d.count),
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const provinceCountData = {
+    labels: chartComplainByProvinceData.map(d => d.provinceName),
+    datasets: [
+      {
+        label: 'province',
+        fill: false,
+        lineTension: 0.0,
+        pointHitRadius: 20,
+        data: chartComplainByProvinceData.map(d => d.count),
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
           'rgba(54, 162, 235, 0.2)',
@@ -131,6 +181,7 @@ export const Home = () => {
     reportComplainByPriority();
     reportComplainByStatus();
     reportComplainByCategory();
+    reportComplainByProvinceCount();
   }, []);
 
   return (
@@ -146,23 +197,49 @@ export const Home = () => {
         {account?.login ? (
           <div>
             <Alert color="success">You are logged in as user {account.login}.</Alert>
-            <div className="row">
+            <div className="row" style={{ margin: 50 }}>
               <div className="col-4">
-                <div style={{ width: 290 }}>
+                <div style={{ height: '250px', width: '250px' }}>
                   <h6>Complain priority report</h6>
                   <Pie data={priorityData} />
                 </div>
               </div>
               <div className="col-4">
-                <div style={{ width: 290 }}>
+                <div style={{ height: '250px', width: '250px' }}>
                   <h6>Complain status report</h6>
                   <Pie data={statusData} />
                 </div>
               </div>
               <div className="col-4">
-                <div style={{ width: 290 }}>
+                <div style={{ height: '250px', width: '250px' }}>
                   <h6>Complain based on Category report</h6>
                   <Bar data={complainCategoryData} />
+                </div>
+              </div>
+            </div>
+            <div className="row" style={{ margin: 50 }}>
+              <div className="col-4">
+                <div style={{ height: '250px', width: '250px' }}>
+                  <h6>Complain based on Province report</h6>
+                  <Bar
+                    data={provinceCountData}
+                    options={{
+                      plugins: {
+                        title: {
+                          display: true,
+                          text: 'Complain based on Province report',
+                          padding: {
+                            top: 10,
+                            bottom: 30,
+                          },
+                        },
+                        legend: {
+                          position: 'right',
+                          display: true,
+                        },
+                      },
+                    }}
+                  />
                 </div>
               </div>
             </div>

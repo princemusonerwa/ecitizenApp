@@ -4,6 +4,7 @@ import com.minaloc.gov.repository.ComplainRepository;
 import com.minaloc.gov.service.ComplainService;
 import com.minaloc.gov.service.dto.ComplainCategoryDTO;
 import com.minaloc.gov.service.dto.ComplainPriorityCountDTO;
+import com.minaloc.gov.service.dto.ComplainProvinceCountDTO;
 import com.minaloc.gov.service.dto.ComplainStatusCountDTO;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,12 @@ public class ReportResource {
     @GetMapping("reports/complains/category")
     ResponseEntity<List<ComplainCategoryDTO>> getComplainBasedOnCategory() {
         List<ComplainCategoryDTO> result = complainRepository.getComplainBasedOnCategory();
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("reports/complains/provinces")
+    ResponseEntity<List<ComplainProvinceCountDTO>> getComplainBasedOnProvince() {
+        List<ComplainProvinceCountDTO> result = complainRepository.getComplainBasedOnProvince();
         return ResponseEntity.ok().body(result);
     }
 }
