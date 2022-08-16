@@ -178,8 +178,6 @@ public class ComplainResource {
         @RequestParam("officeType") String officeType,
         @RequestParam("officeName") String officeName
     ) {
-        System.out.println(officeType);
-        System.out.println(officeName);
         Page<Complain> page;
         HttpHeaders headers;
         switch (officeType.toLowerCase()) {
@@ -193,7 +191,6 @@ public class ComplainResource {
                 page = complainQueryService.findAllComplainsByDistrict(pageable, officeName);
                 headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
                 return ResponseEntity.ok().headers(headers).body(page.getContent());
-
             case "sector":
                 log.debug("REST request to get Complains by criteria: {}", criteria);
                 page = complainQueryService.findAllComplainsBySector(pageable, officeName);
@@ -212,7 +209,6 @@ public class ComplainResource {
             default:
                 return ResponseEntity.badRequest().body(null);
         }
-
     }
 
     /**

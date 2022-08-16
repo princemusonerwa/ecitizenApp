@@ -24,14 +24,13 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
   const totalItems = useAppSelector(state => state.complain.totalItems);
 
   const getAllEntities = () => {
-    // dispatch(
-    //   getEntities({
-    //     page: paginationState.activePage - 1,
-    //     size: paginationState.itemsPerPage,
-    //     sort: `${paginationState.sort},${paginationState.order}`,
-    //   })
-    // );
-    console.log("Hello leaders!!!");
+    dispatch(
+      getEntities({
+        page: paginationState.activePage - 1,
+        size: paginationState.itemsPerPage,
+        sort: `${paginationState.sort},${paginationState.order}`,
+      })
+    );
   };
 
   const sortEntities = () => {
@@ -43,7 +42,6 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
   };
 
   useEffect(() => {
-
     sortEntities();
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
@@ -51,7 +49,6 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
     const params = new URLSearchParams(props.location.search);
     const page = params.get('page');
     const sort = params.get(SORT);
-    console.log("Hollaaa!");
     if (page && sort) {
       const sortSplit = sort.split(',');
       setPaginationState({
