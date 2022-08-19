@@ -15,6 +15,9 @@ import com.minaloc.gov.service.dto.UmuturageComplainDTO;
 import com.minaloc.gov.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,7 +28,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -149,7 +154,6 @@ public class ComplainResource {
             umuturageComplainDTO.getOrganizations()
         );
         Complain result = complainService.save(complain);
-
         return ResponseEntity
             .created(new URI("/api/complains/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
@@ -261,10 +265,16 @@ public class ComplainResource {
     @GetMapping("/complains")
     public ResponseEntity<List<Complain>> getAllComplains(
         ComplainCriteria criteria,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @RequestParam(value = "keyword", required = false) String keyword
     ) {
         log.debug("REST request to get Complains by criteria: {}", criteria);
-        Page<Complain> page = complainQueryService.findByCriteria(criteria, pageable);
+        Page<Complain> page;
+        if (keyword != null) {
+            page = complainRepository.findAll(pageable, keyword);
+        } else {
+            page = complainQueryService.findByCriteria(criteria, pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -308,5 +318,13 @@ public class ComplainResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/complains/createdat")
+    public ResponseEntity<List<Complain>> findByCreatedAtBetween(
+        @RequestParam(value = "from") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant startDate,
+        @RequestParam(value = "to") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant endDate
+    ) {
+        return ResponseEntity.ok().body(complainRepository.findByCreatedAtBetween(startDate, endDate));
     }
 }

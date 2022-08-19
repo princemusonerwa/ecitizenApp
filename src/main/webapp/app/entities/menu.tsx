@@ -48,6 +48,7 @@ const EntitiesMenu = () => {
       <MenuItem icon="asterisk" to="/umurimo">
         Umurimo
       </MenuItem>
+
       {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
     </>
   );

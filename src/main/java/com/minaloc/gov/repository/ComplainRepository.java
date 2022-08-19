@@ -6,10 +6,12 @@ import com.minaloc.gov.service.dto.ComplainCategoryDTO;
 import com.minaloc.gov.service.dto.ComplainPriorityCountDTO;
 import com.minaloc.gov.service.dto.ComplainProvinceCountDTO;
 import com.minaloc.gov.service.dto.ComplainStatusCountDTO;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -70,4 +72,14 @@ public interface ComplainRepository
         "select new com.minaloc.gov.service.dto.ComplainProvinceCountDTO(p.name, COUNT(p.name)) from Complain c inner join Umuturage u on c.umuturage.id = u.id inner join Village v on v.id = u.village.id inner join Cell cel on cel.id = v.cell.id inner join Sector s on s.id = cel.sector.id inner join District d on d.id=s.district.id inner join Province p on p.id = d.province.id group by p.name"
     )
     List<ComplainProvinceCountDTO> getComplainBasedOnProvince();
+
+    @Query("select complain from Complain complain where complain.createdAt >= :from and complain.createdAt <= :to")
+    List<Complain> findByCreatedAtBetween(@Param("from") Instant from, @Param("to") Instant to);
+
+    @Query(
+        "select complain from Complain complain where lower(complain.ikibazo) LIKE lower(concat('%', ?1,'%')) OR lower(complain.icyakozwe) LIKE lower(concat('%', ?1,'%'))" +
+        "OR lower(complain.icyakorwa) LIKE lower(concat('%', ?1,'%')) OR lower(complain.umwanzuro) LIKE lower(concat('%', ?1,'%')) OR lower(complain.status) LIKE lower(concat('%', ?1,'%')) OR lower(complain.priority) LIKE lower(concat('%', ?1,'%'))" +
+        "OR lower(complain.category.name) LIKE lower(concat('%', ?1,'%')) OR lower(complain.umuturage.indangamuntu) LIKE lower(concat('%', ?1,'%')) OR lower(complain.umuturage.amazina) LIKE lower(concat('%', ?1,'%'))"
+    )
+    Page<Complain> findAll(Pageable pageable, String keyword);
 }

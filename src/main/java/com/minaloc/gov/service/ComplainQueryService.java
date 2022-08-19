@@ -55,6 +55,7 @@ public class ComplainQueryService extends QueryService<Complain> {
     public Page<Complain> findByCriteria(ComplainCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Complain> specification = createSpecification(criteria);
+
         return complainRepository.findAll(specification, page);
     }
 

@@ -2,6 +2,7 @@ package com.minaloc.gov.web.rest;
 
 import com.minaloc.gov.domain.UserExtended;
 import com.minaloc.gov.repository.UserExtendedRepository;
+import com.minaloc.gov.repository.UserRepository;
 import com.minaloc.gov.service.UserExtendedService;
 import com.minaloc.gov.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -171,5 +172,10 @@ public class UserExtendedResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/user-extendeds/find-user/{id}")
+    public Optional<UserExtended> findUserForUserExtended(@PathVariable Long id) {
+        return userExtendedRepository.findOneWithToOneRelationships(id);
     }
 }
