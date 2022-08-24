@@ -66,6 +66,7 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
   }, [updateSuccess]);
 
   const saveEntity = values => {
+    console.log('Values: ', values);
     values.createdAt = convertDateTimeToServer(values.createdAt);
     values.updatedAt = convertDateTimeToServer(values.updatedAt);
     values.dob = convertDateTimeToServer(values.dob);

@@ -74,7 +74,7 @@ public interface ComplainRepository
     List<ComplainProvinceCountDTO> getComplainBasedOnProvince();
 
     @Query("select complain from Complain complain where complain.createdAt >= :from and complain.createdAt <= :to")
-    List<Complain> findByCreatedAtBetween(@Param("from") Instant from, @Param("to") Instant to);
+    Page<Complain> findAll(Pageable pageable, @Param("from") Instant from, @Param("to") Instant to);
 
     @Query(
         "select complain from Complain complain where lower(complain.ikibazo) LIKE lower(concat('%', ?1,'%')) OR lower(complain.icyakozwe) LIKE lower(concat('%', ?1,'%'))" +

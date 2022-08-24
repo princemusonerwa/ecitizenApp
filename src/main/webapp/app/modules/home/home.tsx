@@ -198,49 +198,97 @@ export const Home = () => {
           <div>
             <Alert color="success">You are logged in as user {account.login}.</Alert>
             <div className="row" style={{ margin: 50 }}>
-              <div className="col-4">
-                <div style={{ height: '250px', width: '250px' }}>
-                  <h6>Complain priority report</h6>
-                  <Pie data={priorityData} />
-                </div>
-              </div>
-              <div className="col-4">
-                <div style={{ height: '250px', width: '250px' }}>
-                  <h6>Complain status report</h6>
-                  <Pie data={statusData} />
-                </div>
-              </div>
-              <div className="col-4">
-                <div style={{ height: '250px', width: '250px' }}>
-                  <h6>Complain based on Category report</h6>
-                  <Bar data={complainCategoryData} />
-                </div>
-              </div>
-            </div>
-            <div className="row" style={{ margin: 50 }}>
-              <div className="col-4">
-                <div style={{ height: '250px', width: '250px' }}>
-                  <h6>Complain based on Province report</h6>
-                  <Bar
-                    data={provinceCountData}
-                    options={{
-                      plugins: {
-                        title: {
-                          display: true,
-                          text: 'Complain based on Province report',
-                          padding: {
-                            top: 10,
-                            bottom: 30,
-                          },
-                        },
-                        legend: {
-                          position: 'right',
-                          display: true,
+              <div className="col-sm-3 col-lg-4 col-md-6">
+                <Pie
+                  data={priorityData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                      title: {
+                        display: true,
+                        text: 'Complain priority report',
+                        padding: {
+                          top: 10,
+                          bottom: 30,
                         },
                       },
-                    }}
-                  />
-                </div>
+                      legend: {
+                        position: 'right',
+                        display: true,
+                      },
+                    },
+                  }}
+                />
+              </div>
+              <div className="col-sm-3 col-lg-4 col-md-6">
+                <Pie
+                  data={statusData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                      title: {
+                        display: true,
+                        text: 'Complain status report',
+                        padding: {
+                          top: 10,
+                          bottom: 30,
+                        },
+                      },
+                      legend: {
+                        position: 'right',
+                        display: true,
+                      },
+                    },
+                  }}
+                />
+              </div>
+              <div className="col-sm-3 col-lg-4 col-md-6">
+                <Bar
+                  data={complainCategoryData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                      title: {
+                        display: true,
+                        text: 'Complain based on Category report',
+                        padding: {
+                          top: 10,
+                          bottom: 30,
+                        },
+                      },
+                      legend: {
+                        position: 'right',
+                        display: true,
+                      },
+                    },
+                  }}
+                />
+              </div>
+              <div className="col-sm-3 col-md-6 col-lg-4">
+                <Bar
+                  data={provinceCountData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                      title: {
+                        display: true,
+                        text: 'Complain based on Province report',
+                        padding: {
+                          top: 10,
+                          bottom: 30,
+                        },
+                      },
+                      legend: {
+                        position: 'right',
+                        display: true,
+                      },
+                    },
+                  }}
+                />
               </div>
             </div>
           </div>

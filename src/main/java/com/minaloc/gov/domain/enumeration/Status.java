@@ -4,7 +4,7 @@ package com.minaloc.gov.domain.enumeration;
  * The Status enumeration.
  */
 public enum Status {
-    PENDING_REVIEW,
+    PENDING,
     ORIENTED,
     ONHOLD,
     SOLVED,

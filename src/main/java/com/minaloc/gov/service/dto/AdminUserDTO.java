@@ -60,6 +60,7 @@ public class AdminUserDTO {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
+        this.phone = user.getPhone();
         this.activated = user.isActivated();
         this.imageUrl = user.getImageUrl();
         this.langKey = user.getLangKey();
@@ -108,6 +109,14 @@ public class AdminUserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getImageUrl() {
@@ -191,9 +200,5 @@ public class AdminUserDTO {
             ", lastModifiedDate=" + lastModifiedDate +
             ", authorities=" + authorities +
             "}";
-    }
-
-    public String getPhone() {
-        return phone;
     }
 }

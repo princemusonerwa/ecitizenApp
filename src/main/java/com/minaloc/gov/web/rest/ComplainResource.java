@@ -266,12 +266,16 @@ public class ComplainResource {
     public ResponseEntity<List<Complain>> getAllComplains(
         ComplainCriteria criteria,
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam(value = "keyword", required = false) String keyword
+        @RequestParam(value = "keyword", required = false) String keyword,
+        @RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant startDate,
+        @RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant endDate
     ) {
         log.debug("REST request to get Complains by criteria: {}", criteria);
         Page<Complain> page;
         if (keyword != null) {
             page = complainRepository.findAll(pageable, keyword);
+        } else if (startDate != null && endDate != null) {
+            page = complainRepository.findAll(pageable, startDate, endDate);
         } else {
             page = complainQueryService.findByCriteria(criteria, pageable);
         }
@@ -321,10 +325,11 @@ public class ComplainResource {
     }
 
     @GetMapping("/complains/createdat")
-    public ResponseEntity<List<Complain>> findByCreatedAtBetween(
+    public ResponseEntity<Page<Complain>> findByCreatedAtBetween(
+        Pageable pageable,
         @RequestParam(value = "from") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant startDate,
         @RequestParam(value = "to") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant endDate
     ) {
-        return ResponseEntity.ok().body(complainRepository.findByCreatedAtBetween(startDate, endDate));
+        return ResponseEntity.ok().body(complainRepository.findAll(pageable, startDate, endDate));
     }
 }

@@ -60,7 +60,7 @@ class ComplainResourceIT {
     private static final String DEFAULT_UMWANZURO = "AAAAAAAAAA";
     private static final String UPDATED_UMWANZURO = "BBBBBBBBBB";
 
-    private static final Status DEFAULT_STATUS = Status.PENDING_REVIEW;
+    private static final Status DEFAULT_STATUS = Status.PENDING;
     private static final Status UPDATED_STATUS = Status.ORIENTED;
 
     private static final Priority DEFAULT_PRIORITY = Priority.HIGH;

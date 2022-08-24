@@ -131,9 +131,6 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
           <Table responsive>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('id')}>
-                  ID <FontAwesomeIcon icon="sort" />
-                </th>
                 <th className="hand" onClick={sort('ikibazo')}>
                   Ikibazo <FontAwesomeIcon icon="sort" />
                 </th>
@@ -164,20 +161,12 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
                 <th>
                   Umuturage <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  User <FontAwesomeIcon icon="sort" />
-                </th>
                 <th />
               </tr>
             </thead>
             <tbody>
               {complainList.map((complain, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/complain/${complain.id}`} color="link" size="sm">
-                      {complain.id}
-                    </Button>
-                  </td>
                   <td>{complain.ikibazo}</td>
                   <td>{complain.icyakozwe}</td>
                   <td>{complain.icyakorwa}</td>
@@ -186,9 +175,8 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{complain.priority}</td>
                   <td>{complain.createdAt ? <TextFormat type="date" value={complain.createdAt} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{complain.updatedAt ? <TextFormat type="date" value={complain.updatedAt} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{complain.category ? <Link to={`/category/${complain.category.id}`}>{complain.category.id}</Link> : ''}</td>
-                  <td>{complain.umuturage ? <Link to={`/umuturage/${complain.umuturage.id}`}>{complain.umuturage.id}</Link> : ''}</td>
-                  <td>{complain.user ? complain.user.login : ''}</td>
+                  <td>{complain.category ? <Link to={`/category/${complain.category.id}`}>{complain.category.name}</Link> : ''}</td>
+                  <td>{complain.umuturage ? <Link to={`/umuturage/${complain.umuturage.id}`}>{complain.umuturage.amazina}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/complain/${complain.id}`} color="info" size="sm" data-cy="entityDetailsButton">
