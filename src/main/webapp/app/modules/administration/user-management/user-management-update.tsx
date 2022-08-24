@@ -23,12 +23,17 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
     };
   }, [props.match.params.login]);
 
+  const handleClose = () => {
+    props.history.push('/admin/user-management');
+  };
+
   const saveUser = values => {
     if (isNew) {
       dispatch(createUser(values));
     } else {
       dispatch(updateUser(values));
     }
+    handleClose();
   };
 
   const isInvalid = false;
@@ -119,23 +124,14 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
                 }}
               />
               <ValidatedField
+                label="Phone"
+                id="umuturage-phone"
                 name="phone"
-                label="Phone number"
-                placeholder={'Your phone number'}
+                data-cy="phone"
                 type="text"
                 validate={{
-                  required: {
-                    value: true,
-                    message: 'Your phone number is required.',
-                  },
-                  minLength: {
-                    value: 13,
-                    message: 'Your phone number is required to be 13 characters.',
-                  },
-                  maxLength: {
-                    value: 13,
-                    message: 'Your phone number is required to be 13 characters.',
-                  },
+                  minLength: { value: 13, message: 'This field is required to be at least 13 characters.' },
+                  maxLength: { value: 13, message: 'This field cannot be longer than 13 characters.' },
                 }}
               />
               <ValidatedField type="checkbox" name="activated" check value={true} disabled={!user.id} label="Activated" />

@@ -112,6 +112,10 @@ export const UserManagement = (props: RouteComponentProps<any>) => {
               Email
               <FontAwesomeIcon icon="sort" />
             </th>
+            <th className="hand" onClick={sort('phone')}>
+              Phone
+              <FontAwesomeIcon icon="sort" />
+            </th>
             <th />
             <th>Profiles</th>
             <th className="hand" onClick={sort('createdDate')}>
@@ -139,6 +143,7 @@ export const UserManagement = (props: RouteComponentProps<any>) => {
               </td>
               <td>{user.login}</td>
               <td>{user.email}</td>
+              <td>{user.phone}</td>
               <td>
                 {user.activated ? (
                   <Button color="success" onClick={toggleActive(user)}>
