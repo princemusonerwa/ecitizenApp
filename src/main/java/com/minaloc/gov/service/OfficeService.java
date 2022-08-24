@@ -3,8 +3,6 @@ package com.minaloc.gov.service;
 import com.minaloc.gov.domain.Office;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface for managing {@link Office}.
@@ -40,14 +38,6 @@ public interface OfficeService {
      * @return the list of entities.
      */
     List<Office> findAll();
-
-    /**
-     * Get all the offices with eager load of many-to-many relationships.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    Page<Office> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Get the "id" office.

@@ -65,18 +65,14 @@ public class OfficeServiceImpl implements OfficeService {
     @Transactional(readOnly = true)
     public List<Office> findAll() {
         log.debug("Request to get all Offices");
-        return officeRepository.findAllWithEagerRelationships();
-    }
-
-    public Page<Office> findAllWithEagerRelationships(Pageable pageable) {
-        return officeRepository.findAllWithEagerRelationships(pageable);
+        return officeRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Office> findOne(Long id) {
         log.debug("Request to get Office : {}", id);
-        return officeRepository.findOneWithEagerRelationships(id);
+        return officeRepository.findById(id);
     }
 
     @Override

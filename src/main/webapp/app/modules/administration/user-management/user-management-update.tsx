@@ -4,11 +4,14 @@ import { Button, Row, Col, FormText } from 'reactstrap';
 import { ValidatedField, ValidatedForm, isEmail } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { getEntities as getOffices } from 'app/entities/office/office.reducer';
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 export const UserManagementUpdate = (props: RouteComponentProps<{ login: string }>) => {
   const [isNew] = useState(!props.match.params || !props.match.params.login);
+  const offices = useAppSelector(state => state.office.entities);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -18,6 +21,7 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
       dispatch(getUser(props.match.params.login));
     }
     dispatch(getRoles());
+    dispatch(getOffices({}));
     return () => {
       dispatch(reset());
     };
@@ -28,10 +32,15 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
   };
 
   const saveUser = values => {
+    const entity = {
+      ...values,
+      office: offices.find(it => it.id.toString() === values.office.toString()),
+    };
+    console.log(entity);
     if (isNew) {
-      dispatch(createUser(values));
+      dispatch(createUser(entity));
     } else {
-      dispatch(updateUser(values));
+      dispatch(updateUser(entity));
     }
     handleClose();
   };
@@ -134,6 +143,25 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
                   maxLength: { value: 13, message: 'This field cannot be longer than 13 characters.' },
                 }}
               />
+              <ValidatedField
+                id="umuyobozi-office"
+                name="office"
+                data-cy="office"
+                label="Area"
+                type="select"
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                }}
+              >
+                <option value="" key="0" />
+                {offices
+                  ? offices.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.name}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <ValidatedField type="checkbox" name="activated" check value={true} disabled={!user.id} label="Activated" />
               <ValidatedField type="select" name="authorities" multiple label="Profiles">
                 {authorities.map(role => (

@@ -21,7 +21,7 @@ export const Home = () => {
   const [chartComplainCategoryData, setComplainCategoryData] = useState([]);
   const [chartComplainByProvinceData, setchartComplainByProvinceData] = useState([]);
 
-  const url = 'http://localhost:8080/api/reports/complains';
+  const url = 'api/reports/complains';
 
   const reportComplainByPriority = async () => {
     const { data } = await axios.get(`${url}/priority`);

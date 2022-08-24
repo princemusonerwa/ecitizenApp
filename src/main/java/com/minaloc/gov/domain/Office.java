@@ -40,9 +40,6 @@ public class Office implements Serializable {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @OneToOne
-    private User user;
-
     @OneToMany(mappedBy = "parent")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "user", "children", "parent" }, allowSetters = true)
@@ -51,6 +48,10 @@ public class Office implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties(value = { "user", "children", "parent" }, allowSetters = true)
     private Office parent;
+
+    @OneToMany(mappedBy = "office")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<User> users = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -61,6 +62,14 @@ public class Office implements Serializable {
     public Office id(Long id) {
         this.setId(id);
         return this;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     public void setId(Long id) {
@@ -104,19 +113,6 @@ public class Office implements Serializable {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public User getUser() {
-        return this.user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Office user(User user) {
-        this.setUser(user);
-        return this;
     }
 
     public Set<Office> getChildren() {
