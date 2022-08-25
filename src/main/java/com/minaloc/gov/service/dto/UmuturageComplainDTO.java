@@ -28,9 +28,10 @@ public class UmuturageComplainDTO {
     private String icyakozwe;
     private String icyakorwa;
     private String umwanzuro;
-    private Instant date;
     private Status status;
     private Priority priority;
+    private Instant createdAt;
+    private Instant updatedAt;
     private Category category;
     private Set<Organization> organizations = new HashSet<>();
 
@@ -146,14 +147,6 @@ public class UmuturageComplainDTO {
         this.umwanzuro = umwanzuro;
     }
 
-    public Instant getDate() {
-        return date;
-    }
-
-    public void setDate(Instant date) {
-        this.date = date;
-    }
-
     public Status getStatus() {
         return status;
     }
@@ -168,6 +161,22 @@ public class UmuturageComplainDTO {
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Category getCategory() {

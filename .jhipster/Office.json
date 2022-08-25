@@ -6,8 +6,10 @@
   "entityTableName": "office",
   "fields": [
     {
-      "fieldName": "parentId",
-      "fieldType": "String"
+      "fieldName": "officeType",
+      "fieldType": "OfficeType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "MINALOC,PROVINCE,DISTRICT,SECTOR,CELL,OTHER"
     },
     {
       "fieldName": "name",
@@ -15,14 +17,8 @@
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "officeType",
-      "fieldType": "OfficeType",
-      "fieldValidateRules": ["required"],
-      "fieldValues": "MINALOC,PROVINCE,DISTRICT,SECTOR,CELL,OTHER"
-    },
-    {
       "fieldName": "createdAt",
-      "fieldType": "LocalDate",
+      "fieldType": "Instant",
       "fieldValidateRules": ["required"]
     }
   ],
@@ -33,22 +29,25 @@
   "readOnly": false,
   "relationships": [
     {
+      "otherEntityField": "login",
       "otherEntityName": "user",
       "otherEntityRelationshipName": "office",
       "ownerSide": true,
-      "relationshipName": "office",
+      "relationshipName": "user",
       "relationshipType": "one-to-one"
     },
     {
-      "otherEntityName": "office",
-      "otherEntityRelationshipName": "children",
-      "relationshipName": "parent",
-      "relationshipType": "one-to-many"
-    },
-    {
+      "otherEntityField": "name",
       "otherEntityName": "office",
       "otherEntityRelationshipName": "parent",
       "relationshipName": "children",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "office",
+      "otherEntityRelationshipName": "children",
+      "relationshipName": "parent",
       "relationshipType": "many-to-one"
     }
   ],

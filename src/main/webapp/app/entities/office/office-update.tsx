@@ -8,7 +8,6 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { getEntities as getOffices } from 'app/entities/office/office.reducer';
 import { IOffice } from 'app/shared/model/office.model';
@@ -49,11 +48,13 @@ export const OfficeUpdate = (props: RouteComponentProps<{ id: string }>) => {
   }, [updateSuccess]);
 
   const saveEntity = values => {
+    values.createdAt = convertDateTimeToServer(values.createdAt);
+
     const entity = {
       ...officeEntity,
       ...values,
-      office: users.find(it => it.id.toString() === values.office.toString()),
-      children: offices.find(it => it.id.toString() === values.children.toString()),
+      user: users.find(it => it.id.toString() === values.user.toString()),
+      parent: offices.find(it => it.id.toString() === values.parent.toString()),
     };
 
     if (isNew) {
@@ -65,12 +66,15 @@ export const OfficeUpdate = (props: RouteComponentProps<{ id: string }>) => {
 
   const defaultValues = () =>
     isNew
-      ? {}
+      ? {
+          createdAt: displayDefaultDateTime(),
+        }
       : {
           officeType: 'MINALOC',
           ...officeEntity,
-          office: officeEntity?.office?.id,
-          children: officeEntity?.children?.id,
+          createdAt: convertDateTimeFromServer(officeEntity.createdAt),
+          user: officeEntity?.user?.id,
+          parent: officeEntity?.parent?.id,
         };
 
   return (
@@ -89,7 +93,13 @@ export const OfficeUpdate = (props: RouteComponentProps<{ id: string }>) => {
           ) : (
             <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
               {!isNew ? <ValidatedField name="id" required readOnly id="office-id" label="ID" validate={{ required: true }} /> : null}
-              <ValidatedField label="Parent Id" id="office-parentId" name="parentId" data-cy="parentId" type="text" />
+              <ValidatedField label="Office Type" id="office-officeType" name="officeType" data-cy="officeType" type="select">
+                {officeTypeValues.map(officeType => (
+                  <option value={officeType} key={officeType}>
+                    {officeType}
+                  </option>
+                ))}
+              </ValidatedField>
               <ValidatedField
                 label="Name"
                 id="office-name"
@@ -100,39 +110,33 @@ export const OfficeUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   required: { value: true, message: 'This field is required.' },
                 }}
               />
-              <ValidatedField label="Office Type" id="office-officeType" name="officeType" data-cy="officeType" type="select">
-                {officeTypeValues.map(officeType => (
-                  <option value={officeType} key={officeType}>
-                    {officeType}
-                  </option>
-                ))}
-              </ValidatedField>
               <ValidatedField
                 label="Created At"
                 id="office-createdAt"
                 name="createdAt"
                 data-cy="createdAt"
-                type="date"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
                 validate={{
                   required: { value: true, message: 'This field is required.' },
                 }}
               />
-              <ValidatedField id="office-office" name="office" data-cy="office" label="Office" type="select">
+              <ValidatedField id="office-user" name="user" data-cy="user" label="User" type="select">
                 <option value="" key="0" />
                 {users
                   ? users.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.login}
                       </option>
                     ))
                   : null}
               </ValidatedField>
-              <ValidatedField id="office-children" name="children" data-cy="children" label="Children" type="select">
+              <ValidatedField id="office-parent" name="parent" data-cy="parent" label="Parent" type="select">
                 <option value="" key="0" />
                 {offices
                   ? offices.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.name}
                       </option>
                     ))
                   : null}

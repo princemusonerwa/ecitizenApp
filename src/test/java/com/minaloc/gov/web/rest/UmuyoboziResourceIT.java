@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.minaloc.gov.IntegrationTest;
+import com.minaloc.gov.domain.Office;
 import com.minaloc.gov.domain.Umurimo;
 import com.minaloc.gov.domain.Umuyobozi;
 import com.minaloc.gov.repository.UmuyoboziRepository;
@@ -726,6 +727,32 @@ class UmuyoboziResourceIT {
 
         // Get all the umuyoboziList where umurimo equals to (umurimoId + 1)
         defaultUmuyoboziShouldNotBeFound("umurimoId.equals=" + (umurimoId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllUmuyobozisByOfficeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        umuyoboziRepository.saveAndFlush(umuyobozi);
+        Office office;
+        if (TestUtil.findAll(em, Office.class).isEmpty()) {
+            office = OfficeResourceIT.createEntity(em);
+            em.persist(office);
+            em.flush();
+        } else {
+            office = TestUtil.findAll(em, Office.class).get(0);
+        }
+        em.persist(office);
+        em.flush();
+        umuyobozi.setOffice(office);
+        umuyoboziRepository.saveAndFlush(umuyobozi);
+        Long officeId = office.getId();
+
+        // Get all the umuyoboziList where office equals to officeId
+        defaultUmuyoboziShouldBeFound("officeId.equals=" + officeId);
+
+        // Get all the umuyoboziList where office equals to (officeId + 1)
+        defaultUmuyoboziShouldNotBeFound("officeId.equals=" + (officeId + 1));
     }
 
     /**

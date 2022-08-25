@@ -1,5 +1,6 @@
 package com.minaloc.gov.domain;
 
+import com.minaloc.gov.domain.enumeration.OfficeType;
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -27,10 +28,9 @@ public class Umurimo implements Serializable {
     @Column(name = "umurimo", length = 100, nullable = false)
     private String umurimo;
 
-    @NotNull
-    @Size(min = 3, max = 100)
-    @Column(name = "urwego", length = 100, nullable = false)
-    private String urwego;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "office_type")
+    private OfficeType officeType;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -60,17 +60,17 @@ public class Umurimo implements Serializable {
         this.umurimo = umurimo;
     }
 
-    public String getUrwego() {
-        return this.urwego;
+    public OfficeType getOfficeType() {
+        return this.officeType;
     }
 
-    public Umurimo urwego(String urwego) {
-        this.setUrwego(urwego);
+    public Umurimo officeType(OfficeType officeType) {
+        this.setOfficeType(officeType);
         return this;
     }
 
-    public void setUrwego(String urwego) {
-        this.urwego = urwego;
+    public void setOfficeType(OfficeType officeType) {
+        this.officeType = officeType;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -98,7 +98,7 @@ public class Umurimo implements Serializable {
         return "Umurimo{" +
             "id=" + getId() +
             ", umurimo='" + getUmurimo() + "'" +
-            ", urwego='" + getUrwego() + "'" +
+            ", officeType='" + getOfficeType() + "'" +
             "}";
     }
 }

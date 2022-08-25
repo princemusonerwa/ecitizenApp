@@ -11,14 +11,17 @@
       }
   ],
   "fields": [
-      {
-          "fieldName": "phone",
-          "fieldType": "String"
-      }
+    {
+      "fieldName": "phone",
+      "fieldType": "String",
+      "fieldValidateRules": ["minlength", "maxlength"],
+      "fieldValidateRulesMaxlength": "13",
+      "fieldValidateRulesMinlength": "13"
+    }
   ],
   "changelogDate": "20220713102526",
   "dto": "no",
-  "service": "no",
+  "service": "serviceImpl",
   "entityTableName": "user_extended",
   "jpaMetamodelFiltering": false,
   "pagination": "no"

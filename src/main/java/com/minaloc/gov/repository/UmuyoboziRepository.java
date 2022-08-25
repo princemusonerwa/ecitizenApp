@@ -27,14 +27,16 @@ public interface UmuyoboziRepository extends JpaRepository<Umuyobozi, Long>, Jpa
     }
 
     @Query(
-        value = "select distinct umuyobozi from Umuyobozi umuyobozi left join fetch umuyobozi.umurimo",
+        value = "select distinct umuyobozi from Umuyobozi umuyobozi left join fetch umuyobozi.umurimo left join fetch umuyobozi.office",
         countQuery = "select count(distinct umuyobozi) from Umuyobozi umuyobozi"
     )
     Page<Umuyobozi> findAllWithToOneRelationships(Pageable pageable);
 
-    @Query("select distinct umuyobozi from Umuyobozi umuyobozi left join fetch umuyobozi.umurimo")
+    @Query("select distinct umuyobozi from Umuyobozi umuyobozi left join fetch umuyobozi.umurimo left join fetch umuyobozi.office")
     List<Umuyobozi> findAllWithToOneRelationships();
 
-    @Query("select umuyobozi from Umuyobozi umuyobozi left join fetch umuyobozi.umurimo where umuyobozi.id =:id")
+    @Query(
+        "select umuyobozi from Umuyobozi umuyobozi left join fetch umuyobozi.umurimo left join fetch umuyobozi.office where umuyobozi.id =:id"
+    )
     Optional<Umuyobozi> findOneWithToOneRelationships(@Param("id") Long id);
 }

@@ -8,11 +8,16 @@ import com.minaloc.gov.repository.UmuturageRepository;
 import com.minaloc.gov.repository.UserRepository;
 import com.minaloc.gov.service.ComplainQueryService;
 import com.minaloc.gov.service.ComplainService;
+import com.minaloc.gov.service.EmailAlreadyUsedException;
+import com.minaloc.gov.service.UmuturageService;
 import com.minaloc.gov.service.criteria.ComplainCriteria;
 import com.minaloc.gov.service.dto.UmuturageComplainDTO;
 import com.minaloc.gov.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,7 +28,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,18 +64,22 @@ public class ComplainResource {
 
     private final UmuturageRepository umuturageRepository;
 
+    private final UmuturageService umuturageService;
+
     public ComplainResource(
         ComplainService complainService,
         ComplainRepository complainRepository,
         ComplainQueryService complainQueryService,
         UserRepository userRepository,
-        UmuturageRepository umuturageRepository
+        UmuturageRepository umuturageRepository,
+        UmuturageService umuturageService
     ) {
         this.complainService = complainService;
         this.complainRepository = complainRepository;
         this.complainQueryService = complainQueryService;
         this.userRepository = userRepository;
         this.umuturageRepository = umuturageRepository;
+        this.umuturageService = umuturageService;
     }
 
     /**
@@ -83,7 +94,28 @@ public class ComplainResource {
         throws URISyntaxException {
         log.debug("REST request to save Complain : {}", umuturageComplainDTO);
         if (umuturageComplainDTO.getId() != null) {
-            throw new BadRequestAlertException("A new complain cannot already have an ID", ENTITY_NAME, "idexists");
+            throw new BadRequestAlertException("A new complain cannot already have an ID", ENTITY_NAME, "id exists");
+        }
+
+        Optional<Umuturage> existingUmuturage = umuturageRepository.findByIndangamuntu(umuturageComplainDTO.getIndangamuntu());
+
+        Optional<Umuturage> existingEmail = umuturageRepository.findOneByEmailIgnoreCase(umuturageComplainDTO.getEmail());
+
+        Optional<Umuturage> existingPhone = umuturageRepository.findOneByEmailIgnoreCase(umuturageComplainDTO.getPhone());
+
+        if (
+            existingUmuturage.isPresent() &&
+            (existingUmuturage.get().getIndangamuntu().equalsIgnoreCase(umuturageComplainDTO.getIndangamuntu()))
+        ) {
+            throw new BadRequestAlertException("Umuturage with the given indangamuntu already exists", ENTITY_NAME, "indangamuntuexists");
+        }
+
+        if (existingEmail.isPresent() && (existingEmail.get().getEmail().equalsIgnoreCase(umuturageComplainDTO.getEmail()))) {
+            throw new BadRequestAlertException("Umuturage with the given email already exists", ENTITY_NAME, "emailexists");
+        }
+
+        if (existingPhone.isPresent() && (existingPhone.get().getEmail().equalsIgnoreCase(umuturageComplainDTO.getPhone()))) {
+            throw new BadRequestAlertException("Umuturage with the given phone already exists", ENTITY_NAME, "phoneexists");
         }
 
         String username = "";
@@ -94,6 +126,7 @@ public class ComplainResource {
         }
 
         User user = userRepository.findByLogin(username);
+
         Umuturage umuturage = new Umuturage(
             umuturageComplainDTO.getIndangamuntu(),
             umuturageComplainDTO.getAmazina(),
@@ -111,9 +144,10 @@ public class ComplainResource {
             umuturageComplainDTO.getIcyakozwe(),
             umuturageComplainDTO.getIcyakorwa(),
             umuturageComplainDTO.getUmwanzuro(),
-            umuturageComplainDTO.getDate(),
             umuturageComplainDTO.getStatus(),
             umuturageComplainDTO.getPriority(),
+            umuturageComplainDTO.getCreatedAt(),
+            umuturageComplainDTO.getUpdatedAt(),
             umuturageComplainDTO.getCategory(),
             umuturage,
             user,
@@ -139,19 +173,44 @@ public class ComplainResource {
     @PutMapping("/complains/{id}")
     public ResponseEntity<Complain> updateComplain(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Complain complain
+        @Valid @RequestBody UmuturageComplainDTO umuturageComplainDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update Complain : {}, {}", id, complain);
-        if (complain.getId() == null) {
+        log.debug("REST request to update Complain : {}, {}", id, umuturageComplainDTO);
+        if (umuturageComplainDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, complain.getId())) {
+        if (!Objects.equals(id, umuturageComplainDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
         if (!complainRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
+
+        Complain complain = complainRepository.getById(id);
+
+        complain.setIkibazo(umuturageComplainDTO.getIkibazo());
+        complain.setIcyakozwe(umuturageComplainDTO.getIcyakozwe());
+        complain.setIcyakorwa(umuturageComplainDTO.getIcyakorwa());
+        complain.setUmwanzuro(umuturageComplainDTO.getUmwanzuro());
+        complain.setStatus(umuturageComplainDTO.getStatus());
+        complain.setPriority(umuturageComplainDTO.getPriority());
+        complain.setUpdatedAt(umuturageComplainDTO.getUpdatedAt());
+        complain.setCategory(umuturageComplainDTO.getCategory());
+        complain.setOrganizations(umuturageComplainDTO.getOrganizations());
+
+        Umuturage umuturage = complain.getUmuturage();
+
+        umuturage.setIndangamuntu(umuturageComplainDTO.getIndangamuntu());
+        umuturage.setAmazina(umuturageComplainDTO.getAmazina());
+        umuturage.setDob(umuturageComplainDTO.getDob());
+        umuturage.setUbudeheCategory(umuturageComplainDTO.getUbudeheCategory());
+        umuturage.setPhone(umuturageComplainDTO.getPhone());
+        umuturage.setEmail(umuturageComplainDTO.getEmail());
+        umuturage.setVillage(umuturageComplainDTO.getVillage());
+        umuturageService.update(umuturage);
+
+        complain.setUmuturage(umuturage);
 
         Complain result = complainService.update(complain);
         return ResponseEntity
@@ -206,10 +265,20 @@ public class ComplainResource {
     @GetMapping("/complains")
     public ResponseEntity<List<Complain>> getAllComplains(
         ComplainCriteria criteria,
-        @org.springdoc.api.annotations.ParameterObject Pageable pageable
+        @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @RequestParam(value = "keyword", required = false) String keyword,
+        @RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant startDate,
+        @RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant endDate
     ) {
         log.debug("REST request to get Complains by criteria: {}", criteria);
-        Page<Complain> page = complainQueryService.findByCriteria(criteria, pageable);
+        Page<Complain> page;
+        if (keyword != null) {
+            page = complainRepository.findAll(pageable, keyword);
+        } else if (startDate != null && endDate != null) {
+            page = complainRepository.findAll(pageable, startDate, endDate);
+        } else {
+            page = complainQueryService.findByCriteria(criteria, pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -253,5 +322,14 @@ public class ComplainResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/complains/createdat")
+    public ResponseEntity<Page<Complain>> findByCreatedAtBetween(
+        Pageable pageable,
+        @RequestParam(value = "from") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant startDate,
+        @RequestParam(value = "to") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant endDate
+    ) {
+        return ResponseEntity.ok().body(complainRepository.findAll(pageable, startDate, endDate));
     }
 }

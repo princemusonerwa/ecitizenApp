@@ -71,12 +71,12 @@ public class Umuturage implements Serializable {
 
     public Umuturage(
         @NotNull @Size(min = 16, max = 16) String indangamuntu,
-        @NotNull @Size(min = 3, max = 255) String amazina,
-        @NotNull Instant dob,
-        @NotNull Gender gender,
-        @NotNull @Size(min = 1, max = 1) String ubudeheCategory,
+        String amazina,
+        Instant dob,
+        Gender gender,
+        String ubudeheCategory,
         @Size(min = 13, max = 13) String phone,
-        @NotNull @Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$") String email,
+        String email,
         User user,
         Village village
     ) {

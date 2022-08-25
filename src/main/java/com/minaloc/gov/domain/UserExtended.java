@@ -1,7 +1,6 @@
 package com.minaloc.gov.domain;
 
 import java.io.Serializable;
-import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
@@ -18,18 +17,28 @@ public class UserExtended implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id")
     private Long id;
 
-    @OneToOne
-    @MapsId
-    private User user;
-
-    @Column(name = "phone")
+    @Size(min = 13, max = 13)
+    @Column(name = "phone", length = 13)
     private String phone;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    @OneToOne
+    @JoinColumn(unique = true)
+    private User user;
+
+    // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public UserExtended id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
@@ -37,11 +46,11 @@ public class UserExtended implements Serializable {
     }
 
     public String getPhone() {
-        return phone;
+        return this.phone;
     }
 
     public UserExtended phone(String phone) {
-        this.phone = phone;
+        this.setPhone(phone);
         return this;
     }
 
@@ -50,37 +59,43 @@ public class UserExtended implements Serializable {
     }
 
     public User getUser() {
-        return user;
+        return this.user;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    public UserExtended user(User user) {
+        this.setUser(user);
+        return this;
+    }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof UserExtended)) {
             return false;
         }
-        UserExtended userExtended = (UserExtended) o;
-        if (userExtended.getId() == null || getId() == null) {
-            return false;
-        }
-        return Objects.equals(getId(), userExtended.getId());
+        return id != null && id.equals(((UserExtended) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
-        return "User Extended{" + "id=" + getId() + ", phone='" + getPhone() + "'" + "}";
+        return "UserExtended{" +
+            "id=" + getId() +
+            ", phone='" + getPhone() + "'" +
+            "}";
     }
 }

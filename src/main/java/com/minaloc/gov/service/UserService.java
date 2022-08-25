@@ -3,9 +3,7 @@ package com.minaloc.gov.service;
 import com.minaloc.gov.config.Constants;
 import com.minaloc.gov.domain.Authority;
 import com.minaloc.gov.domain.User;
-import com.minaloc.gov.domain.UserExtended;
 import com.minaloc.gov.repository.AuthorityRepository;
-import com.minaloc.gov.repository.UserExtendedRepository;
 import com.minaloc.gov.repository.UserRepository;
 import com.minaloc.gov.security.AuthoritiesConstants;
 import com.minaloc.gov.security.SecurityUtils;
@@ -43,20 +41,16 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    private final UserExtendedRepository userExtendedRepository;
-
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager,
-        UserExtendedRepository userExtendedRepository
+        CacheManager cacheManager
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
-        this.userExtendedRepository = userExtendedRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -151,13 +145,16 @@ public class UserService {
         return true;
     }
 
-    public User createUser(AdminUserDTO userDTO, String phone) {
+    public User createUser(AdminUserDTO userDTO) {
         User user = new User();
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         if (userDTO.getEmail() != null) {
             user.setEmail(userDTO.getEmail().toLowerCase());
+        }
+        if (userDTO.getPhone() != null) {
+            user.setPhone(userDTO.getPhone());
         }
         user.setImageUrl(userDTO.getImageUrl());
         if (userDTO.getLangKey() == null) {
@@ -170,6 +167,7 @@ public class UserService {
         user.setResetKey(RandomUtil.generateResetKey());
         user.setResetDate(Instant.now());
         user.setActivated(true);
+        user.setOffice(userDTO.getOffice());
         if (userDTO.getAuthorities() != null) {
             Set<Authority> authorities = userDTO
                 .getAuthorities()
@@ -181,15 +179,7 @@ public class UserService {
             user.setAuthorities(authorities);
         }
         userRepository.save(user);
-        userRepository.save(user);
-        this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
-        // Create and save the UserExtra entity
-        UserExtended newUserExtended = new UserExtended();
-        newUserExtended.setUser(user);
-        newUserExtended.setPhone(phone);
-        userExtendedRepository.save(newUserExtended);
-        log.debug("Created Information for UserExtended: {}", newUserExtended);
         this.clearUserCaches(user);
         return user;
     }
@@ -213,9 +203,11 @@ public class UserService {
                 if (userDTO.getEmail() != null) {
                     user.setEmail(userDTO.getEmail().toLowerCase());
                 }
+                user.setPhone(userDTO.getPhone());
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());
                 user.setLangKey(userDTO.getLangKey());
+                user.setOffice(userDTO.getOffice());
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
                 userDTO
@@ -251,7 +243,7 @@ public class UserService {
      * @param langKey   language key.
      * @param imageUrl  image URL of user.
      */
-    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
+    public void updateUser(String firstName, String lastName, String email, String phone, String langKey, String imageUrl) {
         SecurityUtils
             .getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
@@ -260,6 +252,9 @@ public class UserService {
                 user.setLastName(lastName);
                 if (email != null) {
                     user.setEmail(email.toLowerCase());
+                }
+                if (phone != null) {
+                    user.setPhone(phone);
                 }
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);

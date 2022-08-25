@@ -66,8 +66,9 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
   }, [updateSuccess]);
 
   const saveEntity = values => {
-    console.log(values);
-    values.date = convertDateTimeToServer(values.date);
+    console.log('Values: ', values);
+    values.createdAt = convertDateTimeToServer(values.createdAt);
+    values.updatedAt = convertDateTimeToServer(values.updatedAt);
     values.dob = convertDateTimeToServer(values.dob);
 
     const entity = {
@@ -94,9 +95,18 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
           status: 'PENDING_REVIEW',
           priority: 'HIGH',
           ...complainEntity,
-          date: convertDateTimeFromServer(complainEntity.date),
+          createdAt: convertDateTimeFromServer(complainEntity.createdAt),
+          updatedAt: convertDateTimeFromServer(complainEntity.updatedAt),
           category: complainEntity?.category?.id,
           umuturage: complainEntity?.umuturage?.id,
+          indangamuntu: complainEntity?.umuturage?.indangamuntu,
+          amazina: complainEntity?.umuturage?.amazina,
+          dob: convertDateTimeFromServer(complainEntity?.umuturage?.dob),
+          gender: complainEntity?.umuturage?.gender,
+          ubudeheCategory: complainEntity?.umuturage?.ubudeheCategory,
+          phone: complainEntity?.umuturage?.phone,
+          email: complainEntity?.umuturage?.email,
+          village: complainEntity?.umuturage?.village,
           organizations: complainEntity?.organizations?.map(e => e.id.toString()),
         };
 
@@ -228,17 +238,6 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
               />
               <ValidatedField label="Icyakorwa" id="complain-icyakorwa" name="icyakorwa" data-cy="icyakorwa" type="textarea" />
               <ValidatedField label="Umwanzuro" id="complain-umwanzuro" name="umwanzuro" data-cy="umwanzuro" type="textarea" />
-              <ValidatedField
-                label="Date"
-                id="complain-date"
-                name="date"
-                data-cy="date"
-                type="datetime-local"
-                placeholder="YYYY-MM-DD HH:mm"
-                validate={{
-                  required: { value: true, message: 'This field is required.' },
-                }}
-              />
               <ValidatedField label="Status" id="complain-status" name="status" data-cy="status" type="select">
                 {statusValues.map(status => (
                   <option value={status} key={status}>
@@ -253,6 +252,30 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   </option>
                 ))}
               </ValidatedField>
+              <ValidatedField
+                label="Created At"
+                id="complain-createdAt"
+                name="createdAt"
+                data-cy="createdAt"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+                value={displayDefaultDateTime()}
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                }}
+              />
+              <ValidatedField
+                label="Updated At"
+                id="complain-updatedAt"
+                name="updatedAt"
+                data-cy="updatedAt"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+                value={displayDefaultDateTime()}
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                }}
+              />
               <ValidatedField id="complain-category" name="category" data-cy="category" label="Category" type="select">
                 <option value="" key="0" />
                 {categories
@@ -263,16 +286,6 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
                     ))
                   : null}
               </ValidatedField>
-              {/* <ValidatedField id="complain-umuturage" name="umuturage" data-cy="umuturage" label="Umuturage" type="select">
-                <option value="" key="0" />
-                {umuturages
-                  ? umuturages.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField> */}
               <ValidatedField
                 label="Organization"
                 id="complain-organization"

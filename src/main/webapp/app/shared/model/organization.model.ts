@@ -5,7 +5,7 @@ export interface IOrganization {
   id?: number;
   name?: string;
   location?: string;
-  organization?: IUser | null;
+  user?: IUser | null;
   complains?: IComplain[] | null;
 }
 

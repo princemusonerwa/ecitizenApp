@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.minaloc.gov.IntegrationTest;
 import com.minaloc.gov.domain.Umurimo;
+import com.minaloc.gov.domain.enumeration.OfficeType;
 import com.minaloc.gov.repository.UmurimoRepository;
 import com.minaloc.gov.service.criteria.UmurimoCriteria;
 import java.util.List;
@@ -33,8 +34,8 @@ class UmurimoResourceIT {
     private static final String DEFAULT_UMURIMO = "AAAAAAAAAA";
     private static final String UPDATED_UMURIMO = "BBBBBBBBBB";
 
-    private static final String DEFAULT_URWEGO = "AAAAAAAAAA";
-    private static final String UPDATED_URWEGO = "BBBBBBBBBB";
+    private static final String DEFAULT_OFFICETYPE = "PROVINCE";
+    private static final String UPDATED_OFFICETYPE = "DISTRICT";
 
     private static final String ENTITY_API_URL = "/api/umurimos";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -60,7 +61,7 @@ class UmurimoResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Umurimo createEntity(EntityManager em) {
-        Umurimo umurimo = new Umurimo().umurimo(DEFAULT_UMURIMO).urwego(DEFAULT_URWEGO);
+        Umurimo umurimo = new Umurimo().umurimo(DEFAULT_UMURIMO).officeType(OfficeType.valueOf(DEFAULT_OFFICETYPE));
         return umurimo;
     }
 
@@ -71,7 +72,7 @@ class UmurimoResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Umurimo createUpdatedEntity(EntityManager em) {
-        Umurimo umurimo = new Umurimo().umurimo(UPDATED_UMURIMO).urwego(UPDATED_URWEGO);
+        Umurimo umurimo = new Umurimo().umurimo(UPDATED_UMURIMO).officeType(OfficeType.valueOf(UPDATED_OFFICETYPE));
         return umurimo;
     }
 
@@ -94,7 +95,7 @@ class UmurimoResourceIT {
         assertThat(umurimoList).hasSize(databaseSizeBeforeCreate + 1);
         Umurimo testUmurimo = umurimoList.get(umurimoList.size() - 1);
         assertThat(testUmurimo.getUmurimo()).isEqualTo(DEFAULT_UMURIMO);
-        assertThat(testUmurimo.getUrwego()).isEqualTo(DEFAULT_URWEGO);
+        assertThat(testUmurimo.getOfficeType()).isEqualTo(OfficeType.valueOf(DEFAULT_OFFICETYPE));
     }
 
     @Test
@@ -137,7 +138,7 @@ class UmurimoResourceIT {
     void checkUrwegoIsRequired() throws Exception {
         int databaseSizeBeforeTest = umurimoRepository.findAll().size();
         // set the field null
-        umurimo.setUrwego(null);
+        umurimo.setOfficeType(null);
 
         // Create the Umurimo, which fails.
 
@@ -162,7 +163,7 @@ class UmurimoResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(umurimo.getId().intValue())))
             .andExpect(jsonPath("$.[*].umurimo").value(hasItem(DEFAULT_UMURIMO)))
-            .andExpect(jsonPath("$.[*].urwego").value(hasItem(DEFAULT_URWEGO)));
+            .andExpect(jsonPath("$.[*].urwego").value(hasItem(OfficeType.valueOf(DEFAULT_OFFICETYPE))));
     }
 
     @Test
@@ -178,7 +179,7 @@ class UmurimoResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(umurimo.getId().intValue()))
             .andExpect(jsonPath("$.umurimo").value(DEFAULT_UMURIMO))
-            .andExpect(jsonPath("$.urwego").value(DEFAULT_URWEGO));
+            .andExpect(jsonPath("$.urwego").value(OfficeType.valueOf(DEFAULT_OFFICETYPE)));
     }
 
     @Test
@@ -284,10 +285,10 @@ class UmurimoResourceIT {
         umurimoRepository.saveAndFlush(umurimo);
 
         // Get all the umurimoList where urwego equals to DEFAULT_URWEGO
-        defaultUmurimoShouldBeFound("urwego.equals=" + DEFAULT_URWEGO);
+        defaultUmurimoShouldBeFound("officeType.equals=" + OfficeType.valueOf(DEFAULT_OFFICETYPE));
 
         // Get all the umurimoList where urwego equals to UPDATED_URWEGO
-        defaultUmurimoShouldNotBeFound("urwego.equals=" + UPDATED_URWEGO);
+        defaultUmurimoShouldNotBeFound("officeType.equals=" + OfficeType.valueOf(UPDATED_OFFICETYPE));
     }
 
     @Test
@@ -297,10 +298,10 @@ class UmurimoResourceIT {
         umurimoRepository.saveAndFlush(umurimo);
 
         // Get all the umurimoList where urwego not equals to DEFAULT_URWEGO
-        defaultUmurimoShouldNotBeFound("urwego.notEquals=" + DEFAULT_URWEGO);
+        defaultUmurimoShouldNotBeFound("officeType.notEquals=" + OfficeType.valueOf(DEFAULT_OFFICETYPE));
 
         // Get all the umurimoList where urwego not equals to UPDATED_URWEGO
-        defaultUmurimoShouldBeFound("urwego.notEquals=" + UPDATED_URWEGO);
+        defaultUmurimoShouldBeFound("urwego.notEquals=" + OfficeType.valueOf(UPDATED_OFFICETYPE));
     }
 
     @Test
@@ -310,10 +311,12 @@ class UmurimoResourceIT {
         umurimoRepository.saveAndFlush(umurimo);
 
         // Get all the umurimoList where urwego in DEFAULT_URWEGO or UPDATED_URWEGO
-        defaultUmurimoShouldBeFound("urwego.in=" + DEFAULT_URWEGO + "," + UPDATED_URWEGO);
+        defaultUmurimoShouldBeFound(
+            "officeType.in=" + OfficeType.valueOf(DEFAULT_OFFICETYPE) + "," + OfficeType.valueOf(UPDATED_OFFICETYPE)
+        );
 
         // Get all the umurimoList where urwego equals to UPDATED_URWEGO
-        defaultUmurimoShouldNotBeFound("urwego.in=" + UPDATED_URWEGO);
+        defaultUmurimoShouldNotBeFound("officeType.in=" + OfficeType.valueOf(UPDATED_OFFICETYPE));
     }
 
     @Test
@@ -336,10 +339,10 @@ class UmurimoResourceIT {
         umurimoRepository.saveAndFlush(umurimo);
 
         // Get all the umurimoList where urwego contains DEFAULT_URWEGO
-        defaultUmurimoShouldBeFound("urwego.contains=" + DEFAULT_URWEGO);
+        defaultUmurimoShouldBeFound("officeType.contains=" + OfficeType.valueOf(DEFAULT_OFFICETYPE));
 
         // Get all the umurimoList where urwego contains UPDATED_URWEGO
-        defaultUmurimoShouldNotBeFound("urwego.contains=" + UPDATED_URWEGO);
+        defaultUmurimoShouldNotBeFound("officeType.contains=" + OfficeType.valueOf(UPDATED_OFFICETYPE));
     }
 
     @Test
@@ -349,10 +352,10 @@ class UmurimoResourceIT {
         umurimoRepository.saveAndFlush(umurimo);
 
         // Get all the umurimoList where urwego does not contain DEFAULT_URWEGO
-        defaultUmurimoShouldNotBeFound("urwego.doesNotContain=" + DEFAULT_URWEGO);
+        defaultUmurimoShouldNotBeFound("officeType.doesNotContain=" + OfficeType.valueOf(DEFAULT_OFFICETYPE));
 
         // Get all the umurimoList where urwego does not contain UPDATED_URWEGO
-        defaultUmurimoShouldBeFound("urwego.doesNotContain=" + UPDATED_URWEGO);
+        defaultUmurimoShouldBeFound("officeType.doesNotContain=" + OfficeType.valueOf(UPDATED_OFFICETYPE));
     }
 
     /**
@@ -365,7 +368,7 @@ class UmurimoResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(umurimo.getId().intValue())))
             .andExpect(jsonPath("$.[*].umurimo").value(hasItem(DEFAULT_UMURIMO)))
-            .andExpect(jsonPath("$.[*].urwego").value(hasItem(DEFAULT_URWEGO)));
+            .andExpect(jsonPath("$.[*].urwego").value(hasItem(OfficeType.valueOf(DEFAULT_OFFICETYPE))));
 
         // Check, that the count call also returns 1
         restUmurimoMockMvc
@@ -413,7 +416,7 @@ class UmurimoResourceIT {
         Umurimo updatedUmurimo = umurimoRepository.findById(umurimo.getId()).get();
         // Disconnect from session so that the updates on updatedUmurimo are not directly saved in db
         em.detach(updatedUmurimo);
-        updatedUmurimo.umurimo(UPDATED_UMURIMO).urwego(UPDATED_URWEGO);
+        updatedUmurimo.umurimo(UPDATED_UMURIMO).officeType(OfficeType.valueOf(UPDATED_OFFICETYPE));
 
         restUmurimoMockMvc
             .perform(
@@ -428,7 +431,7 @@ class UmurimoResourceIT {
         assertThat(umurimoList).hasSize(databaseSizeBeforeUpdate);
         Umurimo testUmurimo = umurimoList.get(umurimoList.size() - 1);
         assertThat(testUmurimo.getUmurimo()).isEqualTo(UPDATED_UMURIMO);
-        assertThat(testUmurimo.getUrwego()).isEqualTo(UPDATED_URWEGO);
+        assertThat(testUmurimo.getOfficeType()).isEqualTo(OfficeType.valueOf(UPDATED_OFFICETYPE));
     }
 
     @Test
@@ -499,7 +502,7 @@ class UmurimoResourceIT {
         Umurimo partialUpdatedUmurimo = new Umurimo();
         partialUpdatedUmurimo.setId(umurimo.getId());
 
-        partialUpdatedUmurimo.umurimo(UPDATED_UMURIMO).urwego(UPDATED_URWEGO);
+        partialUpdatedUmurimo.umurimo(UPDATED_UMURIMO).officeType(OfficeType.valueOf(UPDATED_OFFICETYPE));
 
         restUmurimoMockMvc
             .perform(
@@ -514,7 +517,7 @@ class UmurimoResourceIT {
         assertThat(umurimoList).hasSize(databaseSizeBeforeUpdate);
         Umurimo testUmurimo = umurimoList.get(umurimoList.size() - 1);
         assertThat(testUmurimo.getUmurimo()).isEqualTo(UPDATED_UMURIMO);
-        assertThat(testUmurimo.getUrwego()).isEqualTo(UPDATED_URWEGO);
+        assertThat(testUmurimo.getOfficeType()).isEqualTo(OfficeType.valueOf(UPDATED_OFFICETYPE));
     }
 
     @Test
@@ -529,7 +532,7 @@ class UmurimoResourceIT {
         Umurimo partialUpdatedUmurimo = new Umurimo();
         partialUpdatedUmurimo.setId(umurimo.getId());
 
-        partialUpdatedUmurimo.umurimo(UPDATED_UMURIMO).urwego(UPDATED_URWEGO);
+        partialUpdatedUmurimo.umurimo(UPDATED_UMURIMO).officeType(OfficeType.valueOf(UPDATED_OFFICETYPE));
 
         restUmurimoMockMvc
             .perform(
@@ -544,7 +547,7 @@ class UmurimoResourceIT {
         assertThat(umurimoList).hasSize(databaseSizeBeforeUpdate);
         Umurimo testUmurimo = umurimoList.get(umurimoList.size() - 1);
         assertThat(testUmurimo.getUmurimo()).isEqualTo(UPDATED_UMURIMO);
-        assertThat(testUmurimo.getUrwego()).isEqualTo(UPDATED_URWEGO);
+        assertThat(testUmurimo.getOfficeType()).isEqualTo(OfficeType.valueOf(UPDATED_OFFICETYPE));
     }
 
     @Test

@@ -3,7 +3,7 @@ package com.minaloc.gov.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.minaloc.gov.domain.enumeration.OfficeType;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
@@ -27,34 +27,31 @@ public class Office implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "parent_id")
-    private String parentId;
-
-    @NotNull
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "office_type", nullable = false)
     private OfficeType officeType;
 
     @NotNull
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @NotNull
     @Column(name = "created_at", nullable = false)
-    private LocalDate createdAt;
+    private Instant createdAt;
 
-    @OneToOne
-    @JoinColumn(unique = true)
-    private User office;
-
-    @OneToMany(mappedBy = "children")
+    @OneToMany(mappedBy = "parent")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "office", "parents", "children" }, allowSetters = true)
-    private Set<Office> parents = new HashSet<>();
+    @JsonIgnoreProperties(value = { "user", "children", "parent" }, allowSetters = true)
+    private Set<Office> children = new HashSet<>();
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "office", "parents", "children" }, allowSetters = true)
-    private Office children;
+    @JsonIgnoreProperties(value = { "user", "children", "parent" }, allowSetters = true)
+    private Office parent;
+
+    @OneToMany(mappedBy = "office")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<User> users = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -67,34 +64,16 @@ public class Office implements Serializable {
         return this;
     }
 
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getParentId() {
-        return this.parentId;
-    }
-
-    public Office parentId(String parentId) {
-        this.setParentId(parentId);
-        return this;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public Office name(String name) {
-        this.setName(name);
-        return this;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public OfficeType getOfficeType() {
@@ -110,73 +89,73 @@ public class Office implements Serializable {
         this.officeType = officeType;
     }
 
-    public LocalDate getCreatedAt() {
+    public String getName() {
+        return this.name;
+    }
+
+    public Office name(String name) {
+        this.setName(name);
+        return this;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Instant getCreatedAt() {
         return this.createdAt;
     }
 
-    public Office createdAt(LocalDate createdAt) {
+    public Office createdAt(Instant createdAt) {
         this.setCreatedAt(createdAt);
         return this;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
-    public User getOffice() {
-        return this.office;
-    }
-
-    public void setOffice(User user) {
-        this.office = user;
-    }
-
-    public Office office(User user) {
-        this.setOffice(user);
-        return this;
-    }
-
-    public Set<Office> getParents() {
-        return this.parents;
-    }
-
-    public void setParents(Set<Office> offices) {
-        if (this.parents != null) {
-            this.parents.forEach(i -> i.setChildren(null));
-        }
-        if (offices != null) {
-            offices.forEach(i -> i.setChildren(this));
-        }
-        this.parents = offices;
-    }
-
-    public Office parents(Set<Office> offices) {
-        this.setParents(offices);
-        return this;
-    }
-
-    public Office addParent(Office office) {
-        this.parents.add(office);
-        office.setChildren(this);
-        return this;
-    }
-
-    public Office removeParent(Office office) {
-        this.parents.remove(office);
-        office.setChildren(null);
-        return this;
-    }
-
-    public Office getChildren() {
+    public Set<Office> getChildren() {
         return this.children;
     }
 
-    public void setChildren(Office office) {
-        this.children = office;
+    public void setChildren(Set<Office> offices) {
+        if (this.children != null) {
+            this.children.forEach(i -> i.setParent(null));
+        }
+        if (offices != null) {
+            offices.forEach(i -> i.setParent(this));
+        }
+        this.children = offices;
     }
 
-    public Office children(Office office) {
-        this.setChildren(office);
+    public Office children(Set<Office> offices) {
+        this.setChildren(offices);
+        return this;
+    }
+
+    public Office addChildren(Office office) {
+        this.children.add(office);
+        office.setParent(this);
+        return this;
+    }
+
+    public Office removeChildren(Office office) {
+        this.children.remove(office);
+        office.setParent(null);
+        return this;
+    }
+
+    public Office getParent() {
+        return this.parent;
+    }
+
+    public void setParent(Office office) {
+        this.parent = office;
+    }
+
+    public Office parent(Office office) {
+        this.setParent(office);
         return this;
     }
 
@@ -204,9 +183,8 @@ public class Office implements Serializable {
     public String toString() {
         return "Office{" +
             "id=" + getId() +
-            ", parentId='" + getParentId() + "'" +
-            ", name='" + getName() + "'" +
             ", officeType='" + getOfficeType() + "'" +
+            ", name='" + getName() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             "}";
     }

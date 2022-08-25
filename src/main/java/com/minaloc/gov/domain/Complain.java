@@ -49,10 +49,6 @@ public class Complain implements Serializable {
     @Column(name = "umwanzuro")
     private String umwanzuro;
 
-    @NotNull
-    @Column(name = "date", nullable = false)
-    private Instant date;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
@@ -62,8 +58,16 @@ public class Complain implements Serializable {
     @Column(name = "priority", nullable = false)
     private Priority priority;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @NotNull
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    @NotNull
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "complains" }, allowSetters = true)
     private Category category;
 
     @ManyToOne
@@ -80,7 +84,7 @@ public class Complain implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "organization_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "organization", "complains" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "user", "complains" }, allowSetters = true)
     private Set<Organization> organizations = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -92,9 +96,10 @@ public class Complain implements Serializable {
         String icyakozwe,
         String icyakorwa,
         String umwanzuro,
-        @NotNull Instant date,
         Status status,
-        @NotNull Priority priority,
+        Priority priority,
+        Instant createdAt,
+        Instant updatedAt,
         Category category,
         Umuturage umuturage,
         User user,
@@ -104,9 +109,10 @@ public class Complain implements Serializable {
         this.icyakozwe = icyakozwe;
         this.icyakorwa = icyakorwa;
         this.umwanzuro = umwanzuro;
-        this.date = date;
         this.status = status;
         this.priority = priority;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.category = category;
         this.umuturage = umuturage;
         this.user = user;
@@ -178,19 +184,6 @@ public class Complain implements Serializable {
         this.umwanzuro = umwanzuro;
     }
 
-    public Instant getDate() {
-        return this.date;
-    }
-
-    public Complain date(Instant date) {
-        this.setDate(date);
-        return this;
-    }
-
-    public void setDate(Instant date) {
-        this.date = date;
-    }
-
     public Status getStatus() {
         return this.status;
     }
@@ -215,6 +208,32 @@ public class Complain implements Serializable {
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+    }
+
+    public Instant getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public Complain createdAt(Instant createdAt) {
+        this.setCreatedAt(createdAt);
+        return this;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public Complain updatedAt(Instant updatedAt) {
+        this.setUpdatedAt(updatedAt);
+        return this;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Category getCategory() {
@@ -309,9 +328,10 @@ public class Complain implements Serializable {
             ", icyakozwe='" + getIcyakozwe() + "'" +
             ", icyakorwa='" + getIcyakorwa() + "'" +
             ", umwanzuro='" + getUmwanzuro() + "'" +
-            ", date='" + getDate() + "'" +
             ", status='" + getStatus() + "'" +
             ", priority='" + getPriority() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            ", updatedAt='" + getUpdatedAt() + "'" +
             "}";
     }
 }

@@ -2,6 +2,7 @@ package com.minaloc.gov.service.dto;
 
 import com.minaloc.gov.config.Constants;
 import com.minaloc.gov.domain.Authority;
+import com.minaloc.gov.domain.Office;
 import com.minaloc.gov.domain.User;
 import java.time.Instant;
 import java.util.Set;
@@ -50,6 +51,8 @@ public class AdminUserDTO {
 
     private String phone;
 
+    private Office office;
+
     public AdminUserDTO() {
         // Empty constructor needed for Jackson.
     }
@@ -60,6 +63,8 @@ public class AdminUserDTO {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
+        this.phone = user.getPhone();
+        this.office = user.getOffice();
         this.activated = user.isActivated();
         this.imageUrl = user.getImageUrl();
         this.langKey = user.getLangKey();
@@ -108,6 +113,14 @@ public class AdminUserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getImageUrl() {
@@ -193,11 +206,11 @@ public class AdminUserDTO {
             "}";
     }
 
-    public String getPhone() {
-        return phone;
+    public Office getOffice() {
+        return office;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setOffice(Office office) {
+        this.office = office;
     }
 }

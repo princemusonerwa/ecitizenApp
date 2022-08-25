@@ -20,10 +20,12 @@ export interface IComplain {
   icyakozwe?: string;
   icyakorwa?: string | null;
   umwanzuro?: string | null;
-  date?: string;
   status?: Status | null;
   priority?: Priority;
+  createdAt?: string;
+  updatedAt?: string;
   category?: ICategory | null;
+  umuturage?: IUmuturage | null;
   user?: IUser | null;
   organizations?: IOrganization[] | null;
 }

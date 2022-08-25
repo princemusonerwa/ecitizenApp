@@ -120,6 +120,9 @@ export const Umuyobozi = (props: RouteComponentProps<{ url: string }>) => {
                 <th>
                   Umurimo <FontAwesomeIcon icon="sort" />
                 </th>
+                <th>
+                  Office <FontAwesomeIcon icon="sort" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -137,6 +140,7 @@ export const Umuyobozi = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{umuyobozi.phoneTwo}</td>
                   <td>{umuyobozi.email}</td>
                   <td>{umuyobozi.umurimo ? <Link to={`/umurimo/${umuyobozi.umurimo.id}`}>{umuyobozi.umurimo.umurimo}</Link> : ''}</td>
+                  <td>{umuyobozi.office ? <Link to={`/office/${umuyobozi.office.id}`}>{umuyobozi.office.name}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/umuyobozi/${umuyobozi.id}`} color="info" size="sm" data-cy="entityDetailsButton">

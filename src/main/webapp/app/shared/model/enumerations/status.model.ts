@@ -1,5 +1,5 @@
 export enum Status {
-  PENDING_REVIEW = 'PENDING_REVIEW',
+  PENDING = 'PENDING',
 
   ORIENTED = 'ORIENTED',
 
