@@ -20,8 +20,8 @@
             <column name="location" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="organization_id" type="bigint">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_organization__organization_id" />
+            <column name="user_id" type="bigint">
+                <constraints nullable="true" unique="true" uniqueConstraintName="ux_organization__user_id" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>

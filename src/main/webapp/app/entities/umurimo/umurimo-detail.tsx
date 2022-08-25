@@ -33,7 +33,7 @@ export const UmurimoDetail = (props: RouteComponentProps<{ id: string }>) => {
           <dt>
             <span id="urwego">Urwego</span>
           </dt>
-          <dd>{umurimoEntity.urwego}</dd>
+          <dd>{umurimoEntity.officeType}</dd>
         </dl>
         <Button tag={Link} to="/umurimo" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

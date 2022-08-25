@@ -27,6 +27,11 @@ public class Cell implements Serializable {
 
     @NotNull
     @Size(min = 3, max = 255)
+    @Column(name = "sector_code", length = 255, nullable = false, unique = true)
+    private String sectorCode;
+
+    @NotNull
+    @Size(min = 3, max = 255)
     @Column(name = "name", length = 255, nullable = false)
     private String name;
 
@@ -52,6 +57,19 @@ public class Cell implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSectorCode() {
+        return this.sectorCode;
+    }
+
+    public Cell sectorCode(String sectorCode) {
+        this.setSectorCode(sectorCode);
+        return this;
+    }
+
+    public void setSectorCode(String sectorCode) {
+        this.sectorCode = sectorCode;
     }
 
     public String getName() {
@@ -135,6 +153,7 @@ public class Cell implements Serializable {
     public String toString() {
         return "Cell{" +
             "id=" + getId() +
+            ", sectorCode='" + getSectorCode() + "'" +
             ", name='" + getName() + "'" +
             "}";
     }

@@ -27,10 +27,13 @@
                 <constraints nullable="false" />
             </column>
             <column name="email" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_umuyobozi__email" />
             </column>
             <column name="umurimo_id" type="bigint">
                 <constraints nullable="true" unique="true" uniqueConstraintName="ux_umuyobozi__umurimo_id" />
+            </column>
+            <column name="office_id" type="bigint">
+                <constraints nullable="true" unique="true" uniqueConstraintName="ux_umuyobozi__office_id" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>

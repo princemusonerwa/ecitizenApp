@@ -6,6 +6,13 @@
   "entityTableName": "village",
   "fields": [
     {
+      "fieldName": "villageCode",
+      "fieldType": "String",
+      "fieldValidateRules": ["unique", "minlength", "maxlength", "required"],
+      "fieldValidateRulesMaxlength": "255",
+      "fieldValidateRulesMinlength": "3"
+    },
+    {
       "fieldName": "name",
       "fieldType": "String",
       "fieldValidateRules": ["minlength", "maxlength", "required"],

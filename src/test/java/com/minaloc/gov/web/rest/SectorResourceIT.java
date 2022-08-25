@@ -41,6 +41,9 @@ import org.springframework.transaction.annotation.Transactional;
 @WithMockUser
 class SectorResourceIT {
 
+    private static final String DEFAULT_SECTOR_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_SECTOR_CODE = "BBBBBBBBBB";
+
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
@@ -74,7 +77,7 @@ class SectorResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Sector createEntity(EntityManager em) {
-        Sector sector = new Sector().name(DEFAULT_NAME);
+        Sector sector = new Sector().sectorCode(DEFAULT_SECTOR_CODE).name(DEFAULT_NAME);
         return sector;
     }
 
@@ -85,7 +88,7 @@ class SectorResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Sector createUpdatedEntity(EntityManager em) {
-        Sector sector = new Sector().name(UPDATED_NAME);
+        Sector sector = new Sector().sectorCode(UPDATED_SECTOR_CODE).name(UPDATED_NAME);
         return sector;
     }
 
@@ -107,6 +110,7 @@ class SectorResourceIT {
         List<Sector> sectorList = sectorRepository.findAll();
         assertThat(sectorList).hasSize(databaseSizeBeforeCreate + 1);
         Sector testSector = sectorList.get(sectorList.size() - 1);
+        assertThat(testSector.getSectorCode()).isEqualTo(DEFAULT_SECTOR_CODE);
         assertThat(testSector.getName()).isEqualTo(DEFAULT_NAME);
     }
 
@@ -126,6 +130,23 @@ class SectorResourceIT {
         // Validate the Sector in the database
         List<Sector> sectorList = sectorRepository.findAll();
         assertThat(sectorList).hasSize(databaseSizeBeforeCreate);
+    }
+
+    @Test
+    @Transactional
+    void checkSectorCodeIsRequired() throws Exception {
+        int databaseSizeBeforeTest = sectorRepository.findAll().size();
+        // set the field null
+        sector.setSectorCode(null);
+
+        // Create the Sector, which fails.
+
+        restSectorMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(sector)))
+            .andExpect(status().isBadRequest());
+
+        List<Sector> sectorList = sectorRepository.findAll();
+        assertThat(sectorList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
@@ -157,6 +178,7 @@ class SectorResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(sector.getId().intValue())))
+            .andExpect(jsonPath("$.[*].sectorCode").value(hasItem(DEFAULT_SECTOR_CODE)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
     }
 
@@ -190,6 +212,7 @@ class SectorResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(sector.getId().intValue()))
+            .andExpect(jsonPath("$.sectorCode").value(DEFAULT_SECTOR_CODE))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
     }
 
@@ -209,6 +232,84 @@ class SectorResourceIT {
 
         defaultSectorShouldBeFound("id.lessThanOrEqual=" + id);
         defaultSectorShouldNotBeFound("id.lessThan=" + id);
+    }
+
+    @Test
+    @Transactional
+    void getAllSectorsBySectorCodeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        sectorRepository.saveAndFlush(sector);
+
+        // Get all the sectorList where sectorCode equals to DEFAULT_SECTOR_CODE
+        defaultSectorShouldBeFound("sectorCode.equals=" + DEFAULT_SECTOR_CODE);
+
+        // Get all the sectorList where sectorCode equals to UPDATED_SECTOR_CODE
+        defaultSectorShouldNotBeFound("sectorCode.equals=" + UPDATED_SECTOR_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllSectorsBySectorCodeIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        sectorRepository.saveAndFlush(sector);
+
+        // Get all the sectorList where sectorCode not equals to DEFAULT_SECTOR_CODE
+        defaultSectorShouldNotBeFound("sectorCode.notEquals=" + DEFAULT_SECTOR_CODE);
+
+        // Get all the sectorList where sectorCode not equals to UPDATED_SECTOR_CODE
+        defaultSectorShouldBeFound("sectorCode.notEquals=" + UPDATED_SECTOR_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllSectorsBySectorCodeIsInShouldWork() throws Exception {
+        // Initialize the database
+        sectorRepository.saveAndFlush(sector);
+
+        // Get all the sectorList where sectorCode in DEFAULT_SECTOR_CODE or UPDATED_SECTOR_CODE
+        defaultSectorShouldBeFound("sectorCode.in=" + DEFAULT_SECTOR_CODE + "," + UPDATED_SECTOR_CODE);
+
+        // Get all the sectorList where sectorCode equals to UPDATED_SECTOR_CODE
+        defaultSectorShouldNotBeFound("sectorCode.in=" + UPDATED_SECTOR_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllSectorsBySectorCodeIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        sectorRepository.saveAndFlush(sector);
+
+        // Get all the sectorList where sectorCode is not null
+        defaultSectorShouldBeFound("sectorCode.specified=true");
+
+        // Get all the sectorList where sectorCode is null
+        defaultSectorShouldNotBeFound("sectorCode.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllSectorsBySectorCodeContainsSomething() throws Exception {
+        // Initialize the database
+        sectorRepository.saveAndFlush(sector);
+
+        // Get all the sectorList where sectorCode contains DEFAULT_SECTOR_CODE
+        defaultSectorShouldBeFound("sectorCode.contains=" + DEFAULT_SECTOR_CODE);
+
+        // Get all the sectorList where sectorCode contains UPDATED_SECTOR_CODE
+        defaultSectorShouldNotBeFound("sectorCode.contains=" + UPDATED_SECTOR_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllSectorsBySectorCodeNotContainsSomething() throws Exception {
+        // Initialize the database
+        sectorRepository.saveAndFlush(sector);
+
+        // Get all the sectorList where sectorCode does not contain DEFAULT_SECTOR_CODE
+        defaultSectorShouldNotBeFound("sectorCode.doesNotContain=" + DEFAULT_SECTOR_CODE);
+
+        // Get all the sectorList where sectorCode does not contain UPDATED_SECTOR_CODE
+        defaultSectorShouldBeFound("sectorCode.doesNotContain=" + UPDATED_SECTOR_CODE);
     }
 
     @Test
@@ -350,6 +451,7 @@ class SectorResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(sector.getId().intValue())))
+            .andExpect(jsonPath("$.[*].sectorCode").value(hasItem(DEFAULT_SECTOR_CODE)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
 
         // Check, that the count call also returns 1
@@ -398,7 +500,7 @@ class SectorResourceIT {
         Sector updatedSector = sectorRepository.findById(sector.getId()).get();
         // Disconnect from session so that the updates on updatedSector are not directly saved in db
         em.detach(updatedSector);
-        updatedSector.name(UPDATED_NAME);
+        updatedSector.sectorCode(UPDATED_SECTOR_CODE).name(UPDATED_NAME);
 
         restSectorMockMvc
             .perform(
@@ -412,6 +514,7 @@ class SectorResourceIT {
         List<Sector> sectorList = sectorRepository.findAll();
         assertThat(sectorList).hasSize(databaseSizeBeforeUpdate);
         Sector testSector = sectorList.get(sectorList.size() - 1);
+        assertThat(testSector.getSectorCode()).isEqualTo(UPDATED_SECTOR_CODE);
         assertThat(testSector.getName()).isEqualTo(UPDATED_NAME);
     }
 
@@ -483,7 +586,7 @@ class SectorResourceIT {
         Sector partialUpdatedSector = new Sector();
         partialUpdatedSector.setId(sector.getId());
 
-        partialUpdatedSector.name(UPDATED_NAME);
+        partialUpdatedSector.sectorCode(UPDATED_SECTOR_CODE).name(UPDATED_NAME);
 
         restSectorMockMvc
             .perform(
@@ -497,6 +600,7 @@ class SectorResourceIT {
         List<Sector> sectorList = sectorRepository.findAll();
         assertThat(sectorList).hasSize(databaseSizeBeforeUpdate);
         Sector testSector = sectorList.get(sectorList.size() - 1);
+        assertThat(testSector.getSectorCode()).isEqualTo(UPDATED_SECTOR_CODE);
         assertThat(testSector.getName()).isEqualTo(UPDATED_NAME);
     }
 
@@ -512,7 +616,7 @@ class SectorResourceIT {
         Sector partialUpdatedSector = new Sector();
         partialUpdatedSector.setId(sector.getId());
 
-        partialUpdatedSector.name(UPDATED_NAME);
+        partialUpdatedSector.sectorCode(UPDATED_SECTOR_CODE).name(UPDATED_NAME);
 
         restSectorMockMvc
             .perform(
@@ -526,6 +630,7 @@ class SectorResourceIT {
         List<Sector> sectorList = sectorRepository.findAll();
         assertThat(sectorList).hasSize(databaseSizeBeforeUpdate);
         Sector testSector = sectorList.get(sectorList.size() - 1);
+        assertThat(testSector.getSectorCode()).isEqualTo(UPDATED_SECTOR_CODE);
         assertThat(testSector.getName()).isEqualTo(UPDATED_NAME);
     }
 

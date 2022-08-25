@@ -28,11 +28,6 @@
       "fieldTypeBlobContent": "text"
     },
     {
-      "fieldName": "date",
-      "fieldType": "Instant",
-      "fieldValidateRules": ["required"]
-    },
-    {
       "fieldName": "status",
       "fieldType": "Status",
       "fieldValues": "PENDING_REVIEW,ORIENTED,ONHOLD,SOLVED"
@@ -42,6 +37,16 @@
       "fieldType": "Priority",
       "fieldValidateRules": ["required"],
       "fieldValues": "HIGH,MEDIUM,LOW"
+    },
+    {
+      "fieldName": "createdAt",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "updatedAt",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
     }
   ],
   "fluentMethods": true,

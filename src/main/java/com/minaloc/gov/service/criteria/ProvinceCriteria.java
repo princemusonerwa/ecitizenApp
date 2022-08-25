@@ -28,6 +28,8 @@ public class ProvinceCriteria implements Serializable, Criteria {
 
     private LongFilter id;
 
+    private StringFilter provinceCode;
+
     private StringFilter name;
 
     private LongFilter districtId;
@@ -38,6 +40,7 @@ public class ProvinceCriteria implements Serializable, Criteria {
 
     public ProvinceCriteria(ProvinceCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
+        this.provinceCode = other.provinceCode == null ? null : other.provinceCode.copy();
         this.name = other.name == null ? null : other.name.copy();
         this.districtId = other.districtId == null ? null : other.districtId.copy();
         this.distinct = other.distinct;
@@ -61,6 +64,21 @@ public class ProvinceCriteria implements Serializable, Criteria {
 
     public void setId(LongFilter id) {
         this.id = id;
+    }
+
+    public StringFilter getProvinceCode() {
+        return provinceCode;
+    }
+
+    public StringFilter provinceCode() {
+        if (provinceCode == null) {
+            provinceCode = new StringFilter();
+        }
+        return provinceCode;
+    }
+
+    public void setProvinceCode(StringFilter provinceCode) {
+        this.provinceCode = provinceCode;
     }
 
     public StringFilter getName() {
@@ -112,6 +130,7 @@ public class ProvinceCriteria implements Serializable, Criteria {
         final ProvinceCriteria that = (ProvinceCriteria) o;
         return (
             Objects.equals(id, that.id) &&
+            Objects.equals(provinceCode, that.provinceCode) &&
             Objects.equals(name, that.name) &&
             Objects.equals(districtId, that.districtId) &&
             Objects.equals(distinct, that.distinct)
@@ -120,7 +139,7 @@ public class ProvinceCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, districtId, distinct);
+        return Objects.hash(id, provinceCode, name, districtId, distinct);
     }
 
     // prettier-ignore
@@ -128,6 +147,7 @@ public class ProvinceCriteria implements Serializable, Criteria {
     public String toString() {
         return "ProvinceCriteria{" +
             (id != null ? "id=" + id + ", " : "") +
+            (provinceCode != null ? "provinceCode=" + provinceCode + ", " : "") +
             (name != null ? "name=" + name + ", " : "") +
             (districtId != null ? "districtId=" + districtId + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +

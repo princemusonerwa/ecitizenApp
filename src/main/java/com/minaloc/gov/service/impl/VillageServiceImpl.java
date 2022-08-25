@@ -45,6 +45,9 @@ public class VillageServiceImpl implements VillageService {
         return villageRepository
             .findById(village.getId())
             .map(existingVillage -> {
+                if (village.getVillageCode() != null) {
+                    existingVillage.setVillageCode(village.getVillageCode());
+                }
                 if (village.getName() != null) {
                     existingVillage.setName(village.getName());
                 }

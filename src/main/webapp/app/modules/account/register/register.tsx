@@ -6,8 +6,9 @@ import { toast } from 'react-toastify';
 import PasswordStrengthBar from 'app/shared/layout/password/password-strength-bar';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { handleRegister, reset } from './register.reducer';
+import { Link } from 'react-router-dom';
 
-export const RegisterPage = () => {
+export const RegisterPage = props => {
   const [password, setPassword] = useState('');
   const dispatch = useAppDispatch();
 
@@ -18,8 +19,13 @@ export const RegisterPage = () => {
     []
   );
 
+  const handleClose = () => {
+    props.history.push('/login');
+  };
+
   const handleValidSubmit = ({ username, email, firstPassword }) => {
     dispatch(handleRegister({ login: username, email, password: firstPassword, langKey: 'en' }));
+    handleClose();
   };
 
   const updatePassword = event => setPassword(event.target.value);
@@ -105,8 +111,11 @@ export const RegisterPage = () => {
           </ValidatedForm>
           <p>&nbsp;</p>
           <Alert color="warning">
-            <span>If you want to</span>
-            <a className="alert-link"> sign in</a>
+            <span>If you want to </span>
+            <a className="alert-link"></a>
+            <Link to="/login" className="alert-link">
+              sign in
+            </Link>
             <span>
               , you can try the default accounts:
               <br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;)

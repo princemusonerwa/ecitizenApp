@@ -27,27 +27,21 @@ export const OfficeDetail = (props: RouteComponentProps<{ id: string }>) => {
           </dt>
           <dd>{officeEntity.id}</dd>
           <dt>
-            <span id="parentId">Parent Id</span>
+            <span id="officeType">Office Type</span>
           </dt>
-          <dd>{officeEntity.parentId}</dd>
+          <dd>{officeEntity.officeType}</dd>
           <dt>
             <span id="name">Name</span>
           </dt>
           <dd>{officeEntity.name}</dd>
           <dt>
-            <span id="officeType">Office Type</span>
-          </dt>
-          <dd>{officeEntity.officeType}</dd>
-          <dt>
             <span id="createdAt">Created At</span>
           </dt>
-          <dd>
-            {officeEntity.createdAt ? <TextFormat value={officeEntity.createdAt} type="date" format={APP_LOCAL_DATE_FORMAT} /> : null}
-          </dd>
-          <dt>Office</dt>
-          <dd>{officeEntity.office ? officeEntity.office.id : ''}</dd>
-          <dt>Children</dt>
-          <dd>{officeEntity.children ? officeEntity.children.id : ''}</dd>
+          <dd>{officeEntity.createdAt ? <TextFormat value={officeEntity.createdAt} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
+          <dt>User</dt>
+          <dd>{officeEntity.user ? officeEntity.user.login : ''}</dd>
+          <dt>Parent</dt>
+          <dd>{officeEntity.parent ? officeEntity.parent.name : ''}</dd>
         </dl>
         <Button tag={Link} to="/office" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

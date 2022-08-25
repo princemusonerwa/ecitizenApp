@@ -8,8 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Service Implementation for managing {@link Umuturage}.
@@ -21,6 +27,8 @@ public class UmuturageServiceImpl implements UmuturageService {
     private final Logger log = LoggerFactory.getLogger(UmuturageServiceImpl.class);
 
     private final UmuturageRepository umuturageRepository;
+
+    private RestTemplate template = new RestTemplate();
 
     public UmuturageServiceImpl(UmuturageRepository umuturageRepository) {
         this.umuturageRepository = umuturageRepository;
@@ -94,5 +102,36 @@ public class UmuturageServiceImpl implements UmuturageService {
     public void delete(Long id) {
         log.debug("Request to delete Umuturage : {}", id);
         umuturageRepository.deleteById(id);
+    }
+
+    @Override
+    public Object getByIdentityCard(String identityCard) {
+        log.debug("Request to get Umuturage by Identity card : {}", identityCard);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth("umuturage@minaloc.gov.rw", "Ecitizen@123");
+
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+        String url = "https://meis.loda.gov.rw/meis/rest/rssb/details/nid/" + identityCard;
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.GET, request, String.class);
+        // check response
+        // UmuturageIdentityDTO dto = response.getBody();
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        // System.out.println(dto.getPeople());
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        if (response.getStatusCode() == HttpStatus.OK) {
+            System.out.println("Request Successful.");
+            System.out.println(response.getBody());
+        } else {
+            System.out.println("Request Failed");
+            System.out.println(response.getStatusCode());
+        }
+        return response;
+    }
+
+    @Override
+    public Optional<Umuturage> findByIndangamuntu(String indangamuntu) {
+        // TODO Auto-generated method stub
+        return umuturageRepository.findByIndangamuntu(indangamuntu);
     }
 }

@@ -85,6 +85,9 @@ public class CellQueryService extends QueryService<Cell> {
             if (criteria.getId() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getId(), Cell_.id));
             }
+            if (criteria.getSectorCode() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getSectorCode(), Cell_.sectorCode));
+            }
             if (criteria.getName() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getName(), Cell_.name));
             }

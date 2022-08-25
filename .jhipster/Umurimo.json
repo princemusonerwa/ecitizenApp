@@ -13,11 +13,9 @@
       "fieldValidateRulesMinlength": "3"
     },
     {
-      "fieldName": "urwego",
-      "fieldType": "String",
-      "fieldValidateRules": ["required", "minlength", "maxlength"],
-      "fieldValidateRulesMaxlength": "100",
-      "fieldValidateRulesMinlength": "3"
+      "fieldName": "officeType",
+      "fieldType": "OfficeType",
+      "fieldValues": "MINALOC,PROVINCE,DISTRICT,SECTOR,CELL,OTHER"
     }
   ],
   "fluentMethods": true,

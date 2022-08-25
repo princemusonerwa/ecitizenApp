@@ -17,8 +17,8 @@
             <column name="umurimo" type="varchar(100)">
                 <constraints nullable="false" />
             </column>
-            <column name="urwego" type="varchar(100)">
-                <constraints nullable="false" />
+            <column name="office_type" type="varchar(255)">
+                <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
@@ -42,7 +42,7 @@
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
             <column name="umurimo" type="string"/>
-            <column name="urwego" type="string"/>
+            <column name="office_type" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

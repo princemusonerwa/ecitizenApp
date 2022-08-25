@@ -8,15 +8,15 @@
     -->
     <changeSet id="20220713102527-2" author="jhipster">
 
-        <addForeignKeyConstraint baseColumnNames="office_id"
+        <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="office"
-                                 constraintName="fk_office__office_id"
+                                 constraintName="fk_office__user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
 
-        <addForeignKeyConstraint baseColumnNames="children_id"
+        <addForeignKeyConstraint baseColumnNames="parent_id"
                                  baseTableName="office"
-                                 constraintName="fk_office__children_id"
+                                 constraintName="fk_office__parent_id"
                                  referencedColumnNames="id"
                                  referencedTableName="office"/>
     </changeSet>

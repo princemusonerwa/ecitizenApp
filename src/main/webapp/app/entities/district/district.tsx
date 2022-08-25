@@ -46,6 +46,7 @@ export const District = (props: RouteComponentProps<{ url: string }>) => {
             <thead>
               <tr>
                 <th>ID</th>
+                <th>District Code</th>
                 <th>Name</th>
                 <th>Province</th>
                 <th />
@@ -59,6 +60,7 @@ export const District = (props: RouteComponentProps<{ url: string }>) => {
                       {district.id}
                     </Button>
                   </td>
+                  <td>{district.districtCode}</td>
                   <td>{district.name}</td>
                   <td>{district.province ? <Link to={`/province/${district.province.id}`}>{district.province.name}</Link> : ''}</td>
                   <td className="text-end">

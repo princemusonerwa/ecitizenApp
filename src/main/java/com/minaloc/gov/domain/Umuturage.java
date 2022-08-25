@@ -55,7 +55,7 @@ public class Umuturage implements Serializable {
 
     @NotNull
     @Pattern(regexp = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @ManyToOne
@@ -66,6 +66,30 @@ public class Umuturage implements Serializable {
     private Village village;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+    public Umuturage() {}
+
+    public Umuturage(
+        @NotNull @Size(min = 16, max = 16) String indangamuntu,
+        String amazina,
+        Instant dob,
+        Gender gender,
+        String ubudeheCategory,
+        @Size(min = 13, max = 13) String phone,
+        String email,
+        User user,
+        Village village
+    ) {
+        this.indangamuntu = indangamuntu;
+        this.amazina = amazina;
+        this.dob = dob;
+        this.gender = gender;
+        this.ubudeheCategory = ubudeheCategory;
+        this.phone = phone;
+        this.email = email;
+        this.user = user;
+        this.village = village;
+    }
 
     public Long getId() {
         return this.id;

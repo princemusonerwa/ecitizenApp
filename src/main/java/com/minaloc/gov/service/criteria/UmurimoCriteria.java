@@ -1,5 +1,6 @@
 package com.minaloc.gov.service.criteria;
 
+import com.minaloc.gov.domain.enumeration.OfficeType;
 import java.io.Serializable;
 import java.util.Objects;
 import org.springdoc.api.annotations.ParameterObject;
@@ -24,13 +25,30 @@ import tech.jhipster.service.filter.StringFilter;
 @ParameterObject
 public class UmurimoCriteria implements Serializable, Criteria {
 
+    /**
+     * Class for filtering OfficeType
+     */
+    public static class OfficeTypeFilter extends Filter<OfficeType> {
+
+        public OfficeTypeFilter() {}
+
+        public OfficeTypeFilter(OfficeTypeFilter filter) {
+            super(filter);
+        }
+
+        @Override
+        public OfficeTypeFilter copy() {
+            return new OfficeTypeFilter(this);
+        }
+    }
+
     private static final long serialVersionUID = 1L;
 
     private LongFilter id;
 
     private StringFilter umurimo;
 
-    private StringFilter urwego;
+    private OfficeTypeFilter officeType;
 
     private Boolean distinct;
 
@@ -39,7 +57,7 @@ public class UmurimoCriteria implements Serializable, Criteria {
     public UmurimoCriteria(UmurimoCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
         this.umurimo = other.umurimo == null ? null : other.umurimo.copy();
-        this.urwego = other.urwego == null ? null : other.urwego.copy();
+        this.officeType = other.officeType == null ? null : other.officeType.copy();
         this.distinct = other.distinct;
     }
 
@@ -78,19 +96,19 @@ public class UmurimoCriteria implements Serializable, Criteria {
         this.umurimo = umurimo;
     }
 
-    public StringFilter getUrwego() {
-        return urwego;
+    public OfficeTypeFilter getOfficeType() {
+        return officeType;
     }
 
-    public StringFilter urwego() {
-        if (urwego == null) {
-            urwego = new StringFilter();
+    public OfficeTypeFilter officeType() {
+        if (officeType == null) {
+            officeType = new OfficeTypeFilter();
         }
-        return urwego;
+        return officeType;
     }
 
-    public void setUrwego(StringFilter urwego) {
-        this.urwego = urwego;
+    public void setOfficeType(OfficeTypeFilter officeType) {
+        this.officeType = officeType;
     }
 
     public Boolean getDistinct() {
@@ -113,14 +131,14 @@ public class UmurimoCriteria implements Serializable, Criteria {
         return (
             Objects.equals(id, that.id) &&
             Objects.equals(umurimo, that.umurimo) &&
-            Objects.equals(urwego, that.urwego) &&
+            Objects.equals(officeType, that.officeType) &&
             Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, umurimo, urwego, distinct);
+        return Objects.hash(id, umurimo, officeType, distinct);
     }
 
     // prettier-ignore
@@ -129,7 +147,7 @@ public class UmurimoCriteria implements Serializable, Criteria {
         return "UmurimoCriteria{" +
             (id != null ? "id=" + id + ", " : "") +
             (umurimo != null ? "umurimo=" + umurimo + ", " : "") +
-            (urwego != null ? "urwego=" + urwego + ", " : "") +
+            (officeType != null ? "officeType=" + officeType + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +
             "}";
     }

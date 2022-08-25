@@ -48,6 +48,8 @@ export const UmuyoboziDetail = (props: RouteComponentProps<{ id: string }>) => {
           <dd>{umuyoboziEntity.email}</dd>
           <dt>Umurimo</dt>
           <dd>{umuyoboziEntity.umurimo ? umuyoboziEntity.umurimo.umurimo : ''}</dd>
+          <dt>Office</dt>
+          <dd>{umuyoboziEntity.office ? umuyoboziEntity.office.name : ''}</dd>
         </dl>
         <Button tag={Link} to="/umuyobozi" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

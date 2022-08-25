@@ -2,6 +2,7 @@ package com.minaloc.gov.web.rest;
 
 import com.minaloc.gov.domain.Office;
 import com.minaloc.gov.repository.OfficeRepository;
+import com.minaloc.gov.repository.UserRepository;
 import com.minaloc.gov.service.OfficeService;
 import com.minaloc.gov.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -37,7 +38,7 @@ public class OfficeResource {
 
     private final OfficeRepository officeRepository;
 
-    public OfficeResource(OfficeService officeService, OfficeRepository officeRepository) {
+    public OfficeResource(OfficeService officeService, OfficeRepository officeRepository, UserRepository userRepository) {
         this.officeService = officeService;
         this.officeRepository = officeRepository;
     }
@@ -55,6 +56,7 @@ public class OfficeResource {
         if (office.getId() != null) {
             throw new BadRequestAlertException("A new office cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
         Office result = officeService.save(office);
         return ResponseEntity
             .created(new URI("/api/offices/" + result.getId()))
@@ -135,10 +137,11 @@ public class OfficeResource {
     /**
      * {@code GET  /offices} : get all the offices.
      *
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of offices in body.
      */
     @GetMapping("/offices")
-    public List<Office> getAllOffices() {
+    public List<Office> getAllOffices(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get all Offices");
         return officeService.findAll();
     }

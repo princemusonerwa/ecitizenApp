@@ -1,20 +1,25 @@
 entity Province {
-    name String minlength(3) maxlength(255) required
+    provinceCode String unique minlength(3) maxlength(255) required, 
+    name String minlength(3) maxlength(255) required, 
 }
 
 entity District {
+    districtCode String unique minlength(3) maxlength(255) required, 
     name String minlength(3) maxlength(255) required
 }
 
 entity Sector{
+    sectorCode String unique minlength(3) maxlength(255) required,
     name String minlength(3) maxlength(255) required
 }
 
 entity Cell{
+    sectorCode String unique minlength(3) maxlength(255) required,
     name String minlength(3) maxlength(255) required
 }
 
 entity Village{
+    villageCode String unique minlength(3) maxlength(255) required,
     name String minlength(3) maxlength(255) required,
 }
 
@@ -23,10 +28,9 @@ entity UserExtended{
 }
 
 entity Office {
-	parentId String,
-    name String required,
     officeType OfficeType required,
-    createdAt LocalDate required
+    name String required,
+    createdAt Instant required
 }
 
 enum OfficeType{
@@ -41,7 +45,7 @@ entity Umuturage{
     gender Gender required,
     ubudeheCategory String minlength(1) maxlength(1) required,
     phone String minlength(13) maxlength(13),
-    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)
+    email String unique required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)
 }
 
 enum Gender{
@@ -53,9 +57,10 @@ entity Complain{
     icyakozwe TextBlob required,
     icyakorwa TextBlob,
     umwanzuro TextBlob,
-    date Instant required,
     status Status,
-    priority Priority required
+    priority Priority required, 
+    createdAt Instant required, 
+    updatedAt Instant required
 }
 
 enum Status{
@@ -86,7 +91,7 @@ entity Umuyobozi{
     lastName String required minlength(3) maxlength(100), 
     phoneOne String required maxlength(13), 
     phoneTwo String required maxlength(13), 
-    email String required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)
+    email String unique required pattern(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)
 }
 
 entity Umurimo{
@@ -95,11 +100,11 @@ entity Umurimo{
 }
 
 relationship OneToOne{
-	Complain{category} to Category,
     UserExtended{user(login)} to User,
-    Organization{organization} to User,
-    Office{Office} to User,
+    Organization{user(login)} to User,
+    Office{user(login)} to User,
     Umuyobozi{umurimo(umurimo)} to Umurimo,
+    Umuyobozi{office(name)} to Office,
 }
 
 relationship ManyToOne{
@@ -114,7 +119,8 @@ relationship OneToMany {
   Sector to Cell{sector(name)},
   Cell to Village{cell(name)},
   Village to Umuturage{village(name)},
-  Office{parent} to Office{children}
+  Office{children(name)} to Office{parent(name)}
+  Category{complain} to Complain{category(name)},
 }
 
 relationship ManyToMany{

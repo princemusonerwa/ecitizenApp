@@ -153,6 +153,9 @@ public class UserService {
         if (userDTO.getEmail() != null) {
             user.setEmail(userDTO.getEmail().toLowerCase());
         }
+        if (userDTO.getPhone() != null) {
+            user.setPhone(userDTO.getPhone());
+        }
         user.setImageUrl(userDTO.getImageUrl());
         if (userDTO.getLangKey() == null) {
             user.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
@@ -164,6 +167,7 @@ public class UserService {
         user.setResetKey(RandomUtil.generateResetKey());
         user.setResetDate(Instant.now());
         user.setActivated(true);
+        user.setOffice(userDTO.getOffice());
         if (userDTO.getAuthorities() != null) {
             Set<Authority> authorities = userDTO
                 .getAuthorities()
@@ -175,8 +179,8 @@ public class UserService {
             user.setAuthorities(authorities);
         }
         userRepository.save(user);
-        this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
+        this.clearUserCaches(user);
         return user;
     }
 
@@ -199,9 +203,11 @@ public class UserService {
                 if (userDTO.getEmail() != null) {
                     user.setEmail(userDTO.getEmail().toLowerCase());
                 }
+                user.setPhone(userDTO.getPhone());
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());
                 user.setLangKey(userDTO.getLangKey());
+                user.setOffice(userDTO.getOffice());
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
                 userDTO
@@ -237,7 +243,7 @@ public class UserService {
      * @param langKey   language key.
      * @param imageUrl  image URL of user.
      */
-    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
+    public void updateUser(String firstName, String lastName, String email, String phone, String langKey, String imageUrl) {
         SecurityUtils
             .getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
@@ -246,6 +252,9 @@ public class UserService {
                 user.setLastName(lastName);
                 if (email != null) {
                     user.setEmail(email.toLowerCase());
+                }
+                if (phone != null) {
+                    user.setPhone(phone);
                 }
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);

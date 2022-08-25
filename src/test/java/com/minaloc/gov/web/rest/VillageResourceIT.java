@@ -41,6 +41,9 @@ import org.springframework.transaction.annotation.Transactional;
 @WithMockUser
 class VillageResourceIT {
 
+    private static final String DEFAULT_VILLAGE_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_VILLAGE_CODE = "BBBBBBBBBB";
+
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
@@ -74,7 +77,7 @@ class VillageResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Village createEntity(EntityManager em) {
-        Village village = new Village().name(DEFAULT_NAME);
+        Village village = new Village().villageCode(DEFAULT_VILLAGE_CODE).name(DEFAULT_NAME);
         return village;
     }
 
@@ -85,7 +88,7 @@ class VillageResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Village createUpdatedEntity(EntityManager em) {
-        Village village = new Village().name(UPDATED_NAME);
+        Village village = new Village().villageCode(UPDATED_VILLAGE_CODE).name(UPDATED_NAME);
         return village;
     }
 
@@ -107,6 +110,7 @@ class VillageResourceIT {
         List<Village> villageList = villageRepository.findAll();
         assertThat(villageList).hasSize(databaseSizeBeforeCreate + 1);
         Village testVillage = villageList.get(villageList.size() - 1);
+        assertThat(testVillage.getVillageCode()).isEqualTo(DEFAULT_VILLAGE_CODE);
         assertThat(testVillage.getName()).isEqualTo(DEFAULT_NAME);
     }
 
@@ -126,6 +130,23 @@ class VillageResourceIT {
         // Validate the Village in the database
         List<Village> villageList = villageRepository.findAll();
         assertThat(villageList).hasSize(databaseSizeBeforeCreate);
+    }
+
+    @Test
+    @Transactional
+    void checkVillageCodeIsRequired() throws Exception {
+        int databaseSizeBeforeTest = villageRepository.findAll().size();
+        // set the field null
+        village.setVillageCode(null);
+
+        // Create the Village, which fails.
+
+        restVillageMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(village)))
+            .andExpect(status().isBadRequest());
+
+        List<Village> villageList = villageRepository.findAll();
+        assertThat(villageList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
@@ -157,6 +178,7 @@ class VillageResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(village.getId().intValue())))
+            .andExpect(jsonPath("$.[*].villageCode").value(hasItem(DEFAULT_VILLAGE_CODE)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
     }
 
@@ -190,6 +212,7 @@ class VillageResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(village.getId().intValue()))
+            .andExpect(jsonPath("$.villageCode").value(DEFAULT_VILLAGE_CODE))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
     }
 
@@ -209,6 +232,84 @@ class VillageResourceIT {
 
         defaultVillageShouldBeFound("id.lessThanOrEqual=" + id);
         defaultVillageShouldNotBeFound("id.lessThan=" + id);
+    }
+
+    @Test
+    @Transactional
+    void getAllVillagesByVillageCodeIsEqualToSomething() throws Exception {
+        // Initialize the database
+        villageRepository.saveAndFlush(village);
+
+        // Get all the villageList where villageCode equals to DEFAULT_VILLAGE_CODE
+        defaultVillageShouldBeFound("villageCode.equals=" + DEFAULT_VILLAGE_CODE);
+
+        // Get all the villageList where villageCode equals to UPDATED_VILLAGE_CODE
+        defaultVillageShouldNotBeFound("villageCode.equals=" + UPDATED_VILLAGE_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllVillagesByVillageCodeIsNotEqualToSomething() throws Exception {
+        // Initialize the database
+        villageRepository.saveAndFlush(village);
+
+        // Get all the villageList where villageCode not equals to DEFAULT_VILLAGE_CODE
+        defaultVillageShouldNotBeFound("villageCode.notEquals=" + DEFAULT_VILLAGE_CODE);
+
+        // Get all the villageList where villageCode not equals to UPDATED_VILLAGE_CODE
+        defaultVillageShouldBeFound("villageCode.notEquals=" + UPDATED_VILLAGE_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllVillagesByVillageCodeIsInShouldWork() throws Exception {
+        // Initialize the database
+        villageRepository.saveAndFlush(village);
+
+        // Get all the villageList where villageCode in DEFAULT_VILLAGE_CODE or UPDATED_VILLAGE_CODE
+        defaultVillageShouldBeFound("villageCode.in=" + DEFAULT_VILLAGE_CODE + "," + UPDATED_VILLAGE_CODE);
+
+        // Get all the villageList where villageCode equals to UPDATED_VILLAGE_CODE
+        defaultVillageShouldNotBeFound("villageCode.in=" + UPDATED_VILLAGE_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllVillagesByVillageCodeIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        villageRepository.saveAndFlush(village);
+
+        // Get all the villageList where villageCode is not null
+        defaultVillageShouldBeFound("villageCode.specified=true");
+
+        // Get all the villageList where villageCode is null
+        defaultVillageShouldNotBeFound("villageCode.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllVillagesByVillageCodeContainsSomething() throws Exception {
+        // Initialize the database
+        villageRepository.saveAndFlush(village);
+
+        // Get all the villageList where villageCode contains DEFAULT_VILLAGE_CODE
+        defaultVillageShouldBeFound("villageCode.contains=" + DEFAULT_VILLAGE_CODE);
+
+        // Get all the villageList where villageCode contains UPDATED_VILLAGE_CODE
+        defaultVillageShouldNotBeFound("villageCode.contains=" + UPDATED_VILLAGE_CODE);
+    }
+
+    @Test
+    @Transactional
+    void getAllVillagesByVillageCodeNotContainsSomething() throws Exception {
+        // Initialize the database
+        villageRepository.saveAndFlush(village);
+
+        // Get all the villageList where villageCode does not contain DEFAULT_VILLAGE_CODE
+        defaultVillageShouldNotBeFound("villageCode.doesNotContain=" + DEFAULT_VILLAGE_CODE);
+
+        // Get all the villageList where villageCode does not contain UPDATED_VILLAGE_CODE
+        defaultVillageShouldBeFound("villageCode.doesNotContain=" + UPDATED_VILLAGE_CODE);
     }
 
     @Test
@@ -350,6 +451,7 @@ class VillageResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(village.getId().intValue())))
+            .andExpect(jsonPath("$.[*].villageCode").value(hasItem(DEFAULT_VILLAGE_CODE)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
 
         // Check, that the count call also returns 1
@@ -398,7 +500,7 @@ class VillageResourceIT {
         Village updatedVillage = villageRepository.findById(village.getId()).get();
         // Disconnect from session so that the updates on updatedVillage are not directly saved in db
         em.detach(updatedVillage);
-        updatedVillage.name(UPDATED_NAME);
+        updatedVillage.villageCode(UPDATED_VILLAGE_CODE).name(UPDATED_NAME);
 
         restVillageMockMvc
             .perform(
@@ -412,6 +514,7 @@ class VillageResourceIT {
         List<Village> villageList = villageRepository.findAll();
         assertThat(villageList).hasSize(databaseSizeBeforeUpdate);
         Village testVillage = villageList.get(villageList.size() - 1);
+        assertThat(testVillage.getVillageCode()).isEqualTo(UPDATED_VILLAGE_CODE);
         assertThat(testVillage.getName()).isEqualTo(UPDATED_NAME);
     }
 
@@ -483,7 +586,7 @@ class VillageResourceIT {
         Village partialUpdatedVillage = new Village();
         partialUpdatedVillage.setId(village.getId());
 
-        partialUpdatedVillage.name(UPDATED_NAME);
+        partialUpdatedVillage.villageCode(UPDATED_VILLAGE_CODE);
 
         restVillageMockMvc
             .perform(
@@ -497,7 +600,8 @@ class VillageResourceIT {
         List<Village> villageList = villageRepository.findAll();
         assertThat(villageList).hasSize(databaseSizeBeforeUpdate);
         Village testVillage = villageList.get(villageList.size() - 1);
-        assertThat(testVillage.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testVillage.getVillageCode()).isEqualTo(UPDATED_VILLAGE_CODE);
+        assertThat(testVillage.getName()).isEqualTo(DEFAULT_NAME);
     }
 
     @Test
@@ -512,7 +616,7 @@ class VillageResourceIT {
         Village partialUpdatedVillage = new Village();
         partialUpdatedVillage.setId(village.getId());
 
-        partialUpdatedVillage.name(UPDATED_NAME);
+        partialUpdatedVillage.villageCode(UPDATED_VILLAGE_CODE).name(UPDATED_NAME);
 
         restVillageMockMvc
             .perform(
@@ -526,6 +630,7 @@ class VillageResourceIT {
         List<Village> villageList = villageRepository.findAll();
         assertThat(villageList).hasSize(databaseSizeBeforeUpdate);
         Village testVillage = villageList.get(villageList.size() - 1);
+        assertThat(testVillage.getVillageCode()).isEqualTo(UPDATED_VILLAGE_CODE);
         assertThat(testVillage.getName()).isEqualTo(UPDATED_NAME);
     }
 

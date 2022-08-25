@@ -14,26 +14,24 @@
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="parent_id" type="varchar(255)">
-                <constraints nullable="true" />
+            <column name="office_type" type="varchar(255)">
+                <constraints nullable="false" />
             </column>
             <column name="name" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="office_type" type="varchar(255)">
+            <column name="created_at" type="${datetimeType}">
                 <constraints nullable="false" />
             </column>
-            <column name="created_at" type="date">
-                <constraints nullable="false" />
+            <column name="user_id" type="bigint">
+                <constraints nullable="true" unique="true" uniqueConstraintName="ux_office__user_id" />
             </column>
-            <column name="office_id" type="bigint">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_office__office_id" />
-            </column>
-            <column name="children_id" type="bigint">
+            <column name="parent_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
+        <dropDefaultValue tableName="office" columnName="created_at" columnDataType="${datetimeType}"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -53,9 +51,8 @@
                   tableName="office"
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
-            <column name="parent_id" type="string"/>
-            <column name="name" type="string"/>
             <column name="office_type" type="string"/>
+            <column name="name" type="string"/>
             <column name="created_at" type="date"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>

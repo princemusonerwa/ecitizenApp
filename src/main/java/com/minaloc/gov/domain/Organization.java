@@ -35,7 +35,7 @@ public class Organization implements Serializable {
 
     @OneToOne
     @JoinColumn(unique = true)
-    private User organization;
+    private User user;
 
     @ManyToMany(mappedBy = "organizations")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -83,16 +83,16 @@ public class Organization implements Serializable {
         this.location = location;
     }
 
-    public User getOrganization() {
-        return this.organization;
+    public User getUser() {
+        return this.user;
     }
 
-    public void setOrganization(User user) {
-        this.organization = user;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Organization organization(User user) {
-        this.setOrganization(user);
+    public Organization user(User user) {
+        this.setUser(user);
         return this;
     }
 
