@@ -25,6 +25,7 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
   const totalItems = useAppSelector(state => state.complain.totalItems);
 
   const getAllEntities = () => {
+
     dispatch(
       getEntities({
         page: paginationState.activePage - 1,
