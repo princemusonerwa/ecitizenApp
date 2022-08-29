@@ -28,6 +28,8 @@ public class VillageCriteria implements Serializable, Criteria {
 
     private LongFilter id;
 
+    private StringFilter villageCode;
+
     private StringFilter name;
 
     private LongFilter umuturageId;
@@ -40,6 +42,7 @@ public class VillageCriteria implements Serializable, Criteria {
 
     public VillageCriteria(VillageCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
+        this.villageCode = other.villageCode == null ? null : other.villageCode.copy();
         this.name = other.name == null ? null : other.name.copy();
         this.umuturageId = other.umuturageId == null ? null : other.umuturageId.copy();
         this.cellId = other.cellId == null ? null : other.cellId.copy();
@@ -64,6 +67,21 @@ public class VillageCriteria implements Serializable, Criteria {
 
     public void setId(LongFilter id) {
         this.id = id;
+    }
+
+    public StringFilter getVillageCode() {
+        return villageCode;
+    }
+
+    public StringFilter villageCode() {
+        if (villageCode == null) {
+            villageCode = new StringFilter();
+        }
+        return villageCode;
+    }
+
+    public void setVillageCode(StringFilter villageCode) {
+        this.villageCode = villageCode;
     }
 
     public StringFilter getName() {
@@ -130,6 +148,7 @@ public class VillageCriteria implements Serializable, Criteria {
         final VillageCriteria that = (VillageCriteria) o;
         return (
             Objects.equals(id, that.id) &&
+            Objects.equals(villageCode, that.villageCode) &&
             Objects.equals(name, that.name) &&
             Objects.equals(umuturageId, that.umuturageId) &&
             Objects.equals(cellId, that.cellId) &&
@@ -139,7 +158,7 @@ public class VillageCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, umuturageId, cellId, distinct);
+        return Objects.hash(id, villageCode, name, umuturageId, cellId, distinct);
     }
 
     // prettier-ignore
@@ -147,6 +166,7 @@ public class VillageCriteria implements Serializable, Criteria {
     public String toString() {
         return "VillageCriteria{" +
             (id != null ? "id=" + id + ", " : "") +
+            (villageCode != null ? "villageCode=" + villageCode + ", " : "") +
             (name != null ? "name=" + name + ", " : "") +
             (umuturageId != null ? "umuturageId=" + umuturageId + ", " : "") +
             (cellId != null ? "cellId=" + cellId + ", " : "") +

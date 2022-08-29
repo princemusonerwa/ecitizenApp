@@ -1,6 +1,8 @@
 package com.minaloc.gov.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
@@ -31,6 +33,10 @@ public class Category implements Serializable {
     @Type(type = "org.hibernate.type.TextType")
     @Column(name = "description", nullable = false)
     private String description;
+
+    @OneToMany(mappedBy = "umuturage")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    private Set<Complain> complains = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -90,6 +96,14 @@ public class Category implements Serializable {
     public int hashCode() {
         // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
+    }
+
+    public Set<Complain> getComplains() {
+        return complains;
+    }
+
+    public void setComplains(Set<Complain> complains) {
+        this.complains = complains;
     }
 
     // prettier-ignore

@@ -34,8 +34,8 @@ export const OrganizationDetail = (props: RouteComponentProps<{ id: string }>) =
             <span id="location">Location</span>
           </dt>
           <dd>{organizationEntity.location}</dd>
-          <dt>Organization</dt>
-          <dd>{organizationEntity.organization ? organizationEntity.organization.id : ''}</dd>
+          <dt>User</dt>
+          <dd>{organizationEntity.user ? organizationEntity.user.login : ''}</dd>
         </dl>
         <Button tag={Link} to="/organization" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

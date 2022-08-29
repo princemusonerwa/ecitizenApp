@@ -122,6 +122,9 @@ export const Cell = (props: RouteComponentProps<{ url: string }>) => {
                   <th className="hand" onClick={sort('id')}>
                     ID <FontAwesomeIcon icon="sort" />
                   </th>
+                  <th className="hand" onClick={sort('sectorCode')}>
+                    Sector Code <FontAwesomeIcon icon="sort" />
+                  </th>
                   <th className="hand" onClick={sort('name')}>
                     Name <FontAwesomeIcon icon="sort" />
                   </th>
@@ -139,6 +142,7 @@ export const Cell = (props: RouteComponentProps<{ url: string }>) => {
                         {cell.id}
                       </Button>
                     </td>
+                    <td>{cell.sectorCode}</td>
                     <td>{cell.name}</td>
                     <td>{cell.sector ? <Link to={`/sector/${cell.sector.id}`}>{cell.sector.name}</Link> : ''}</td>
                     <td className="text-end">

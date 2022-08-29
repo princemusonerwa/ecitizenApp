@@ -34,7 +34,7 @@
     {
       "fieldName": "email",
       "fieldType": "String",
-      "fieldValidateRules": ["required", "pattern"],
+      "fieldValidateRules": ["unique", "required", "pattern"],
       "fieldValidateRulesPattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
     }
   ],
@@ -50,6 +50,14 @@
       "otherEntityRelationshipName": "umuyobozi",
       "ownerSide": true,
       "relationshipName": "umurimo",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "office",
+      "otherEntityRelationshipName": "umuyobozi",
+      "ownerSide": true,
+      "relationshipName": "office",
       "relationshipType": "one-to-one"
     }
   ],

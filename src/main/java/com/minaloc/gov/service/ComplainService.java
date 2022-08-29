@@ -39,7 +39,7 @@ public interface ComplainService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<Complain> findAll(Pageable pageable);
+    Page<Complain> findAll(Pageable pageable, String keyword);
 
     /**
      * Get all the complains with eager load of many-to-many relationships.

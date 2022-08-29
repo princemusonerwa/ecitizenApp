@@ -3,7 +3,6 @@ package com.minaloc.gov.service.impl;
 import com.minaloc.gov.domain.Complain;
 import com.minaloc.gov.repository.ComplainRepository;
 import com.minaloc.gov.service.ComplainService;
-
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -59,14 +58,17 @@ public class ComplainServiceImpl implements ComplainService {
                 if (complain.getUmwanzuro() != null) {
                     existingComplain.setUmwanzuro(complain.getUmwanzuro());
                 }
-                if (complain.getDate() != null) {
-                    existingComplain.setDate(complain.getDate());
-                }
                 if (complain.getStatus() != null) {
                     existingComplain.setStatus(complain.getStatus());
                 }
                 if (complain.getPriority() != null) {
                     existingComplain.setPriority(complain.getPriority());
+                }
+                if (complain.getCreatedAt() != null) {
+                    existingComplain.setCreatedAt(complain.getCreatedAt());
+                }
+                if (complain.getUpdatedAt() != null) {
+                    existingComplain.setUpdatedAt(complain.getUpdatedAt());
                 }
 
                 return existingComplain;
@@ -76,8 +78,11 @@ public class ComplainServiceImpl implements ComplainService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Complain> findAll(Pageable pageable) {
+    public Page<Complain> findAll(Pageable pageable, String keyword) {
         log.debug("Request to get all Complains");
+        if (keyword != null) {
+            return findAll(pageable, keyword);
+        }
         return complainRepository.findAll(pageable);
     }
 

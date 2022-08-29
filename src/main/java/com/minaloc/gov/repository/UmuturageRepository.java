@@ -17,6 +17,8 @@ public interface UmuturageRepository extends JpaRepository<Umuturage, Long>, Jpa
     @Query("select umuturage from Umuturage umuturage where umuturage.user.login = ?#{principal.username}")
     List<Umuturage> findByUserIsCurrentUser();
 
+    Optional<Umuturage> findOneByEmailIgnoreCase(String email);
+
     default Optional<Umuturage> findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }
@@ -42,4 +44,8 @@ public interface UmuturageRepository extends JpaRepository<Umuturage, Long>, Jpa
         "select umuturage from Umuturage umuturage left join fetch umuturage.user left join fetch umuturage.village where umuturage.id =:id"
     )
     Optional<Umuturage> findOneWithToOneRelationships(@Param("id") Long id);
+
+    Optional<Umuturage> findByPhone(String phone);
+
+    Optional<Umuturage> findByIndangamuntu(String indangamuntu);
 }

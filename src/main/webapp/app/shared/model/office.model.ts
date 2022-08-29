@@ -4,13 +4,12 @@ import { OfficeType } from 'app/shared/model/enumerations/office-type.model';
 
 export interface IOffice {
   id?: number;
-  parentId?: string | null;
-  name?: string;
   officeType?: OfficeType;
+  name?: string;
   createdAt?: string;
-  office?: IUser | null;
-  parents?: IOffice[] | null;
-  children?: IOffice | null;
+  user?: IUser | null;
+  children?: IOffice[] | null;
+  parent?: IOffice | null;
 }
 
 export const defaultValue: Readonly<IOffice> = {};

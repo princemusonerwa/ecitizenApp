@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,14 +62,18 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Transactional(readOnly = true)
     public List<Organization> findAll() {
         log.debug("Request to get all Organizations");
-        return organizationRepository.findAll();
+        return organizationRepository.findAllWithEagerRelationships();
+    }
+
+    public Page<Organization> findAllWithEagerRelationships(Pageable pageable) {
+        return organizationRepository.findAllWithEagerRelationships(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<Organization> findOne(Long id) {
         log.debug("Request to get Organization : {}", id);
-        return organizationRepository.findById(id);
+        return organizationRepository.findOneWithEagerRelationships(id);
     }
 
     @Override

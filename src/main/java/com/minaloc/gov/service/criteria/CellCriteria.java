@@ -28,6 +28,8 @@ public class CellCriteria implements Serializable, Criteria {
 
     private LongFilter id;
 
+    private StringFilter sectorCode;
+
     private StringFilter name;
 
     private LongFilter villageId;
@@ -40,6 +42,7 @@ public class CellCriteria implements Serializable, Criteria {
 
     public CellCriteria(CellCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
+        this.sectorCode = other.sectorCode == null ? null : other.sectorCode.copy();
         this.name = other.name == null ? null : other.name.copy();
         this.villageId = other.villageId == null ? null : other.villageId.copy();
         this.sectorId = other.sectorId == null ? null : other.sectorId.copy();
@@ -64,6 +67,21 @@ public class CellCriteria implements Serializable, Criteria {
 
     public void setId(LongFilter id) {
         this.id = id;
+    }
+
+    public StringFilter getSectorCode() {
+        return sectorCode;
+    }
+
+    public StringFilter sectorCode() {
+        if (sectorCode == null) {
+            sectorCode = new StringFilter();
+        }
+        return sectorCode;
+    }
+
+    public void setSectorCode(StringFilter sectorCode) {
+        this.sectorCode = sectorCode;
     }
 
     public StringFilter getName() {
@@ -130,6 +148,7 @@ public class CellCriteria implements Serializable, Criteria {
         final CellCriteria that = (CellCriteria) o;
         return (
             Objects.equals(id, that.id) &&
+            Objects.equals(sectorCode, that.sectorCode) &&
             Objects.equals(name, that.name) &&
             Objects.equals(villageId, that.villageId) &&
             Objects.equals(sectorId, that.sectorId) &&
@@ -139,7 +158,7 @@ public class CellCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, villageId, sectorId, distinct);
+        return Objects.hash(id, sectorCode, name, villageId, sectorId, distinct);
     }
 
     // prettier-ignore
@@ -147,6 +166,7 @@ public class CellCriteria implements Serializable, Criteria {
     public String toString() {
         return "CellCriteria{" +
             (id != null ? "id=" + id + ", " : "") +
+            (sectorCode != null ? "sectorCode=" + sectorCode + ", " : "") +
             (name != null ? "name=" + name + ", " : "") +
             (villageId != null ? "villageId=" + villageId + ", " : "") +
             (sectorId != null ? "sectorId=" + sectorId + ", " : "") +

@@ -82,6 +82,8 @@ export const UserManagement = (props: RouteComponentProps<any>) => {
   const totalItems = useAppSelector(state => state.userManagement.totalItems);
   const loading = useAppSelector(state => state.userManagement.loading);
 
+  console.log(users);
+
   return (
     <div>
       <h2 id="user-management-page-heading" data-cy="userManagementPageHeading">
@@ -108,6 +110,10 @@ export const UserManagement = (props: RouteComponentProps<any>) => {
             </th>
             <th className="hand" onClick={sort('email')}>
               Email
+              <FontAwesomeIcon icon="sort" />
+            </th>
+            <th className="hand" onClick={sort('phone')}>
+              Phone
               <FontAwesomeIcon icon="sort" />
             </th>
             <th />
@@ -137,6 +143,7 @@ export const UserManagement = (props: RouteComponentProps<any>) => {
               </td>
               <td>{user.login}</td>
               <td>{user.email}</td>
+              <td>{user.phone}</td>
               <td>
                 {user.activated ? (
                   <Button color="success" onClick={toggleActive(user)}>

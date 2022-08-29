@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { byteSize, Translate, TextFormat, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { byteSize, Translate, TextFormat, getSortState, JhiPagination, JhiItemCount, containerSize } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -14,6 +14,7 @@ import { getEntities } from './complain.reducer';
 
 export const Complain = (props: RouteComponentProps<{ url: string }>) => {
   const dispatch = useAppDispatch();
+  const [keyword, setKeyword] = useState('');
 
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
@@ -24,11 +25,13 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
   const totalItems = useAppSelector(state => state.complain.totalItems);
 
   const getAllEntities = () => {
+
     dispatch(
       getEntities({
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
+        keyword,
       })
     );
   };
@@ -47,6 +50,7 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
 
   useEffect(() => {
     const params = new URLSearchParams(props.location.search);
+    console.log(`This is the props: ${props.history}`);
     const page = params.get('page');
     const sort = params.get(SORT);
     if (page && sort) {
@@ -75,7 +79,19 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
     });
 
   const handleSyncList = () => {
-    sortEntities();
+    dispatch(
+      getEntities({
+        page: paginationState.activePage - 1,
+        size: paginationState.itemsPerPage,
+        sort: `${paginationState.sort},${paginationState.order}`,
+        keyword: '',
+      })
+    );
+  };
+
+  const handleSearch = e => {
+    e.preventDefault();
+    getAllEntities();
   };
 
   const { match } = props;
@@ -94,14 +110,28 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
           </Link>
         </div>
       </h2>
+      <div className="row justify-content-center">
+        <div className="col-4">
+          <form className="d-flex search-form" role="search" onSubmit={handleSearch}>
+            <input
+              className="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+              value={keyword}
+              onChange={e => setKeyword(e.target.value)}
+            />
+            <button type="submit" className="btn btn-success">
+              Search
+            </button>
+          </form>
+        </div>
+      </div>
       <div className="table-responsive">
         {complainList && complainList.length > 0 ? (
           <Table responsive>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('id')}>
-                  ID <FontAwesomeIcon icon="sort" />
-                </th>
                 <th className="hand" onClick={sort('ikibazo')}>
                   Ikibazo <FontAwesomeIcon icon="sort" />
                 </th>
@@ -114,14 +144,17 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
                 <th className="hand" onClick={sort('umwanzuro')}>
                   Umwanzuro <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('date')}>
-                  Date <FontAwesomeIcon icon="sort" />
-                </th>
                 <th className="hand" onClick={sort('status')}>
                   Status <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('priority')}>
                   Priority <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('createdAt')}>
+                  Created At <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand" onClick={sort('updatedAt')}>
+                  Updated At <FontAwesomeIcon icon="sort" />
                 </th>
                 <th>
                   Category <FontAwesomeIcon icon="sort" />
@@ -129,30 +162,22 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
                 <th>
                   Umuturage <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  User <FontAwesomeIcon icon="sort" />
-                </th>
                 <th />
               </tr>
             </thead>
             <tbody>
               {complainList.map((complain, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/complain/${complain.id}`} color="link" size="sm">
-                      {complain.id}
-                    </Button>
-                  </td>
                   <td>{complain.ikibazo}</td>
                   <td>{complain.icyakozwe}</td>
                   <td>{complain.icyakorwa}</td>
                   <td>{complain.umwanzuro}</td>
-                  <td>{complain.date ? <TextFormat type="date" value={complain.date} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{complain.status}</td>
                   <td>{complain.priority}</td>
-                  <td>{complain.category ? <Link to={`/category/${complain.category.id}`}>{complain.category.id}</Link> : ''}</td>
-                  <td>{complain.umuturage ? <Link to={`/umuturage/${complain.umuturage.id}`}>{complain.umuturage.id}</Link> : ''}</td>
-                  <td>{complain.user ? complain.user.login : ''}</td>
+                  <td>{complain.createdAt ? <TextFormat type="date" value={complain.createdAt} format={APP_DATE_FORMAT} /> : null}</td>
+                  <td>{complain.updatedAt ? <TextFormat type="date" value={complain.updatedAt} format={APP_DATE_FORMAT} /> : null}</td>
+                  <td>{complain.category ? <Link to={`/category/${complain.category.id}`}>{complain.category.name}</Link> : ''}</td>
+                  <td>{complain.umuturage ? <Link to={`/umuturage/${complain.umuturage.id}`}>{complain.umuturage.amazina}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/complain/${complain.id}`} color="info" size="sm" data-cy="entityDetailsButton">

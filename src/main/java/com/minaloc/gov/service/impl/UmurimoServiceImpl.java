@@ -47,8 +47,8 @@ public class UmurimoServiceImpl implements UmurimoService {
                 if (umurimo.getUmurimo() != null) {
                     existingUmurimo.setUmurimo(umurimo.getUmurimo());
                 }
-                if (umurimo.getUrwego() != null) {
-                    existingUmurimo.setUrwego(umurimo.getUrwego());
+                if (umurimo.getOfficeType() != null) {
+                    existingUmurimo.setOfficeType(umurimo.getOfficeType());
                 }
 
                 return existingUmurimo;

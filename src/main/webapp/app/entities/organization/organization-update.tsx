@@ -51,7 +51,7 @@ export const OrganizationUpdate = (props: RouteComponentProps<{ id: string }>) =
     const entity = {
       ...organizationEntity,
       ...values,
-      organization: users.find(it => it.id.toString() === values.organization.toString()),
+      user: users.find(it => it.id.toString() === values.user.toString()),
     };
 
     if (isNew) {
@@ -66,7 +66,7 @@ export const OrganizationUpdate = (props: RouteComponentProps<{ id: string }>) =
       ? {}
       : {
           ...organizationEntity,
-          organization: organizationEntity?.organization?.id,
+          user: organizationEntity?.user?.id,
         };
 
   return (
@@ -105,12 +105,12 @@ export const OrganizationUpdate = (props: RouteComponentProps<{ id: string }>) =
                   required: { value: true, message: 'This field is required.' },
                 }}
               />
-              <ValidatedField id="organization-organization" name="organization" data-cy="organization" label="Organization" type="select">
+              <ValidatedField id="organization-user" name="user" data-cy="user" label="User" type="select">
                 <option value="" key="0" />
                 {users
                   ? users.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
+                        {otherEntity.login}
                       </option>
                     ))
                   : null}

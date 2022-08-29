@@ -56,6 +56,7 @@ public class ComplainQueryService extends QueryService<Complain> {
     public Page<Complain> findByCriteria(ComplainCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Complain> specification = createSpecification(criteria);
+
         return complainRepository.findAll(specification, page);
     }
 
@@ -86,14 +87,17 @@ public class ComplainQueryService extends QueryService<Complain> {
             if (criteria.getId() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getId(), Complain_.id));
             }
-            if (criteria.getDate() != null) {
-                specification = specification.and(buildRangeSpecification(criteria.getDate(), Complain_.date));
-            }
             if (criteria.getStatus() != null) {
                 specification = specification.and(buildSpecification(criteria.getStatus(), Complain_.status));
             }
             if (criteria.getPriority() != null) {
                 specification = specification.and(buildSpecification(criteria.getPriority(), Complain_.priority));
+            }
+            if (criteria.getCreatedAt() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getCreatedAt(), Complain_.createdAt));
+            }
+            if (criteria.getUpdatedAt() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getUpdatedAt(), Complain_.updatedAt));
             }
             if (criteria.getCategoryId() != null) {
                 specification =

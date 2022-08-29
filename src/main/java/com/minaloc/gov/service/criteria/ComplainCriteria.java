@@ -65,11 +65,13 @@ public class ComplainCriteria implements Serializable, Criteria {
 
     private LongFilter id;
 
-    private InstantFilter date;
-
     private StatusFilter status;
 
     private PriorityFilter priority;
+
+    private InstantFilter createdAt;
+
+    private InstantFilter updatedAt;
 
     private LongFilter categoryId;
 
@@ -85,9 +87,10 @@ public class ComplainCriteria implements Serializable, Criteria {
 
     public ComplainCriteria(ComplainCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
-        this.date = other.date == null ? null : other.date.copy();
         this.status = other.status == null ? null : other.status.copy();
         this.priority = other.priority == null ? null : other.priority.copy();
+        this.createdAt = other.createdAt == null ? null : other.createdAt.copy();
+        this.updatedAt = other.updatedAt == null ? null : other.updatedAt.copy();
         this.categoryId = other.categoryId == null ? null : other.categoryId.copy();
         this.umuturageId = other.umuturageId == null ? null : other.umuturageId.copy();
         this.userId = other.userId == null ? null : other.userId.copy();
@@ -113,21 +116,6 @@ public class ComplainCriteria implements Serializable, Criteria {
 
     public void setId(LongFilter id) {
         this.id = id;
-    }
-
-    public InstantFilter getDate() {
-        return date;
-    }
-
-    public InstantFilter date() {
-        if (date == null) {
-            date = new InstantFilter();
-        }
-        return date;
-    }
-
-    public void setDate(InstantFilter date) {
-        this.date = date;
     }
 
     public StatusFilter getStatus() {
@@ -158,6 +146,36 @@ public class ComplainCriteria implements Serializable, Criteria {
 
     public void setPriority(PriorityFilter priority) {
         this.priority = priority;
+    }
+
+    public InstantFilter getCreatedAt() {
+        return createdAt;
+    }
+
+    public InstantFilter createdAt() {
+        if (createdAt == null) {
+            createdAt = new InstantFilter();
+        }
+        return createdAt;
+    }
+
+    public void setCreatedAt(InstantFilter createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public InstantFilter getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public InstantFilter updatedAt() {
+        if (updatedAt == null) {
+            updatedAt = new InstantFilter();
+        }
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(InstantFilter updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public LongFilter getCategoryId() {
@@ -239,9 +257,10 @@ public class ComplainCriteria implements Serializable, Criteria {
         final ComplainCriteria that = (ComplainCriteria) o;
         return (
             Objects.equals(id, that.id) &&
-            Objects.equals(date, that.date) &&
             Objects.equals(status, that.status) &&
             Objects.equals(priority, that.priority) &&
+            Objects.equals(createdAt, that.createdAt) &&
+            Objects.equals(updatedAt, that.updatedAt) &&
             Objects.equals(categoryId, that.categoryId) &&
             Objects.equals(umuturageId, that.umuturageId) &&
             Objects.equals(userId, that.userId) &&
@@ -252,7 +271,7 @@ public class ComplainCriteria implements Serializable, Criteria {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, date, status, priority, categoryId, umuturageId, userId, organizationId, distinct);
+        return Objects.hash(id, status, priority, createdAt, updatedAt, categoryId, umuturageId, userId, organizationId, distinct);
     }
 
     // prettier-ignore
@@ -260,9 +279,10 @@ public class ComplainCriteria implements Serializable, Criteria {
     public String toString() {
         return "ComplainCriteria{" +
             (id != null ? "id=" + id + ", " : "") +
-            (date != null ? "date=" + date + ", " : "") +
             (status != null ? "status=" + status + ", " : "") +
             (priority != null ? "priority=" + priority + ", " : "") +
+            (createdAt != null ? "createdAt=" + createdAt + ", " : "") +
+            (updatedAt != null ? "updatedAt=" + updatedAt + ", " : "") +
             (categoryId != null ? "categoryId=" + categoryId + ", " : "") +
             (umuturageId != null ? "umuturageId=" + umuturageId + ", " : "") +
             (userId != null ? "userId=" + userId + ", " : "") +

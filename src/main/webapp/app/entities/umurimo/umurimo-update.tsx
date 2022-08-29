@@ -9,6 +9,7 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { IUmurimo } from 'app/shared/model/umurimo.model';
+import { OfficeType } from 'app/shared/model/enumerations/office-type.model';
 import { getEntity, updateEntity, createEntity, reset } from './umurimo.reducer';
 
 export const UmurimoUpdate = (props: RouteComponentProps<{ id: string }>) => {
@@ -20,6 +21,7 @@ export const UmurimoUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const loading = useAppSelector(state => state.umurimo.loading);
   const updating = useAppSelector(state => state.umurimo.updating);
   const updateSuccess = useAppSelector(state => state.umurimo.updateSuccess);
+  const officeTypeValues = Object.keys(OfficeType);
   const handleClose = () => {
     props.history.push('/umurimo');
   };
@@ -55,6 +57,7 @@ export const UmurimoUpdate = (props: RouteComponentProps<{ id: string }>) => {
     isNew
       ? {}
       : {
+          officeType: 'MINALOC',
           ...umurimoEntity,
         };
 
@@ -86,18 +89,13 @@ export const UmurimoUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   maxLength: { value: 100, message: 'This field cannot be longer than 100 characters.' },
                 }}
               />
-              <ValidatedField
-                label="Urwego"
-                id="umurimo-urwego"
-                name="urwego"
-                data-cy="urwego"
-                type="text"
-                validate={{
-                  required: { value: true, message: 'This field is required.' },
-                  minLength: { value: 3, message: 'This field is required to be at least 3 characters.' },
-                  maxLength: { value: 100, message: 'This field cannot be longer than 100 characters.' },
-                }}
-              />
+              <ValidatedField label="Office Type" id="umurimo-officeType" name="officeType" data-cy="officeType" type="select">
+                {officeTypeValues.map(officeType => (
+                  <option value={officeType} key={officeType}>
+                    {officeType}
+                  </option>
+                ))}
+              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/umurimo" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

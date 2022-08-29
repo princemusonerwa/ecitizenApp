@@ -23,10 +23,11 @@
   "readOnly": false,
   "relationships": [
     {
+      "otherEntityField": "login",
       "otherEntityName": "user",
       "otherEntityRelationshipName": "organization",
       "ownerSide": true,
-      "relationshipName": "organization",
+      "relationshipName": "user",
       "relationshipType": "one-to-one"
     },
     {

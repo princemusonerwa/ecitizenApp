@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+
+import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { IVillage } from 'app/shared/model/village.model';
 import { getEntities as getVillages } from 'app/entities/village/village.reducer';
 import { IUmuturage } from 'app/shared/model/umuturage.model';
@@ -34,6 +36,8 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
     } else {
       dispatch(getEntity(props.match.params.id));
     }
+
+    dispatch(getUsers({}));
     dispatch(getVillages({}));
   }, []);
 
@@ -68,7 +72,6 @@ export const UmuturageUpdate = (props: RouteComponentProps<{ id: string }>) => {
           gender: 'MALE',
           ...umuturageEntity,
           dob: convertDateTimeFromServer(umuturageEntity.dob),
-          user: umuturageEntity?.user?.id,
           village: umuturageEntity?.village?.id,
         };
 

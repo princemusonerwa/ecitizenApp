@@ -27,6 +27,10 @@ export const VillageDetail = (props: RouteComponentProps<{ id: string }>) => {
           </dt>
           <dd>{villageEntity.id}</dd>
           <dt>
+            <span id="villageCode">Village Code</span>
+          </dt>
+          <dd>{villageEntity.villageCode}</dd>
+          <dt>
             <span id="name">Name</span>
           </dt>
           <dd>{villageEntity.name}</dd>

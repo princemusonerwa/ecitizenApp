@@ -47,7 +47,7 @@ export const Umurimo = (props: RouteComponentProps<{ url: string }>) => {
               <tr>
                 <th>ID</th>
                 <th>Umurimo</th>
-                <th>Urwego</th>
+                <th>Level</th>
                 <th />
               </tr>
             </thead>
@@ -60,7 +60,7 @@ export const Umurimo = (props: RouteComponentProps<{ url: string }>) => {
                     </Button>
                   </td>
                   <td>{umurimo.umurimo}</td>
-                  <td>{umurimo.urwego}</td>
+                  <td>{umurimo.officeType}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/umurimo/${umurimo.id}`} color="info" size="sm" data-cy="entityDetailsButton">

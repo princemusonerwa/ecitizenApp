@@ -4,6 +4,7 @@ import com.minaloc.gov.domain.Umuturage;
 import com.minaloc.gov.domain.User;
 import com.minaloc.gov.repository.UmuturageRepository;
 import com.minaloc.gov.repository.UserRepository;
+import com.minaloc.gov.service.EmailAlreadyUsedException;
 import com.minaloc.gov.service.UmuturageQueryService;
 import com.minaloc.gov.service.UmuturageService;
 import com.minaloc.gov.service.criteria.UmuturageCriteria;
@@ -76,6 +77,18 @@ public class UmuturageResource {
         log.debug("REST request to save Umuturage : {}", umuturage);
         if (umuturage.getId() != null) {
             throw new BadRequestAlertException("A new umuturage cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+
+        Optional<Umuturage> existingUmuturage = umuturageRepository.findByIndangamuntu(umuturage.getIndangamuntu());
+
+        Optional<Umuturage> existEmail = umuturageRepository.findOneByEmailIgnoreCase(umuturage.getEmail());
+
+        if (existingUmuturage.isPresent() && (existingUmuturage.get().getIndangamuntu().equalsIgnoreCase(umuturage.getIndangamuntu()))) {
+            throw new BadRequestAlertException("Umuturage with the given indangamuntu already exists", ENTITY_NAME, "indangamuntuexists");
+        }
+
+        if (existEmail.isPresent() && (existEmail.get().getEmail().equalsIgnoreCase(umuturage.getEmail()))) {
+            throw new BadRequestAlertException("Umuturage with the given email already exists", ENTITY_NAME, "emailexists");
         }
 
         // Get the current logged in user and assign it to Umuturage
@@ -223,5 +236,18 @@ public class UmuturageResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/umuturages/indentification/{identityId}")
+    public Object getUmuturageByIdentityCard(@PathVariable("identityId") String identityCard) {
+        Optional<Umuturage> umuturage = umuturageRepository.findByIndangamuntu(identityCard);
+        if (umuturage.isPresent()) {
+            throw new BadRequestAlertException(
+                "Umuturage with the given indangamuntu already exists in our system.",
+                ENTITY_NAME,
+                "idexists"
+            );
+        }
+        return umuturageService.getByIdentityCard(identityCard);
     }
 }

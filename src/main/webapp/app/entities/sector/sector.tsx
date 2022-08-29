@@ -122,6 +122,9 @@ export const Sector = (props: RouteComponentProps<{ url: string }>) => {
                   <th className="hand" onClick={sort('id')}>
                     ID <FontAwesomeIcon icon="sort" />
                   </th>
+                  <th className="hand" onClick={sort('sectorCode')}>
+                    Sector Code <FontAwesomeIcon icon="sort" />
+                  </th>
                   <th className="hand" onClick={sort('name')}>
                     Name <FontAwesomeIcon icon="sort" />
                   </th>
@@ -139,6 +142,7 @@ export const Sector = (props: RouteComponentProps<{ url: string }>) => {
                         {sector.id}
                       </Button>
                     </td>
+                    <td>{sector.sectorCode}</td>
                     <td>{sector.name}</td>
                     <td>{sector.district ? <Link to={`/district/${sector.district.id}`}>{sector.district.name}</Link> : ''}</td>
                     <td className="text-end">

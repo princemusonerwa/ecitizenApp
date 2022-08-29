@@ -27,6 +27,10 @@ export const SectorDetail = (props: RouteComponentProps<{ id: string }>) => {
           </dt>
           <dd>{sectorEntity.id}</dd>
           <dt>
+            <span id="sectorCode">Sector Code</span>
+          </dt>
+          <dd>{sectorEntity.sectorCode}</dd>
+          <dt>
             <span id="name">Name</span>
           </dt>
           <dd>{sectorEntity.name}</dd>
