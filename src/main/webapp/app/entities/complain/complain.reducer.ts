@@ -1,9 +1,11 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { IComplain, defaultValue } from 'app/shared/model/complain.model';
+import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { defaultValue, IComplain } from 'app/shared/model/complain.model';
+import { Status } from 'app/shared/model/enumerations/status.model';
+import { Priority } from 'app/shared/model/enumerations/priority.model';
 
 const initialState: EntityState<IComplain> = {
   loading: false,
@@ -19,10 +21,11 @@ const apiUrl = 'api/complains';
 
 // Actions
 
-export const getEntities = createAsyncThunk('complain/fetch_entity_list', async ({ page, size, sort, keyword }: IQueryParams) => {
-  const requestUrl = `${apiUrl}${
-    sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'
-  }cacheBuster=${new Date().getTime()}&keyword=${keyword}`;
+export const getEntities = createAsyncThunk('complain/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
+  const requestUrl = `${apiUrl}?cacheBuster=${new Date().getTime()}&officeType=minaloc&officeName=minaloc`;
+  console.log('===============================');
+  console.log(requestUrl);
+  console.log('================================');
   return axios.get<IComplain[]>(requestUrl);
 });
 

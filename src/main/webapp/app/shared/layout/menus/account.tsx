@@ -18,14 +18,9 @@ const accountMenuItemsAuthenticated = () => (
 );
 
 const accountMenuItems = () => (
-  <>
     <MenuItem id="login-item" icon="sign-in-alt" to="/login" data-cy="login">
       Sign in
     </MenuItem>
-    {/* <MenuItem icon="user-plus" to="/account/register" data-cy="register">
-      Register
-    </MenuItem> */}
-  </>
 );
 
 export const AccountMenu = ({ isAuthenticated = false }) => (
