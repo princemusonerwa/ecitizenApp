@@ -1,9 +1,12 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { IComplain, defaultValue } from 'app/shared/model/complain.model';
+import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { defaultValue, IComplain } from 'app/shared/model/complain.model';
+import { Status } from 'app/shared/model/enumerations/status.model';
+import { Priority } from 'app/shared/model/enumerations/priority.model';
+import getStore from "app/config/store";
 
 const initialState: EntityState<IComplain> = {
   loading: false,
@@ -18,11 +21,16 @@ const initialState: EntityState<IComplain> = {
 const apiUrl = 'api/complains';
 
 // Actions
-
 export const getEntities = createAsyncThunk('complain/fetch_entity_list', async ({ page, size, sort, keyword }: IQueryParams) => {
+  const officeType = getStore().getState().authentication.account.office.officeType;
+  const officeName = getStore().getState().authentication.account.office.name;
   const requestUrl = `${apiUrl}${
     sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'
-  }cacheBuster=${new Date().getTime()}&keyword=${keyword}`;
+  }cacheBuster=${new Date().getTime()}&keyword=${keyword}&officeType=${officeType}&officeName=${officeName}`;
+  console.log(officeName)
+  console.log(officeType);
+  console.log(requestUrl);
+  console.log(getStore().getState().authentication);
   return axios.get<IComplain[]>(requestUrl);
 });
 
