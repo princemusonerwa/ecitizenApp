@@ -6,6 +6,7 @@ import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } fro
 import { defaultValue, IComplain } from 'app/shared/model/complain.model';
 import { Status } from 'app/shared/model/enumerations/status.model';
 import { Priority } from 'app/shared/model/enumerations/priority.model';
+import getStore from "app/config/store";
 
 const initialState: EntityState<IComplain> = {
   loading: false,
@@ -20,12 +21,16 @@ const initialState: EntityState<IComplain> = {
 const apiUrl = 'api/complains';
 
 // Actions
-
-export const getEntities = createAsyncThunk('complain/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
-  const requestUrl = `${apiUrl}?cacheBuster=${new Date().getTime()}&officeType=minaloc&officeName=minaloc`;
-  console.log('===============================');
+export const getEntities = createAsyncThunk('complain/fetch_entity_list', async ({ page, size, sort, keyword }: IQueryParams) => {
+  const officeType = getStore().getState().authentication.account.office.officeType;
+  const officeName = getStore().getState().authentication.account.office.name;
+  const requestUrl = `${apiUrl}${
+    sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'
+  }cacheBuster=${new Date().getTime()}&keyword=${keyword}&officeType=${officeType}&officeName=${officeName}`;
+  console.log(officeName)
+  console.log(officeType);
   console.log(requestUrl);
-  console.log('================================');
+  console.log(getStore().getState().authentication);
   return axios.get<IComplain[]>(requestUrl);
 });
 

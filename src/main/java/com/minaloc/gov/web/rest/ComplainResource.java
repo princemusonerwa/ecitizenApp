@@ -280,6 +280,8 @@ public class ComplainResource {
     ) {
         Page<Complain> page;
         HttpHeaders headers;
+        System.out.println(officeType);
+        System.out.println(officeName);
         switch (officeType.toLowerCase()) {
             case "province":
                 log.debug("REST request to get Complains by criteria: {}", criteria);
