@@ -1,5 +1,6 @@
 package com.minaloc.gov.web.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minaloc.gov.domain.Complain;
 import com.minaloc.gov.domain.Umuturage;
 import com.minaloc.gov.domain.User;
@@ -11,6 +12,11 @@ import com.minaloc.gov.service.ComplainService;
 import com.minaloc.gov.service.EmailAlreadyUsedException;
 import com.minaloc.gov.service.UmuturageService;
 import com.minaloc.gov.service.criteria.ComplainCriteria;
+import com.minaloc.gov.service.dto.OfficeType;
+import com.minaloc.gov.web.rest.errors.BadRequestAlertException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 import com.minaloc.gov.service.dto.UmuturageComplainDTO;
 import com.minaloc.gov.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -105,7 +111,7 @@ public class ComplainResource {
 
         if (
             existingUmuturage.isPresent() &&
-            (existingUmuturage.get().getIndangamuntu().equalsIgnoreCase(umuturageComplainDTO.getIndangamuntu()))
+                (existingUmuturage.get().getIndangamuntu().equalsIgnoreCase(umuturageComplainDTO.getIndangamuntu()))
         ) {
             throw new BadRequestAlertException("Umuturage with the given indangamuntu already exists", ENTITY_NAME, "indangamuntuexists");
         }
@@ -266,21 +272,44 @@ public class ComplainResource {
     public ResponseEntity<List<Complain>> getAllComplains(
         ComplainCriteria criteria,
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
+        @RequestParam("officeType") String officeType,
+        @RequestParam("officeName") String officeName,
         @RequestParam(value = "keyword", required = false) String keyword,
         @RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant startDate,
         @RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant endDate
     ) {
-        log.debug("REST request to get Complains by criteria: {}", criteria);
         Page<Complain> page;
-        if (keyword != null) {
-            page = complainRepository.findAll(pageable, keyword);
-        } else if (startDate != null && endDate != null) {
-            page = complainRepository.findAll(pageable, startDate, endDate);
-        } else {
-            page = complainQueryService.findByCriteria(criteria, pageable);
+        HttpHeaders headers;
+        switch (officeType.toLowerCase()) {
+            case "province":
+                log.debug("REST request to get Complains by criteria: {}", criteria);
+                page = complainQueryService.findAllComplainsByProvince(pageable, officeName);
+                headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+                return ResponseEntity.ok().headers(headers).body(page.getContent());
+            case "district":
+                log.debug("REST request to get Complains by criteria: {}", criteria);
+                page = complainQueryService.findAllComplainsByDistrict(pageable, officeName);
+                headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+                return ResponseEntity.ok().headers(headers).body(page.getContent());
+            case "sector":
+                log.debug("REST request to get Complains by criteria: {}", criteria);
+                page = complainQueryService.findAllComplainsBySector(pageable, officeName);
+                headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+                return ResponseEntity.ok().headers(headers).body(page.getContent());
+            case "cell":
+                log.debug("REST request to get Complains by criteria: {}", criteria);
+                page = complainQueryService.findAllComplainsByCell(pageable, officeName);
+                headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+                return ResponseEntity.ok().headers(headers).body(page.getContent());
+            case "minaloc":
+                log.debug("REST request to get Complains by criteria: {}", criteria);
+                page = complainQueryService.findByCriteria(criteria, pageable);
+                headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+                return ResponseEntity.ok().headers(headers).body(page.getContent());
+            default:
+                return ResponseEntity.badRequest().body(null);
         }
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+
     }
 
     /**
