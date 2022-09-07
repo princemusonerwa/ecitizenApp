@@ -13,17 +13,17 @@ import com.minaloc.gov.service.EmailAlreadyUsedException;
 import com.minaloc.gov.service.UmuturageService;
 import com.minaloc.gov.service.criteria.ComplainCriteria;
 import com.minaloc.gov.service.dto.OfficeType;
-import com.minaloc.gov.web.rest.errors.BadRequestAlertException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
 import com.minaloc.gov.service.dto.UmuturageComplainDTO;
 import com.minaloc.gov.web.rest.errors.BadRequestAlertException;
+import com.minaloc.gov.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URISyntaxException;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -111,7 +111,7 @@ public class ComplainResource {
 
         if (
             existingUmuturage.isPresent() &&
-                (existingUmuturage.get().getIndangamuntu().equalsIgnoreCase(umuturageComplainDTO.getIndangamuntu()))
+            (existingUmuturage.get().getIndangamuntu().equalsIgnoreCase(umuturageComplainDTO.getIndangamuntu()))
         ) {
             throw new BadRequestAlertException("Umuturage with the given indangamuntu already exists", ENTITY_NAME, "indangamuntuexists");
         }
@@ -272,16 +272,14 @@ public class ComplainResource {
     public ResponseEntity<List<Complain>> getAllComplains(
         ComplainCriteria criteria,
         @org.springdoc.api.annotations.ParameterObject Pageable pageable,
-        @RequestParam("officeType") String officeType,
-        @RequestParam("officeName") String officeName,
+        @RequestParam(value = "officeType", required = false) String officeType,
+        @RequestParam(value = "officeName", required = false) String officeName,
         @RequestParam(value = "keyword", required = false) String keyword,
         @RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant startDate,
         @RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Instant endDate
     ) {
         Page<Complain> page;
         HttpHeaders headers;
-        System.out.println(officeType);
-        System.out.println(officeName);
         switch (officeType.toLowerCase()) {
             case "province":
                 log.debug("REST request to get Complains by criteria: {}", criteria);
@@ -311,7 +309,6 @@ public class ComplainResource {
             default:
                 return ResponseEntity.badRequest().body(null);
         }
-
     }
 
     /**

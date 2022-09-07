@@ -80,6 +80,7 @@ public interface ComplainRepository
         " inner join Village v on v.id = u.village.id inner join Cell cel on cel.name=?2"
     )
     Page<Complain> findAllComplainsByCell(Pageable page, String officeName);
+
     @Query("select complain from Complain complain where complain.id =:id")
     Complain getById(@Param("id") Long id);
 

@@ -3,6 +3,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
 import { ValidatedField, ValidatedForm, isEmail } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { OfficeType } from 'app/shared/model/enumerations/office-type.model';
 
 import { getEntities as getOffices } from 'app/entities/office/office.reducer';
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
@@ -11,6 +12,8 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 export const UserManagementUpdate = (props: RouteComponentProps<{ login: string }>) => {
   const [isNew] = useState(!props.match.params || !props.match.params.login);
   const offices = useAppSelector(state => state.office.entities);
+  const [selected, setSelected] = useState('');
+  const officeTypeValues = Object.keys(OfficeType);
 
   const dispatch = useAppDispatch();
 
@@ -143,6 +146,23 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
                   maxLength: { value: 13, message: 'This field cannot be longer than 13 characters.' },
                 }}
               />
+              <div className="form-group mt-2 mb-2">
+                <label htmlFor="level">Level</label>
+                <select
+                  id="user_level_select"
+                  name="level"
+                  className="form-select"
+                  value={selected}
+                  onChange={e => setSelected(e.target.value)}
+                >
+                  <option value="" key="0" />
+                  {officeTypeValues.map(officeType => (
+                    <option value={officeType} key={officeType}>
+                      {officeType}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <ValidatedField
                 id="umuyobozi-office"
                 name="office"
@@ -153,13 +173,16 @@ export const UserManagementUpdate = (props: RouteComponentProps<{ login: string 
                   required: { value: true, message: 'This field is required.' },
                 }}
               >
+                d
                 <option value="" key="0" />
                 {offices
-                  ? offices.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.name}
-                      </option>
-                    ))
+                  ? offices
+                      .filter(otherEntity => otherEntity.officeType === selected)
+                      .map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.name}
+                        </option>
+                      ))
                   : null}
               </ValidatedField>
               <ValidatedField type="checkbox" name="activated" check value={true} disabled={!user.id} label="Activated" />

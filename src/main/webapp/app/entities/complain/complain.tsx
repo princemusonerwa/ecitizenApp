@@ -25,13 +25,11 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
   const totalItems = useAppSelector(state => state.complain.totalItems);
 
   const getAllEntities = () => {
-
     dispatch(
       getEntities({
         page: paginationState.activePage - 1,
         size: paginationState.itemsPerPage,
         sort: `${paginationState.sort},${paginationState.order}`,
-        keyword,
       })
     );
   };
@@ -50,7 +48,6 @@ export const Complain = (props: RouteComponentProps<{ url: string }>) => {
 
   useEffect(() => {
     const params = new URLSearchParams(props.location.search);
-    console.log(`This is the props: ${props.history}`);
     const page = params.get('page');
     const sort = params.get(SORT);
     if (page && sort) {
