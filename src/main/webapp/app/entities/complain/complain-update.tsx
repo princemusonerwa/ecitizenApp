@@ -276,7 +276,7 @@ export const ComplainUpdate = (props: RouteComponentProps<{ id: string }>) => {
                   required: { value: true, message: 'This field is required.' },
                 }}
               />
-              <ValidatedField id="complain-category" name="category" data-cy="category" label="Category" type="select">
+              <ValidatedField id="compattlain-category" name="category" data-cy="category" label="Category" type="select">
                 <option value="" key="0" />
                 {categories
                   ? categories.map(otherEntity => (

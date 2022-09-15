@@ -186,11 +186,11 @@ export const Home = () => {
 
   return (
     <Row>
-      {!account?.login && (
+      {/* {!account?.login && (
         <Col md="3" className="pad">
           <span className="hipster rounded" />
         </Col>
-      )}
+      )} */}
 
       <Col md="12">
         <h2>Welcome to Minaloc E-Citizen Application!</h2>

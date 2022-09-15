@@ -49,7 +49,7 @@ export const Office = (props: RouteComponentProps<{ url: string }>) => {
                 <th>Office Type</th>
                 <th>Name</th>
                 <th>Created At</th>
-                <th>User</th>
+                {/* <th>User</th> */}
                 <th>Parent</th>
                 <th />
               </tr>
@@ -65,7 +65,7 @@ export const Office = (props: RouteComponentProps<{ url: string }>) => {
                   <td>{office.officeType}</td>
                   <td>{office.name}</td>
                   <td>{office.createdAt ? <TextFormat type="date" value={office.createdAt} format={APP_DATE_FORMAT} /> : null}</td>
-                  <td>{office.user ? office.user.login : ''}</td>
+                  {/* <td>{office.user ? office.user.login : ''}</td> */}
                   <td>{office.parent ? <Link to={`/office/${office.parent.id}`}>{office.parent.name}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
